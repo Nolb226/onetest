@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 28, 2023 at 08:36 AM
+-- Generation Time: Mar 10, 2023 at 08:48 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -88,6 +88,17 @@ INSERT INTO `chitietmon` (`MaNganh`, `MaMon`) VALUES
 ('DCT', '841419'),
 ('DKP', '841109'),
 ('DKP', '841419');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chitietthongbao`
+--
+
+CREATE TABLE `chitietthongbao` (
+  `maThongBao` varchar(10) NOT NULL,
+  `MaLop` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -513,6 +524,18 @@ END
 $$
 DELIMITER ;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `thongbao`
+--
+
+CREATE TABLE `thongbao` (
+  `maThongBao` varchar(10) NOT NULL,
+  `noiDung` longtext NOT NULL,
+  `ngay` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Indexes for dumped tables
 --
@@ -530,6 +553,13 @@ ALTER TABLE `cauhoi`
 ALTER TABLE `chitietmon`
   ADD PRIMARY KEY (`MaNganh`,`MaMon`),
   ADD KEY `MaMon` (`MaMon`);
+
+--
+-- Indexes for table `chitietthongbao`
+--
+ALTER TABLE `chitietthongbao`
+  ADD KEY `MaLop` (`MaLop`),
+  ADD KEY `maThongBao` (`maThongBao`);
 
 --
 -- Indexes for table `chucnang`
@@ -647,6 +677,12 @@ ALTER TABLE `taikhoan`
   ADD KEY `Nhom` (`Nhom`);
 
 --
+-- Indexes for table `thongbao`
+--
+ALTER TABLE `thongbao`
+  ADD PRIMARY KEY (`maThongBao`);
+
+--
 -- Constraints for dumped tables
 --
 
@@ -662,6 +698,13 @@ ALTER TABLE `cauhoi`
 ALTER TABLE `chitietmon`
   ADD CONSTRAINT `chitietmon_ibfk_1` FOREIGN KEY (`MaNganh`) REFERENCES `nganh` (`MaNganh`),
   ADD CONSTRAINT `chitietmon_ibfk_2` FOREIGN KEY (`MaMon`) REFERENCES `monhoc` (`MaMon`);
+
+--
+-- Constraints for table `chitietthongbao`
+--
+ALTER TABLE `chitietthongbao`
+  ADD CONSTRAINT `chitietthongbao_ibfk_1` FOREIGN KEY (`MaLop`) REFERENCES `nhom_lop` (`MaLop`),
+  ADD CONSTRAINT `chitietthongbao_ibfk_2` FOREIGN KEY (`maThongBao`) REFERENCES `thongbao` (`maThongBao`);
 
 --
 -- Constraints for table `chuong`
