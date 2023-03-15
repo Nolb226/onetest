@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,15 +8,71 @@
     <link rel="stylesheet" href="./assets/css/reset.css">
     <link rel="stylesheet" href="./assets/css/base.css">
     <link rel="stylesheet" href="./assets/css/grid.css">
-    <link rel="stylesheet" href="./assets/css/style.css">
-    <link rel="stylesheet" href="./assets/css/responsive.css">
+    <link rel="stylesheet" href="./assets/css/student/style.css">
+    <link rel="stylesheet" href="./assets/css/student/responsive.css">
+    <link rel="stylesheet" href="./assets/fonts/fontawesome-free-6.1.2-web/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;900&display=swap"
         rel="stylesheet">
     <title>Student</title>
 </head>
+
 <body>
-    <div class="main-layout">
-        
+    <div id="main-layout" class="grid wide">
+        <div class="row no-gutters layout--body">
+            <div id="left-menu" class="position-relative col l-1">
+                <ul class="menu-list flex-center flex-direction-col">
+                    <li class="menu-item active flex-center">
+                        <i class="menu-icon fa-solid fa-file-pen"></i>
+                    </li>
+
+                    <li class="menu-item flex-center">
+                        <i class="menu-icon fa-solid fa-plus"></i>
+                    </li>
+
+                </ul>
+                
+                <div class="themes flex-center position-absolute">
+                    <i class="menu-icon fa-solid fa-circle-half-stroke"></i>
+                   
+                    <ul class="themes-list">
+
+                    </ul>
+                </div>
+            </div>
+
+            <div id="container" class="col l-10">
+                <div class="top-bar">
+                    <header class="header flex-center position-relative">
+                        <div class="header__logo">
+                            <img src="./assets/image/BestOfTest.png" alt="">
+                        </div>
+                        <div class="navigation flex-center">
+                            <ul class="nav__list flex-center">
+                                <li class="nav__item flex-center">
+                                    <img src="./assets/image/Flag_of_Vietnam.png" alt="">
+                                </li>
+    
+                                <li class="nav__item flex-center">
+                                    <i class="nav__icon fa-regular fa-bell"></i>
+                                </li>
+    
+                                <li class="nav__item flex-center">
+                                    <i class="nav__icon fa-regular fa-user"></i>
+                                </li>
+                            </ul>
+                        </div>
+                    </header>
+                    <div class="information">
+                        
+                    </div>
+                </div>
+
+                <div class="content">
+
+                </div>
+            </div>
+        </div>
     </div>
 </body>
+
 </html>
