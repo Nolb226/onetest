@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 24, 2023 at 06:44 PM
+-- Generation Time: Mar 10, 2023 at 08:48 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -92,6 +92,17 @@ INSERT INTO `chitietmon` (`MaNganh`, `MaMon`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `chitietthongbao`
+--
+
+CREATE TABLE `chitietthongbao` (
+  `maThongBao` varchar(10) NOT NULL,
+  `MaLop` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `chucnang`
 --
 
@@ -166,6 +177,13 @@ INSERT INTO `classlist` (`MaSV`, `MaLop`) VALUES
 --
 -- Triggers `classlist`
 --
+DELIMITER $$
+CREATE TRIGGER `delete_SVclass` AFTER DELETE ON `classlist` FOR EACH ROW BEGIN
+	UPDATE nhom_lop
+    SET nhom_lop.SoLuong = nhom_lop.SoLuong -1;
+END
+$$
+DELIMITER ;
 DELIMITER $$
 CREATE TRIGGER `insert_svinclass` AFTER INSERT ON `classlist` FOR EACH ROW BEGIN
 	UPDATE nhom_lop
@@ -324,16 +342,17 @@ INSERT INTO `ketqua` (`Luachon`, `MaSV`, `MaCH`, `MaDe`) VALUES
 
 CREATE TABLE `khoa` (
   `MaKhoa` varchar(10) NOT NULL,
-  `TenKhoa` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
+  `TenKhoa` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `truongKhoa` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `khoa`
 --
 
-INSERT INTO `khoa` (`MaKhoa`, `TenKhoa`) VALUES
-('CNTT', 'Công Nghệ Thông Tin'),
-('NNA', 'Ngôn Ngữ Anh');
+INSERT INTO `khoa` (`MaKhoa`, `TenKhoa`, `truongKhoa`) VALUES
+('CNTT', 'Công Nghệ Thông Tin', '10991'),
+('NNA', 'Ngôn Ngữ Anh', '10991');
 
 -- --------------------------------------------------------
 
@@ -345,16 +364,17 @@ CREATE TABLE `monhoc` (
   `MaMon` varchar(10) NOT NULL,
   `TenMon` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `SoTC` int(11) NOT NULL,
-  `SoCH` int(11) NOT NULL
+  `SoCH` int(11) NOT NULL,
+  `truongMon` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `monhoc`
 --
 
-INSERT INTO `monhoc` (`MaMon`, `TenMon`, `SoTC`, `SoCH`) VALUES
-('841109', 'Cơ sở dữ liệu', 4, 6),
-('841419', 'Lập trình web và ứng dụng', 4, 7);
+INSERT INTO `monhoc` (`MaMon`, `TenMon`, `SoTC`, `SoCH`, `truongMon`) VALUES
+('841109', 'Cơ sở dữ liệu', 4, 6, '10991'),
+('841419', 'Lập trình web và ứng dụng', 4, 7, '10991');
 
 -- --------------------------------------------------------
 
@@ -365,17 +385,18 @@ INSERT INTO `monhoc` (`MaMon`, `TenMon`, `SoTC`, `SoCH`) VALUES
 CREATE TABLE `nganh` (
   `MaNganh` varchar(10) NOT NULL,
   `TenNganh` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `MaKhoa` varchar(10) NOT NULL
+  `MaKhoa` varchar(10) NOT NULL,
+  `truongNganh` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `nganh`
 --
 
-INSERT INTO `nganh` (`MaNganh`, `TenNganh`, `MaKhoa`) VALUES
-('DAN', 'Ngôn Ngữ Anh', 'NNA'),
-('DCT', 'Công nghệ thông tin', 'CNTT'),
-('DKP', 'Kỹ thuật phần mềm', 'CNTT');
+INSERT INTO `nganh` (`MaNganh`, `TenNganh`, `MaKhoa`, `truongNganh`) VALUES
+('DAN', 'Ngôn Ngữ Anh', 'NNA', '10991'),
+('DCT', 'Công nghệ thông tin', 'CNTT', '10991'),
+('DKP', 'Kỹ thuật phần mềm', 'CNTT', '10991');
 
 -- --------------------------------------------------------
 
@@ -476,20 +497,44 @@ CREATE TABLE `taikhoan` (
   `NgaySinh` date NOT NULL,
   `MaGV` varchar(10) DEFAULT NULL,
   `MaSV` varchar(10) DEFAULT NULL,
-  `Nhom` varchar(10) NOT NULL
+  `Nhom` varchar(10) NOT NULL,
+  `isActive` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `taikhoan`
 --
 
-INSERT INTO `taikhoan` (`ID`, `password`, `loaitk`, `HoTen`, `NgaySinh`, `MaGV`, `MaSV`, `Nhom`) VALUES
-('GV1', '123456', 'GV', 'Nguyễn Thanh Sang', '1985-10-02', '10991', NULL, 'PQ01'),
-('GV2', '123456', 'GV', 'Trương Tấn Khoa', '1985-02-23', '11384', NULL, 'PQ01'),
-('SV01', '123456', 'SV', 'Nguyễn Ngọc Sơn', '2003-05-20', NULL, '3121410425', 'PQ02'),
-('SV03', '123456', 'SV', 'Nguyễn Thành Đạt', '2003-05-16', NULL, '3121410146', 'PQ02'),
-('SV04', '123456', 'SV', 'Nguyễn Trương Khánh Hoàngho', '2003-10-30', NULL, '3121560033', 'PQ02'),
-('SV2', '123456', 'SV', 'Nguyễn Ngọc Sang', '2003-08-21', NULL, '3121410417', 'PQ02');
+INSERT INTO `taikhoan` (`ID`, `password`, `loaitk`, `HoTen`, `NgaySinh`, `MaGV`, `MaSV`, `Nhom`, `isActive`) VALUES
+('GV1', '123456', 'GV', 'Nguyễn Thanh Sang', '1985-10-02', '10991', NULL, 'PQ01', 0),
+('GV2', '123456', 'GV', 'Trương Tấn Khoa', '1985-02-23', '11384', NULL, 'PQ01', 0),
+('SV01', '123456', 'SV', 'Nguyễn Ngọc Sơn', '2003-05-20', NULL, '3121410425', 'PQ02', 0),
+('SV03', '123456', 'SV', 'Nguyễn Thành Đạt', '2003-05-16', NULL, '3121410146', 'PQ02', 0),
+('SV04', '123456', 'SV', 'Nguyễn Trương Khánh Hoàngho', '2003-10-30', NULL, '3121560033', 'PQ02', 0),
+('SV2', '123456', 'SV', 'Nguyễn Ngọc Sang', '2003-08-21', NULL, '3121410417', 'PQ02', 0);
+
+--
+-- Triggers `taikhoan`
+--
+DELIMITER $$
+CREATE TRIGGER `delete_TK` AFTER DELETE ON `taikhoan` FOR EACH ROW BEGIN 
+	DELETE from giangvien WHERE giangvien.MaGV = old.MaGV;
+    DELETE FROM sinhvien WHERE sinhvien.MaSV = old.MaSV;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `thongbao`
+--
+
+CREATE TABLE `thongbao` (
+  `maThongBao` varchar(10) NOT NULL,
+  `noiDung` longtext NOT NULL,
+  `ngay` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
@@ -508,6 +553,13 @@ ALTER TABLE `cauhoi`
 ALTER TABLE `chitietmon`
   ADD PRIMARY KEY (`MaNganh`,`MaMon`),
   ADD KEY `MaMon` (`MaMon`);
+
+--
+-- Indexes for table `chitietthongbao`
+--
+ALTER TABLE `chitietthongbao`
+  ADD KEY `MaLop` (`MaLop`),
+  ADD KEY `maThongBao` (`maThongBao`);
 
 --
 -- Indexes for table `chucnang`
@@ -576,20 +628,23 @@ ALTER TABLE `ketqua`
 -- Indexes for table `khoa`
 --
 ALTER TABLE `khoa`
-  ADD PRIMARY KEY (`MaKhoa`);
+  ADD PRIMARY KEY (`MaKhoa`),
+  ADD KEY `truongKhoa` (`truongKhoa`);
 
 --
 -- Indexes for table `monhoc`
 --
 ALTER TABLE `monhoc`
-  ADD PRIMARY KEY (`MaMon`);
+  ADD PRIMARY KEY (`MaMon`),
+  ADD KEY `truongMon` (`truongMon`);
 
 --
 -- Indexes for table `nganh`
 --
 ALTER TABLE `nganh`
   ADD PRIMARY KEY (`MaNganh`),
-  ADD KEY `MaKhoa` (`MaKhoa`);
+  ADD KEY `MaKhoa` (`MaKhoa`),
+  ADD KEY `truongNganh` (`truongNganh`);
 
 --
 -- Indexes for table `nhom_lop`
@@ -622,6 +677,12 @@ ALTER TABLE `taikhoan`
   ADD KEY `Nhom` (`Nhom`);
 
 --
+-- Indexes for table `thongbao`
+--
+ALTER TABLE `thongbao`
+  ADD PRIMARY KEY (`maThongBao`);
+
+--
 -- Constraints for dumped tables
 --
 
@@ -637,6 +698,13 @@ ALTER TABLE `cauhoi`
 ALTER TABLE `chitietmon`
   ADD CONSTRAINT `chitietmon_ibfk_1` FOREIGN KEY (`MaNganh`) REFERENCES `nganh` (`MaNganh`),
   ADD CONSTRAINT `chitietmon_ibfk_2` FOREIGN KEY (`MaMon`) REFERENCES `monhoc` (`MaMon`);
+
+--
+-- Constraints for table `chitietthongbao`
+--
+ALTER TABLE `chitietthongbao`
+  ADD CONSTRAINT `chitietthongbao_ibfk_1` FOREIGN KEY (`MaLop`) REFERENCES `nhom_lop` (`MaLop`),
+  ADD CONSTRAINT `chitietthongbao_ibfk_2` FOREIGN KEY (`maThongBao`) REFERENCES `thongbao` (`maThongBao`);
 
 --
 -- Constraints for table `chuong`
@@ -693,10 +761,23 @@ ALTER TABLE `ketqua`
   ADD CONSTRAINT `ketqua_ibfk_3` FOREIGN KEY (`MaDe`) REFERENCES `dethi` (`MaDe`);
 
 --
+-- Constraints for table `khoa`
+--
+ALTER TABLE `khoa`
+  ADD CONSTRAINT `khoa_ibfk_1` FOREIGN KEY (`truongKhoa`) REFERENCES `giangvien` (`MaGV`);
+
+--
+-- Constraints for table `monhoc`
+--
+ALTER TABLE `monhoc`
+  ADD CONSTRAINT `monhoc_ibfk_1` FOREIGN KEY (`truongMon`) REFERENCES `giangvien` (`MaGV`);
+
+--
 -- Constraints for table `nganh`
 --
 ALTER TABLE `nganh`
-  ADD CONSTRAINT `nganh_ibfk_1` FOREIGN KEY (`MaKhoa`) REFERENCES `khoa` (`MaKhoa`);
+  ADD CONSTRAINT `nganh_ibfk_1` FOREIGN KEY (`MaKhoa`) REFERENCES `khoa` (`MaKhoa`),
+  ADD CONSTRAINT `nganh_ibfk_2` FOREIGN KEY (`truongNganh`) REFERENCES `giangvien` (`MaGV`);
 
 --
 -- Constraints for table `nhom_lop`

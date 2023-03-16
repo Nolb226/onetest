@@ -1,0 +1,49 @@
+:root {
+    --white-color: #fff;
+    --sub-text-color: #555;
+    --text-color: #333;
+    --primary-color: #1F2EC9;
+    --backgound-color: #111967;
+    --highlight-color: #D3AE56;
+    --header-pc-height: 80px;
+
+    --feature-wrap-pc-width: 850px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+html {
+    /* 1rem = 10px */
+    font-size: 62.5%;
+    line-height: 1.6rem;
+    font-family: 'Inter', sans-serif;
+    box-sizing: border-box;
+}
+
+.flex-center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-direction-col {
+    flex-direction: column;
+}
+
+.flex-direction-row {
+    flex-direction: row;
+}
+
+.position-relative {
+    position: relative;
+}
+
+.position-absolute {
+    position: absolute;
+}
