@@ -387,11 +387,13 @@
         max-width: 41.66667%;
     }
     
+    /* Layout chia thành 5, chiếm 4/5 */
     .l-5-4 {
         flex: 0 0 20.833334%;
         max-width: 20.833334%;
     }
 
+    /* Layout chia thành 5, chiếm 1/5 */
     .l-5-1 {
         flex: 0 0 16.66667%;
         max-width: 16.66667%;
