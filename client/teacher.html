@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/css/reset.css">
+    <link rel="stylesheet" href="./assets/css/base.css">
+    <link rel="stylesheet" href="./assets/css/grid.css">
+    <link rel="stylesheet" href="./assets/css/student/style.css">
+    <link rel="stylesheet" href="./assets/css/student/responsive.css">
+    <link rel="stylesheet" href="./assets/fonts/fontawesome-free-6.1.2-web/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;900&display=swap"
+        rel="stylesheet">
+    <title>Student</title>
+</head>
+
+<body>
+    <div id="main-layout" class="grid wide">
+        <div class="row no-gutters layout--body">
+            <div id="left-menu" class="position-relative col l-1">
+                <ul class="menu-list flex-center flex-direction-col">
+                    <li class="menu-item active flex-center">
+                        <img src="./assets/image/exam-icon.png" class="menu-icon" alt="">
+                    </li>
+
+                    <li class="menu-item flex-center">
+                        <i class="menu-icon fa-solid fa-plus"></i>
+                    </li>
+                    
+                    <li class="menu-item flex-center">
+                        <img src="./assets/image/class-icon.png" class="menu-icon" alt="">
+                    </li>
+
+                    <li class="menu-item flex-center">
+                        <img src="./assets/image/dashboard-icon.png" class="menu-icon" alt="">
+                    </li>
+
+                </ul>
+                
+                <div class="themes flex-center position-absolute">
+                    <i class="menu-icon fa-solid fa-circle-half-stroke"></i>
+                   
+                    <ul class="themes-list">
+
+                    </ul>
+                </div>
+            </div>
+
+            <div id="container" class="col l-11">
+                <div class="top-bar">
+                    <header class="header flex-center position-relative">
+                        <div class="header__logo">
+                            <img src="./assets/image/BestOfTest.png" alt="Logo Best of Test">
+                        </div>
+                        <div class="navigation flex-center">
+                            <ul class="nav__list flex-center">
+                                <li class="nav__item flex-center" alt="Viet Nam flag" title="Viet Nam">
+                                    <img src="./assets/image/Flag_of_Vietnam.png" alt="">
+                                </li>
+    
+                                <li class="nav__item flex-center">
+                                    <i class="nav__icon fa-regular fa-bell"></i>
+                                </li>
+    
+                                <li class="nav__item flex-center">
+                                    <i class="nav__icon fa-regular fa-user"></i>
+                                </li>
+                            </ul>
+                        </div>
+                    </header>
+                    <div class="information">
+                        
+                    </div>
+                </div>
+                
+                <div class="content">
+                    <div class="flex-center search-bar">
+                        <input type="text" class="search-input" placeholder="Nhập mã lớp">
+                        <button class="flex-center join-button">
+                            <i class="menu-icon fa-solid fa-plus"></i>
+                            <span>Tham gia</span>
+                        </button>
+                    </div>
+
+                    <div class="table-zone grid">
+                        <h1 class="table__heading">DANH SÁCH NHÓM LỚP</h1>
+
+                        <div class="grid table__content">
+                            <ul class="row no-gutters flex-center table__content--heading">
+                                <li class="col l-6-4">
+                                    <h3>Mã Lớp</h3>
+                                </li>
+                                
+                                <li class="col l-6-4">
+                                    <h3>Tên Lớp</h3>
+                                </li>
+                                
+                                <li class="col l-6-4">
+                                    <h3>Môn</h3>
+                                </li>
+                                
+                                <li class="col l-6-4">
+                                    <h3>Danh sách sinh viên</h3>
+                                </li>
+
+                                <li class="col l-6-2">
+                                    <h3>Khóa Lớp</h3>
+                                </li>
+
+                                <li class="col l-6-2">
+                                    <h3>Chỉnh sửa</h3>
+                                </li>
+                            </ul>
+
+                            <div class="table__content--list">
+                                <ul class="row no-gutters flex-center table__content--item">
+                                    <li class="col l-6-4">
+                                        <h3>KTLT2</h3>
+                                    </li>
+                                    
+                                    <li class="col l-6-4">
+                                        <h3>KTLT Nhóm 2</h3>
+                                    </li>
+                                    
+                                    <li class="col l-6-4">
+                                        <h3>Kỹ Thuật Lập Trình</h3>
+                                    </li>
+                                    
+                                    <li class="col l-6-4">
+                                        <button class="list_btn">Xem Danh Sách</button>
+                                    </li>
+    
+                                    <li class="col l-6-2">
+                                        <i class="fa-solid fa-lock"></i>
+                                    </li>
+    
+                                    <li class="col l-6-2">
+                                        <h3>Chỉnh sửa</h3>
+                                    </li>
+                                </ul>
+
+                                <ul class="row no-gutters flex-center table__content--item">
+                                    <li class="col l-6-4">
+                                        <h3>KTLT2</h3>
+                                    </li>
+                                    
+                                    <li class="col l-6-4">
+                                        <h3>KTLT Nhóm 2</h3>
+                                    </li>
+                                    
+                                    <li class="col l-6-4">
+                                        <h3>Kỹ Thuật Lập Trình</h3>
+                                    </li>
+                                    
+                                    <li class="col l-6-4">
+                                        <button class="list_btn">Xem Danh Sách</button>
+                                    </li>
+    
+                                    <li class="col l-6-2">
+                                        <i class="fa-solid fa-lock"></i>
+                                    </li>
+    
+                                    <li class="col l-6-2">
+                                        <h3>Chỉnh sửa</h3>
+                                    </li>
+                                </ul>
+
+                                <ul class="row no-gutters flex-center table__content--item">
+                                    <li class="col l-6-4">
+                                        <h3>KTLT2</h3>
+                                    </li>
+                                    
+                                    <li class="col l-6-4">
+                                        <h3>KTLT Nhóm 2</h3>
+                                    </li>
+                                    
+                                    <li class="col l-6-4">
+                                        <h3>Kỹ Thuật Lập Trình</h3>
+                                    </li>
+                                    
+                                    <li class="col l-6-4">
+                                        <button class="list_btn">Xem Danh Sách</button>
+                                    </li>
+    
+                                    <li class="col l-6-2">
+                                        <i class="fa-solid fa-lock"></i>
+                                    </li>
+    
+                                    <li class="col l-6-2">
+                                        <h3>Chỉnh sửa</h3>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
