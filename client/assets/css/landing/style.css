@@ -44,12 +44,13 @@
     border: none;
     filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 1));
     -webkit-font-smoothing: subpixel-antialiased;
-    animation: buttonNotHover .2s ease;
+    animation: buttonNotHover .4s ease;
 }
 
 .header__btn > button:hover {   
-    animation: buttonHover .2s ease;
-    filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.7));
+    cursor: pointer;
+    animation: buttonHover .4s ease;
+    filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.5));
 }
 
 #container {
@@ -138,6 +139,7 @@
 }
 
 .container__btn--start:hover {
+    cursor: pointer;
     opacity: .95;
     animation: hoverScale .3s ease ;
     transform: scale(1.01) translateZ(0);
@@ -145,24 +147,20 @@
 
 @keyframes hoverScale {
     0% {
-        opacity: 1;
         transform: scale(1);
     }
     
     100% {
-        opacity: .95;
         transform: scale(1.01);
     }
 }
 
 @keyframes notHoverScale {
     0% {
-        opacity: .95;
         transform: scale(1.01);
     }
     
     100% {
-        opacity: 1;
         transform: scale(1);
     }
 }
@@ -183,17 +181,17 @@
     background-color: var(--white-color);
     filter: drop-shadow(10px 10px 15px rgba(0, 0, 0, 0.5));
     overflow: hidden;
-    animation: notHoverScale .5s ease;
 }
 
-.feature:hover {
-    animation: hoverScale .5s ease;
+.feature:hover > .feature__img {
+    animation: hoverScale .4s ease;
     transform: scale(1.01);
 }
 
 .feature__img {
     width: 100%;
     max-height: 215px;
+    animation: notHoverScale .4s ease;
 }
 
 .feature__img > img {
@@ -232,14 +230,24 @@
 
 #footer {
     height: 320px;
+    width: 100%;
     margin-top: 80px;
     background-color: #161F80;
 }
 
 .footer__heading {
+    position: relative;
     width: 100%;
     padding: 25px 0;
-    border-bottom: 2px solid var(--white-color);
+}
+
+.footer__heading::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    height: 1px;
+    width: 100vw;
+    background-color: var(--white-color);
 }
 
 .footer__logo {
@@ -262,7 +270,6 @@
     justify-content: space-around;
     margin: 55px 0 40px 0;
     text-align: center;
-    font-size: 1.5rem;
 }
 
 .footer__content--heading {
