@@ -1,0 +1,11 @@
+{
+    "dev": {
+      "database": {
+        "name": "name",
+        "host": "host",
+        "username": "user",
+        "password": "pass",
+        "dialect": "postgres"
+      }
+    }
+}
