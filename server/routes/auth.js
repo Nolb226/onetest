@@ -1,9 +1,13 @@
 const router = require('express').Router();
 const authController = require('../controllers/auth');
-router.get('/login', authController.signup);
+const { body } = require('express-validator');
+router.get('/login', authController.login);
 
-router.get('/another-route', (req, res) => {
-	// router code here
-});
+router.post(
+	'/signup',
+	// [body('password').isLength({ min: 8 })],
+	//min : 8
+	authController.signup
+);
 
 module.exports = router;

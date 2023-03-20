@@ -1,17 +1,27 @@
 const Account = require('../models/account');
 const bycrypt = require('bcryptjs');
+const { validationResult } = require('express-validator');
 
 exports.signup = async (req, res, next) => {
 	try {
-		const { username, password } = req.body;
-		const accountIsExist = await Account.findOne({ username });
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			throw res.status(400).json({ message: errors, errors: errors.array() });
+		}
+		const { username, password, type, fullname } = req.body;
+		const accountIsExist = await Account.findOne({
+			id: username,
+			include: Account,
+		});
 		if (!accountIsExist) {
 			const error = new Error('Account already exists');
+			error.statusCode = 422;
+			throw error;
 		}
 
-		const account = await Account.create({
-			id: '3121560033',
-			password: await bycrypt.hash('123', 10),
+		const account = await Account.build({
+			id: username,
+			password: await bycrypt.hash('password', 10),
 			type: 'sv',
 		});
 		console.log(account);
