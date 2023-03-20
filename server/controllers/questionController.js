@@ -25,10 +25,13 @@ exports.handleQuestion = async (req, res, _) => {
 
 	const response = await Promise.all(
 		StudentAns.map(async (question) => {
-			const a = await Question.findOne({
+			const questionInData = await Question.findOne({
 				where: { description: question.description },
 			});
-			return a;
+			return {
+				questionInData,
+				correct: question.ans === questionInData.correctAns,
+			};
 		})
 	);
 	res.status(200).json({ message: 'complete', response });
