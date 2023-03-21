@@ -3,10 +3,11 @@ const { DataTypes } = require('sequelize');
 
 const Question = sequelize.define('question', {
 	id: {
-		type: DataTypes.STRING,
+		type: DataTypes.INTEGER,
 		allowNull: false,
 		unique: true,
 		primaryKey: true,
+		autoIncrement: true,
 	},
 
 	correctAns: {

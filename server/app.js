@@ -17,6 +17,8 @@ const app = express();
 	const Question = require('./models/question');
 	const Exam = require('./models/exam');
 
+	const classDetails = require('./models/classdetail');
+
 	const Student = require('./models/student');
 	const Account = require('./models/account');
 
@@ -56,13 +58,18 @@ const app = express();
 	Teacher.hasOne(Major, { foreignKey: 'headOfMajor' });
 
 	Student.belongsToMany(Class, {
-		through: 'classDetail',
-		timestamps: false,
+		through: classDetails,
 		foreignKey: 'studentId',
 	});
+
+	Student.hasMany(classDetails);
+	classDetails.belongsTo(Student);
+
+	Class.hasMany(classDetails);
+	classDetails.belongsTo(Class);
+
 	Class.belongsToMany(Student, {
-		through: 'classDetail',
-		timestamps: false,
+		through: classDetails,
 		foreignKey: 'classId',
 	});
 
@@ -132,6 +139,7 @@ const app = express();
 //Routes define
 const authRoutes = require('./routes/auth');
 const questionsRoutes = require('./routes/question');
+const classesRoutes = require('./routes/class');
 //Middleware
 
 app.use(bodyParser.json());
@@ -146,6 +154,7 @@ app.use((req, res, next) => {
 
 app.use('/auth', authRoutes);
 app.use('/questions', questionsRoutes);
+app.use('/classes', classesRoutes);
 
 //App start when connected to database
 sequelize

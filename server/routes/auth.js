@@ -1,9 +1,21 @@
 const router = require('express').Router();
 const authController = require('../controllers/auth');
-router.get('/login', authController.signup);
+const { body } = require('express-validator');
+router.get('/login', authController.login);
 
-router.get('/another-route', (req, res) => {
-	// router code here
-});
+router.post(
+	'/signup',
+	[
+		body('password')
+			.notEmpty()
+			.trim()
+			.isLength({ min: 8 })
+			.withMessage('Password need to be at least 8 characters long'),
+		body('username').notEmpty().trim(),
+	],
+
+	//min : 8
+	authController.signup
+);
 
 module.exports = router;

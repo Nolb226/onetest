@@ -1,6 +1,7 @@
 const sequelize = require('../util/database');
 const Account = require('./account');
 const DataTypes = require('sequelize').DataTypes;
+const dayjs = require('dayjs');
 
 const Student = sequelize.define('student', {
 	id: {
@@ -14,8 +15,11 @@ const Student = sequelize.define('student', {
 		allowNull: false,
 	},
 	dob: {
-		type: DataTypes.DATE,
+		type: DataTypes.DATEONLY,
 		allowNull: false,
+		get: function () {
+			return dayjs(this.getDataValue('dob')).format('D-M-YYYY');
+		},
 	},
 	accountId: {
 		type: DataTypes.INTEGER,
@@ -23,10 +27,23 @@ const Student = sequelize.define('student', {
 	},
 });
 
-Student.prototype.createStudentAccount = async function (studentData) {
-	const account = await Account.create({ password: '', type: 'SV' });
-	await this.setAccount(account);
-	return account;
+Student.createAccount = async function (studentData) {
+	const { password, id, fullname, type, foreignKey, dob } = studentData;
+	const account = await Account.create({
+		password: password || '',
+		type: 'SV',
+	});
+	const student = await Student.create({
+		id,
+		dob,
+		fullname,
+
+		majorId: foreignKey,
+	});
+	await student.setAccount(account);
+	const result = await Student.fineOne({ id, include: Account });
+
+	return result;
 };
 
 module.exports = Student;
