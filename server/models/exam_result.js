@@ -23,14 +23,6 @@ const Exam_Result = sequelize.define('examResult', {
 			key: 'id',
 		},
 	},
-	examId: {
-		type: DataTypes.STRING(10),
-		allowNull: true,
-		reference: {
-			model: 'exams',
-			key: 'id',
-		},
-	},
 });
 
 module.exports = Exam_Result;

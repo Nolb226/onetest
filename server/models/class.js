@@ -3,40 +3,51 @@ const { DataTypes } = require('sequelize');
 const Exam = require('./exam');
 const Student = require('./student');
 const Account = require('./account');
+const dayjs = require('dayjs');
 
-const Class = sequelize.define('class', {
-	id: {
-		type: DataTypes.STRING,
-		allowNull: false,
-		unique: true,
-		primaryKey: true,
-	},
-	totalStudent: {
-		type: DataTypes.INTEGER(11),
-		defaultValue: 0,
-	},
-	name: {
-		type: DataTypes.STRING(50),
-		allowNull: false,
-	},
-	password: {
-		type: DataTypes.STRING,
-		allowNull: false,
-	},
-	year: {
-		type: DataTypes.DATE,
-		allowNull: false,
-	},
-	semester: {
-		type: DataTypes.TINYINT(1),
+const Class = sequelize.define(
+	'class',
+	{
+		id: {
+			type: DataTypes.STRING(10),
+			allowNull: false,
+			unique: true,
+			primaryKey: true,
+		},
+		totalStudent: {
+			type: DataTypes.INTEGER(11),
+			defaultValue: 0,
+		},
+		name: {
+			type: DataTypes.STRING(50),
+			allowNull: false,
+		},
+		password: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		year: {
+			type: DataTypes.DATEONLY,
+			allowNull: false,
+			get: function () {
+				return dayjs(this.getDataValue('year')).format('YYYY');
+			},
+			set: function (value) {
+				return dayjs().year(+value.split('/')[2]);
+			},
+		},
+		semester: {
+			type: DataTypes.TINYINT(1),
 
-		allowNull: false,
+			allowNull: false,
+		},
+		isLock: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false,
+		},
 	},
-	isLock: {
-		type: DataTypes.BOOLEAN,
-		defaultValue: false,
-	},
-});
+	{ timestamps: false }
+);
 
 Class.prototype.createClassExam = async function (examData) {
 	const exam = await Exam.create(examData);

@@ -22,6 +22,10 @@ const Student_Result = sequelize.define('studentResult', {
 		type: DataTypes.INTEGER,
 		allowNull: false,
 	},
+	isLock: {
+		type: DataTypes.BOOLEAN,
+		defaultValue: false,
+	},
 });
 
 module.exports = Student_Result;
