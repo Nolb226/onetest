@@ -22,6 +22,48 @@
 }
 
 /* student page */
+
+.table__header {
+    position: relative;
+}
+
+.filter-box {
+    position: absolute;
+    top: 40%;
+    right:3%;
+    border: none;
+    background-color: transparent;
+    color:#888;
+    font-weight: 500;
+    
+}
+
+.custom-select {
+    width: 150px;
+    font-size: 15px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.custom-select:hover .custom-select__option-list{
+    display: flex;
+}
+
+.custom-select__option-list {
+    border: none;
+    margin-top: 1.2rem;
+    display: none;
+    justify-content: center;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: inset 0px 0px 0px 1px #888;
+}
+
+.option {
+    height: 30px;
+}
+
 .inf-btn{
     width: 100px;
     height: 20px;
@@ -41,7 +83,6 @@
 }
 
 /* test */
-
 .content-table{
     height: calc(100% - var(--search-bar-pc-height));
     width: 100%;
