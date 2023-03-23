@@ -196,3 +196,81 @@
     color: var(--white-color);
     background-color: var(--primary-color);
 }
+
+.to-submit {
+    background-color: var(--primary-color);
+}
+
+.submitted {
+    background-color: #1F2EC9E5;
+}
+
+.modal {
+    top: 0;
+    left: 0;
+    position: fixed;
+    z-index: 1;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.hidden {
+    display: none;
+}
+
+.main-form {
+    width: 300px;
+    height: 150px;
+    background-color: #fff;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+}
+
+.header-form {
+    height: 30px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#close {
+    height: 25px;
+    width: 25px;
+    padding-right: 5px;
+    font-size: 22px;
+    font-weight: 600;
+    color: #888;
+}
+
+.content-form {
+    height: 70px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #222;
+    text-align: center;
+}
+
+.footer-form {
+    height: 50px;
+    padding-top: 4px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.form-btn {
+    width: 120px;
+    height: 30px;
+    font-size: 14px;
+    font-weight: 400px;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+}
+
+.confirm-btn {
+    background-color: var(--primary-color);
+} 
+
+.cancel-btn {
+    background-color: #888;
+}
