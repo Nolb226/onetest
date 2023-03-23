@@ -1,10 +1,10 @@
 const sequelize = require('../util/database');
-const { DataTypes } = require('sequelize');
+const { DataTypes, Op } = require('sequelize');
 const Exam = require('./exam');
 const Student = require('./student');
 const Account = require('./account');
 const dayjs = require('dayjs');
-
+const classDetails = require('./classdetail');
 const Class = sequelize.define(
 	'class',
 	{
@@ -32,9 +32,6 @@ const Class = sequelize.define(
 			get: function () {
 				return dayjs(this.getDataValue('year')).format('YYYY');
 			},
-			set: function (value) {
-				return dayjs().year(+value.split('/')[2]);
-			},
 		},
 		semester: {
 			type: DataTypes.TINYINT(1),
@@ -49,17 +46,32 @@ const Class = sequelize.define(
 	{ timestamps: false }
 );
 
-Class.prototype.createClassExam = async function (examData) {
+Class.Class.prototype.createClassExam = async function (examData) {
 	const exam = await Exam.create(examData);
 	await this.addExam(exam);
 	return exam;
 };
 
 Class.prototype.createClassStudent = async function (studentData) {
-	const account = await Account.create({ password: '', type: 'SV' });
-	const student = await account.setStudent(await Student.create(studentData));
+	const student =
+		(await Student.findByPk(studentData.id)) ||
+		(await Student.createAccount(studentData));
 	this.totalStudent += 1;
-	await this.addStudent(student);
+	const existingDetail = await classDetails.findOne({
+		where: { [Op.and]: { classId: this.id, studentId: student.id } },
+	});
+
+	if (!existingDetail) {
+		const newDetail = await classDetails.create({
+			classId: this.id,
+			studentId: student.id,
+		});
+	}
+
+	// await this.addStudent(student);
+	// await student.addClass(this);
+	// await student.addClass(this);
+	// await this.addStudent(student);
 	await this.save();
 	return student;
 };
@@ -70,6 +82,17 @@ Class.prototype.deleteClassStudent = async function (studentId) {
 	this.totalStudent -= 1;
 	await this.save();
 	return student;
+};
+
+Class.prototype.destroyClass = async function () {
+	await classDetails.destroy({
+		where: { classId: this.id },
+	});
+	await this.destroy();
+};
+
+Class.prototype.test = async function () {
+	console.log(this.lectureId);
 };
 
 module.exports = Class;

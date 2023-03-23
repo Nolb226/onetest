@@ -23,6 +23,14 @@ const Exam_Result = sequelize.define('examResult', {
 			key: 'id',
 		},
 	},
+	content: {
+		type: DataTypes.JSON,
+		allowNull: false,
+	},
+	isDone: {
+		type: DataTypes.BOOLEAN,
+		defaultValue: false,
+	},
 });
 
 module.exports = Exam_Result;

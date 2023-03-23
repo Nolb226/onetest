@@ -1,6 +1,5 @@
-const { restart } = require('nodemon');
-const { literal } = require('sequelize');
 const Question = require('../models/question');
+const sequelize = require('../util/database');
 const {
 	successResponse,
 	errorResponse,
@@ -9,11 +8,15 @@ const {
 
 exports.getQuestions = async function (req, res, _) {
 	try {
-		const order = req.query.order ? literal(req.query.order) : [['id', 'ASC']];
-		const limit = req.query.limit;
-		const questions = await Question.findAndCountAll({ order, limit });
-		const { rows: result, count: total } = questions;
-		successResponse(res, 200, { questions: result, total });
+		const chaptersArray = req.query.chapters.split(',');
+		const chapterIds = chaptersArray.join('" OR chapterId= "');
+		const result = await sequelize.query(
+			`SELECT questions.id,description,answerA,answerB,answerC,answerD, chapters.id as chapterId FROM exams JOIN classes ON exams.classId = classes.id JOIN lectures ON classes.lectureId= lectures.id JOIN Chapters ON lectures.Id= chapters.lectureId JOIN questions ON questions.chapterId=chapters.id WHERE chapterId ="${chapterIds}" ORDER BY Rand() LIMIT 30;`,
+			{ type: sequelize.QueryTypes.SELECT }
+		);
+
+		successResponse(res, 200, result);
+		// successResponse(res, 200, { questions: result, total });
 	} catch (error) {
 		errorResponse(res, error, [{}]);
 	}
@@ -32,7 +35,7 @@ exports.getQuestion = async function (req, res, _) {
 	}
 };
 
-exports.updateQuestion = async (req, res, _) => {
+exports.putQuestion = async (req, res, _) => {
 	const { questionId } = req.params;
 
 	const question = await Question.findByPk(questionId);

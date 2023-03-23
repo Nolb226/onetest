@@ -1,6 +1,11 @@
+'use strict';
+
 //Packages
+const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
+const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
 
 //Utils
 const sequelize = require('./util/database');
@@ -111,8 +116,19 @@ const app = express();
 	Class.hasMany(Exam);
 	Exam.belongsTo(Class);
 
-	Exam.belongsToMany(Question, { through: Exam_Result });
-	Question.belongsToMany(Exam, { through: Exam_Result });
+	// Exam.belongsToMany(Question, { through: Exam_Result });
+	// Question.belongsToMany(Exam, { through: Exam_Result });
+
+	Student.belongsToMany(Exam, {
+		through: Exam_Result,
+		timestamps: false,
+		foreignKey: 'studentId',
+	});
+	Exam.belongsToMany(Student, {
+		through: Exam_Result,
+		timestamps: false,
+		foreignKey: 'examId',
+	});
 
 	Class.hasMany(Notification);
 	Notification.belongsTo(Class);
@@ -136,13 +152,29 @@ const app = express();
 	});
 })();
 
+const storage = multer.diskStorage({
+	destination: (req, file, cb) => {
+		cb(null, 'excels/');
+	},
+	filename: (req, file, cb) => {
+		let extension = file.originalname.split('.').pop();
+		cb(null, `${uuidv4()}.${extension}`);
+	},
+});
+
 //Routes define
 const authRoutes = require('./routes/auth');
 const questionsRoutes = require('./routes/question');
 const classesRoutes = require('./routes/class');
+const Class = require('./models/class');
+const Exam = require('./models/exam');
+const Lecture = require('./models/lecture');
+const Chapter = require('./models/chapter');
 //Middleware
 
 app.use(bodyParser.json());
+app.use(multer({ storage }).single('fileInput'));
+// app.use(express.static(path.join(__dirname, 'excels')));
 app.use((req, res, next) => {
 	res.setHeader('Access-Control-Allow-Origin', '*');
 	res.setHeader('Access-Control-Allow-Methods', 'OPTIONS,GET,POST,PUT,DELETE');
@@ -164,5 +196,7 @@ sequelize
 	.then(() => {
 		console.log('Connected');
 		app.listen(8080);
+		console.log(path.join(__dirname, 'excels'));
 	})
-	.catch((err) => console.log('Fail to connect to the database' + err));
+
+	.catch((err) => console.log('Fail to connect to the database ' + err));

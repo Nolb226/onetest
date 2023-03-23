@@ -6,9 +6,20 @@ exports.errorResponse = function (res, error, data = {}) {
 	});
 };
 
-exports.successResponse = function (res, status, data) {
-	let message = 'Fetch successfully';
-	if (status === 201) message = 'Created successfully';
+exports.successResponse = function (res, status, data, method = 'GET') {
+	let message;
+	if (method === 'GET') {
+		message = 'Fetch successfully';
+	}
+	if (method === 'PUT') {
+		message = 'Update successfully';
+	}
+	if (method === 'DELETE') {
+		message = 'Delete successfully';
+	}
+	if (method === 'POST') {
+		message = 'Created successfully';
+	}
 
 	return res.status(status).json({
 		status,
