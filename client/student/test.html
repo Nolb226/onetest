@@ -18,8 +18,8 @@
 </head>
 
 <body>
-    <div id="main-layout" class="grid wide">
-        <div class="row no-gutters layout--body">
+    <div id="main-layout" class="grid wide main-layout">
+        <div class="row no-gutters layout--body main-body">
             <div id="left-menu" class="position-relative col l-1">
                 <ul class="menu-list flex-center flex-direction-col">
                     <li class="menu-item active flex-center">
@@ -91,14 +91,14 @@
                         </div>
                         <div class="answer-list">
                             <div class="answer-header flex-center">BÀI LÀM</div>
-                            <div class="answer-grid">
+                            <form name="answer" class="answer-grid">
                                 
-                            </div>
+                            </form>
                             <div class="time-test flex-center">
                                 Thời gian làm bài còn 45 phút 30 giây
                             </div>
                             <div class="test-submit flex-center">
-                                <button class="test-submit-btn">
+                                <button class="test-submit-btn to-submit">
                                     Nộp bài
                                 </button>
                             </div>
@@ -107,18 +107,53 @@
                 </div>
             </div>
         </div>
+        <div class="modal hidden">
+            <div class="main-form">
+                <div class="header-form">
+                    <div id="close" class="flex-center"><i class="fa-solid fa-xmark" style="color: #888888;"></i></div>
+                </div>
+                <div class="content-form flex-center">
+                    Bạn chắc chắn muốn nộp bài?<br>
+                    Chúng tôi khuyến khích bạn kiểm tra lại bại làm 1 lần nữa.
+                </div>
+                <div class="footer-form">
+                    <button class="confirm-btn form-btn" form="answer">Xác nhận nộp</button>
+                    <button class="cancel-btn form-btn">Quay lại</button>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 <script>
-    function render() {
+
+    const questionsAPI = 'http://localhost:8080/questions';
+    let list;
+
+    // fetch(questionsAPI)
+    //     .then(function(response) {
+    //         return response.json();
+    //     })
+    //     .then(function(questions) {
+    //         console.log(questions);
+    //         list = questions['data']['questions'];
+    //         console.log(list);
+    //         render(list);
+    //     });
+
+     async function render(list) {
         let answer = document.querySelector('.answer-grid');
         let question = document.querySelector('.question-list');
-        for(let i = 1;i<47;i++) {
+        const res = await fetch(questionsAPI);
+        const questions = await res.json();
+        list = questions['data']['questions'];
+
+
+        for(let i = 0;i<list.length;i++) {
             if(i<10) {
                 answer.innerHTML += 
-                `<li class="answer-item answer-item-${i}" >
-                    <span>0${i}.</span>
-                    <select data-value="${i}">
+                `<li class="answer-item answer-item-${i+1}" >
+                    <span>0${i+1}.</span>
+                    <select class="answer-select" data-value="${i+1}">
                         <option value="A">A</option>
                         <option value="B">B</option>
                         <option value="C">C</option>
@@ -127,9 +162,9 @@
                 </li>`;
             } else {
                 answer.innerHTML += 
-                `<li class="answer-item answer-item-${i}" ">
-                    <span>${i}.</span>
-                    <select data-value="${i}">
+                `<li class="answer-item answer-item-${i+1}" ">
+                    <span>${i+1}.</span>
+                    <select class="answer-select" data-value="${i+1}">
                         <option value="A">A</option>
                         <option value="B">B</option>
                         <option value="C">C</option>
@@ -141,35 +176,35 @@
             question.innerHTML +=
             `<div class="question-item">
                 <div class="question-item-content">
-                    Câu ${i}: Điều gì sẽ xảy ra khi nhập vào trình quyệt 1 địc chỉ website và Enter?
+                    Câu ${i+1}: ${list[i].description}
                 </div>
                 <div class="question-item-suggest">
                     
-                    <label class="ABCD" data-value="${i}" for="A${i}">
-                        <div class="radio ABCD-children"><input type="radio" value="A" name="answers${i}" id="A${i}">A. </div>
-                        <div class="content-suggest ABCD-children">Thiết bị sẽ chạy đến trang web đó và hiện lên giao diện người dùng</div>
+                    <label class="ABCD" data-value="${i+1}" for="A${i+1}">
+                        <div class="radio ABCD-children"><input class="ABCD-radio" type="radio" value="A" name="answers${i+1}" id="A${i+1}">A. </div>
+                        <div class="content-suggest ABCD-children">${list[i].answerA}</div>
                     </label>
 
-                    <label class="ABCD" data-value="${i}"  for="B${i}">
-                        <div class="radio ABCD-children"><input type="radio" value="B" name="answers${i}" id="B${i}">B. </div>
-                        <div class="content-suggest ABCD-children">Thiết bị sẽ chạy đến trang web đó và hiện lên giao diện người dùng</div>
+                    <label class="ABCD" data-value="${i+1}"  for="B${i+1}">
+                        <div class="radio ABCD-children"><input class="ABCD-radio" type="radio" value="B" name="answers${i+1}" id="B${i+1}">B. </div>
+                        <div class="content-suggest ABCD-children">${list[i].answerB}</div>
                     </label>
 
-                    <label class="ABCD" data-value="${i}"  for="C${i}">
-                        <div class="radio ABCD-children"><input type="radio" value="C" name="answers${i}" id="C${i}">C. </div>
-                        <div class="content-suggest ABCD-children">Thiết bị sẽ chạy đến trang web đó và hiện lên giao diện người dùng</div>
+                    <label class="ABCD" data-value="${i+1}"  for="C${i+1}">
+                        <div class="radio ABCD-children"><input class="ABCD-radio" type="radio" value="C" name="answers${i+1}" id="C${i+1}">C. </div>
+                        <div class="content-suggest ABCD-children">${list[i].answerC}</div>
                     </label>
                     
-                    <label class="ABCD" data-value="${i}"  for="D${i}">
-                        <div class="radio ABCD-children"><input type="radio" value="D" name="answers${i}" id="D${i}">D.</div> 
-                        <div class="content-suggest ABCD-children">Thiết bị sẽ chạy đến trang web đó và hiện lên giao diện người dùng</div>
+                    <label class="ABCD" data-value="${i+1}"  for="D${i+1}">
+                        <div class="radio ABCD-children"><input class="ABCD-radio" type="radio" value="D" name="answers${i+1}" id="D${i+1}">D.</div> 
+                        <div class="content-suggest ABCD-children">${list[i].answerD}</div>
                     </label>
                 </div>
             </div>`
 
         }
     }
-    render();
+    render()
 
     const questionList = document.querySelector('.question-list');
     
@@ -195,6 +230,60 @@
         question.checked= true;
         changedSelected.style.backgroundColor = 'var(--highlight-color)';
     })
+
+    const modal = document.querySelector('.modal');
+
+    const submitBtn = document.querySelector('.to-submit');
+
+    submitBtn.addEventListener('click', openModal)
+
+    const closeBtn = document.querySelector('#close');
+    const confirmBtn = document.querySelector('.confirm-btn');
+    const cancelBtn = document.querySelector('.cancel-btn');
+    
+    closeBtn.addEventListener('click', closeModal);
+
+    confirmBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        const formData = new FormData(answer);
+        const answerList = document.querySelectorAll('.answer-item select');
+        console.log(answerList);
+        answerList.forEach(function(answer,index){
+            formData.append(`answer${index+1}`,answer.value)
+        })
+        console.log(formData.get('answer1'));
+        // $.ajax({
+        //     url: 'http://localhost:8080/question/answer',
+        //     data:formData
+        // })
+        closeModal();
+        submitted();
+    })
+
+    cancelBtn.addEventListener('click', closeModal);
+
+    function openModal() {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex-center');
+    }
+
+    function closeModal() {
+        modal.classList.remove('flex-center');
+        modal.classList.add('hidden');
+    }
+
+    function submitted() {
+        submitBtn.classList.remove('to-submit');
+        submitBtn.classList.add('submitted');
+        submitBtn.innerHTML = 'Đã nộp';
+        submitBtn.removeEventListener('click', openModal);
+        document.querySelectorAll('.answer-select').forEach(function(item) {
+            item.disabled = true;
+        })
+        document.querySelectorAll('.ABCD-radio').forEach(function(item) {
+            item.disabled = true;
+        });
+    }
 
 </script>
 </html>
