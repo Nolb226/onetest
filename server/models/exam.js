@@ -29,6 +29,10 @@ const Exam = sequelize.define('exam', {
 		type: DataTypes.FLOAT,
 		allowNull: false,
 	},
+	isActive: {
+		type: DataTypes.BOOLEAN,
+		defaultValue: false,
+	},
 });
 
 module.exports = Exam;

@@ -46,7 +46,7 @@ const Class = sequelize.define(
 	{ timestamps: false }
 );
 
-Class.Class.prototype.createClassExam = async function (examData) {
+Class.prototype.createClassExam = async function (examData) {
 	const exam = await Exam.create(examData);
 	await this.addExam(exam);
 	return exam;

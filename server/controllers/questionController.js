@@ -59,3 +59,7 @@ exports.handleQuestion = async (req, res, _) => {
 	);
 	res.status(200).json({ message: 'complete', response });
 };
+
+exports.test = (req, res, _) => {
+	successResponse(res, 200, req.body);
+};
