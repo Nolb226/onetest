@@ -1,5 +1,6 @@
 :root {
     --white-color: #fff;
+    --black-color: #000;
     --sub-text-color: #555;
     --text-color: #333;
     --primary-color: #1F2EC9;
@@ -8,7 +9,7 @@
     --header-pc-height: 80px;
 
     --feature-wrap-pc-width: 850px;
-    --feature-wrap-tablet-width: 700px;
+    --feature-wrap-tablet-width: 80vw;
     --search-bar-pc-height: 60px;
 }
 
@@ -18,6 +19,7 @@
 
 body {
     margin: 0;
+    overflow-x: hidden;
 }
 
 html {
