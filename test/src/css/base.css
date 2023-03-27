@@ -20,14 +20,19 @@
 body {
     margin: 0;
     overflow-x: hidden;
+    font-family: 'Inter', sans-serif !important;
 }
 
 html {
     /* 1rem = 10px */
     font-size: 62.5%;
     line-height: 1.6rem;
-    font-family: 'Inter', sans-serif;
     box-sizing: border-box;
+}
+
+#app {
+    width: auto;
+    height: calc(100vh - var(--header-pc-height));
 }
 
 .flex-center{
