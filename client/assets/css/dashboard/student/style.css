@@ -18,7 +18,7 @@
 }
 
 .empty-space{
-    height: 43px;
+    height: 40px;
 }
 
 /* student page */
@@ -145,7 +145,7 @@
     width: 30%;
     height: 480px;
     background: #fff;
-    margin-left: 5%;
+    margin-left: 3%;
 }
 
 .answer-header {
@@ -157,8 +157,9 @@
 
 .answer-grid {
     padding: 0 1rem;
-    height: auto;
+    height: 300px;
     display: grid;
+    align-content: space-evenly;
     grid-template-columns: repeat(5,2fr);
 }
 .answer-item {
@@ -273,4 +274,117 @@
 
 .cancel-btn {
     background-color: #888;
+}
+
+/* result */
+.back {
+    cursor: default;
+    font-size: 14;
+    font-weight: 500;
+    color: #555;
+}
+
+.result-container {
+    width: 600px;
+    height: 350px;
+    background: #FFFFFF;
+    box-shadow: 0px 0px 30px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+.result-header {
+    width: 600px;
+    height: 110px;
+    border-bottom: 2px solid #d9d9d9;
+    padding-top: 10px;
+}
+
+.title {
+    height: 50px;
+    font-size: 24px;
+    font-weight: 600;
+    font-style: normal;
+    color: #333;
+}
+
+.score {
+    height: 40px;
+    display: flex;
+}
+
+.score1 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    margin-right: 5px;
+    margin-top: 6px;
+}
+
+.score2 {
+    font-size: 25px;
+    font-weight: 600;
+    color: #222;
+}
+
+.result-subject {
+    height: 30px;
+    width: 100%;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+}
+
+.result-content {
+    height: 150px;
+    display: block;
+}
+
+.result-content-child {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 30px;
+    padding: 0 3rem;
+}
+
+.result-content-child-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: #222;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.result-content-child-value {
+    line-height: 30px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #222;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.right {
+    color: #44BF41;
+}
+
+.wrong {
+    color: #FF0404;
+}
+
+.result-footer {
+    height: 60px;
+}
+
+.see-detail-test {
+    width: 250px;
+    height: 35px;
+    background: #2B99FF;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
 }

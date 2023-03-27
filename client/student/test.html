@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="../assets/fonts/fontawesome-free-6.1.2-web/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;900&display=swap"
         rel="stylesheet">
+    <script src="./jquery-3.6.3.min.js"></script>
     <title>Test</title>
 </head>
 
@@ -64,6 +65,11 @@
                         </div>
                     </header>
                     <div class="information">
+
+                        <div class="back hidden">
+                            &lt;&lt; Quay lại
+                        </div>
+
                         <div class="code inf-children">
                             Mã cá nhân: 3121411320
                         </div>
@@ -114,7 +120,7 @@
                 </div>
                 <div class="content-form flex-center">
                     Bạn chắc chắn muốn nộp bài?<br>
-                    Chúng tôi khuyến khích bạn kiểm tra lại bại làm 1 lần nữa.
+                    Chúng tôi khuyến khích bạn kiểm tra lại bài làm 1 lần nữa.
                 </div>
                 <div class="footer-form">
                     <button class="confirm-btn form-btn" form="answer">Xác nhận nộp</button>
@@ -149,11 +155,11 @@
 
 
         for(let i = 0;i<list.length;i++) {
-            if(i<10) {
+            if(i<9) {
                 answer.innerHTML += 
                 `<li class="answer-item answer-item-${i+1}" >
                     <span>0${i+1}.</span>
-                    <select class="answer-select" data-value="${i+1}">
+                    <select class="answer-select" data-id=${list[i].id} data-value="${i+1}">
                         <option value="A">A</option>
                         <option value="B">B</option>
                         <option value="C">C</option>
@@ -164,7 +170,7 @@
                 answer.innerHTML += 
                 `<li class="answer-item answer-item-${i+1}" ">
                     <span>${i+1}.</span>
-                    <select class="answer-select" data-value="${i+1}">
+                    <select class="answer-select" data-id=${list[i].id} data-value="${i+1}">
                         <option value="A">A</option>
                         <option value="B">B</option>
                         <option value="C">C</option>
@@ -249,13 +255,14 @@
         const answerList = document.querySelectorAll('.answer-item select');
         console.log(answerList);
         answerList.forEach(function(answer,index){
-            formData.append(`answer${index+1}`,answer.value)
+            formData.append(`answer${index+1}`,{id: answer.dataset.id, answer: answer.value})
         })
-        console.log(formData.get('answer1'));
-        // $.ajax({
-        //     url: 'http://localhost:8080/question/answer',
-        //     data:formData
-        // })
+        
+        $.ajax({
+            url: 'http://localhost:8080/questions/',
+            body:  {StudentAns:formData},
+            method: 'POST'
+        })
         closeModal();
         submitted();
     })
@@ -277,6 +284,7 @@
         submitBtn.classList.add('submitted');
         submitBtn.innerHTML = 'Đã nộp';
         submitBtn.removeEventListener('click', openModal);
+        document.querySelector('.back').classList.add('inf-children');
         document.querySelectorAll('.answer-select').forEach(function(item) {
             item.disabled = true;
         })
