@@ -1,4 +1,5 @@
 import "./header.css";
+import "../../css/landing/responsive.css";
 import SignInModal from "../modal/signIn";
 import SignUpModal from "../modal/signUp";
 import { useState, useEffect } from "react";

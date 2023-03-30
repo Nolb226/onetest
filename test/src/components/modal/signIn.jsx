@@ -22,8 +22,9 @@ function SignInModal({ toggle1, toggle2 }) {
                 Xin chào, chúc bạn một ngày tốt lành !
               </span>
             </div>
+            
             <div
-              className="modal__close--btn position-absolute"
+              className="modal__close--btn position-absolute "
               onClick={(e) => {
                 toggle1.handleSignIn();
                 e.stopPropagation();
