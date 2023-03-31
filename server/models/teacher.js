@@ -2,6 +2,7 @@ const sequelize = require('../util/database');
 const Account = require('./account');
 const DataTypes = require('sequelize').DataTypes;
 const dayjs = require('dayjs');
+const Permission_Group = require('./permission_group');
 
 const Teacher = sequelize.define('teacher', {
 	id: {
@@ -29,21 +30,28 @@ const Teacher = sequelize.define('teacher', {
 });
 
 Teacher.createAccount = async function (teacherData) {
-	const { id, fullname, dob, foreignKey } = teacherData;
-	const account = await Account.create({
-		password: teacherData.password || '',
-		type: 'GV',
-	});
-	const teacher = await Teacher.create({
-		id,
-		fullname,
-		dob,
-		departmentId: foreignKey,
-	});
-	await teacher.setAccount(account);
-	const result = await Teacher.fineOne({ id, include: Account });
+	try {
+		const { id, fullname, dob, foreignKey } = teacherData;
+		const account = await Account.create({
+			password: teacherData.password || '',
+			type: 'GV',
+		});
+		const teacher = await Teacher.create({
+			id,
+			fullname,
+			dob,
+			departmentId: foreignKey,
+		});
+		const permission = await Permission_Group.findOne({
+			where: { name: 'GV' },
+		});
 
-	return result;
+		await account.addPermission(permission);
+		await teacher.setAccount(account);
+		const result = await Teacher.findOne({ id, include: Account });
+
+		return result;
+	} catch (error) {}
 };
 
 module.exports = Teacher;

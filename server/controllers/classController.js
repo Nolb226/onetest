@@ -2,6 +2,7 @@
 const { validationResult } = require('express-validator');
 // const Excel = require('exceljs');
 const XLSX = require('xlsx');
+const bcrypt = require('bcryptjs');
 const fs = require('fs');
 const path = require('path');
 
@@ -17,6 +18,12 @@ const {
 } = require('../util/helper');
 const dayjs = require('dayjs');
 const { log } = require('console');
+const Account = require('../models/account');
+const sequelize = require('../util/database');
+const Major = require('../models/major');
+const Department = require('../models/department');
+const Teacher = require('../models/teacher');
+const Lecture = require('../models/lecture');
 const deleteExcel = function (filePath) {
 	const file = path.join(__dirname, '..', filePath);
 	console.log(file);
@@ -27,12 +34,22 @@ exports.getClasses = async (req, res, _) => {
 	try {
 		const page = req.query.page || 1;
 		const pageSize = 5;
-		const classes = await Classes.findAndCountAll({
+
+		const { user, account } = req;
+		if (!account.isActive) {
+			return successResponse(res, 200, {}, 'GET');
+		}
+
+		const classes = await user.getClasses({
+			include: [
+				{ model: Teacher, attributes: ['id', 'fullname', 'departmentId'] },
+				{ model: Lecture, attributes: ['id', 'name', 'credits'] },
+			],
 			offset: pageSize * (page - 1),
 			limit: pageSize,
 		});
-		const { rows: result, count: total } = classes;
-		successResponse(res, 200, { classes: result, total });
+
+		return successResponse(res, 200, classes);
 	} catch (error) {
 		errorResponse(res, error, [{}]);
 	}
@@ -41,12 +58,29 @@ exports.getClasses = async (req, res, _) => {
 exports.getClass = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
-		const foundedClass = await Classes.findByPk(classId);
-		if (!foundedClass) {
+		const { account, user } = req;
+		const isExist = await Classes.findByPk(classId);
+
+		if (!isExist) {
 			throwError('Class not found', 404);
 		}
-		foundedClass.test();
-		successResponse(res, 200, foundedClass);
+
+		// const has = await user.hasClass(classId);
+		// if (!has) {
+		// 	throwError('Can not access this class', 403);
+		// }
+		// const foundedClass = await user.getClasses({ where: { id: classId } });
+		const foundedClass = await Classes.findByPk(classId, {
+			include: [
+				{ model: Teacher, attributes: ['id', 'fullname', 'departmentId'] },
+				{ model: Lecture, attributes: ['id', 'name', 'credits'] },
+			],
+		});
+		// console.log(foundedClass);
+		if (!foundedClass) {
+			return throwError('Class not found', 404);
+		}
+		return successResponse(res, 200, foundedClass);
 	} catch (error) {
 		errorResponse(res, error);
 	}
@@ -54,6 +88,7 @@ exports.getClass = async (req, res, _) => {
 
 exports.getAllStudent = async (req, res, _) => {
 	try {
+		// console.log(req.path);
 		const errors = validationResult(req);
 
 		if (!errors.isEmpty()) {
@@ -65,16 +100,41 @@ exports.getAllStudent = async (req, res, _) => {
 		}
 		const { classId } = req.params;
 
-		const classroomIsExist = await Classes.findByPk(classId);
-		if (!classroomIsExist) {
-			throwError(`Can't find classroom with that id`, 404);
-		}
-		const studentsInClass = await classroomIsExist.getStudents();
-		successResponse(res, 200, studentsInClass);
+		const classDetail = await Classes.findByPk(classId);
+		const students = await classDetail.getStudents({
+			attributes: [
+				'id',
+				'dob',
+				'fullname',
+				'majorId',
+				// [sequelize.literal('Account.isActive'), 'isActive'],
+				// [sequelize.literal('Account.type'), 'type'],
+			],
+			include: [
+				{
+					model: Account,
+					// attributes: [],
+					attributes: ['isActive', 'type'],
+				},
+				// {
+				// 	model: Major,
+				// 	attributes: ['id', 'name'],
+				// 	include: [
+				// 		{
+				// 			model: Department,
+				// 			attributes: ['id', 'name'],
+				// 		},
+				// 	],
+				// },
+			],
+			through: {
+				attributes: [],
+			},
+		});
 
-		successResponse(res, 200, a);
+		return successResponse(res, 200, students);
 	} catch (error) {
-		errorResponse(res, error, [{}]);
+		errorResponse(res, error, []);
 	}
 };
 
@@ -97,9 +157,25 @@ exports.getStudentInClass = async (req, res, _) => {
 };
 
 exports.postClass = async (req, res, _) => {
-	const { classId } = req.params;
-	const classInDB = await Classes.findByPk(classId);
-	if (!classInDB) {
+	try {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			throwError(errors.array(), 400);
+		}
+		const { user } = req;
+		const { id, name, password, year, semester, lectureId } = req.body;
+		await user.addClass(
+			await Classes.create({
+				name,
+				password,
+				semester,
+				year,
+				lectureId,
+			})
+		);
+		successResponse(res, 201, {}, req.method);
+	} catch (error) {
+		errorResponse(res, error);
 	}
 };
 
@@ -120,16 +196,17 @@ exports.putClass = async (req, res, _) => {
 			throwError(messages, 409);
 		}
 
-		const { name, password, semester, year, isLock } = req.body;
+		const { name, password, semester, year, isLock, lectureId } = req.body;
 		if (!classFounded) {
 			throwError('Class not found', 404);
 		}
 		await classFounded.update({
 			name,
-			password,
+			password: await bcrypt.hash(password, 10),
 			semester,
 			year,
 			isLock,
+			lectureId,
 		});
 
 		successResponse(res, 201, classFounded, 'PUT');
@@ -148,8 +225,8 @@ exports.putClassStudent = async (req, res, _) => {
 		const file = req.file;
 		const filePath = file.path;
 		const workbook = XLSX.readFile(
-			// path.join(__dirname, '..', 'excels/Book1.xlsx')
-			filePath
+			path.join(__dirname, '..', 'excels/Book1.xlsx')
+			// filePath
 		);
 		let worksheet = {};
 		worksheet['Sheet1'] = XLSX.utils.sheet_to_json(workbook.Sheets['Sheet1']);

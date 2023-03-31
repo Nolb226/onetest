@@ -1,8 +1,18 @@
-const Account = require('../models/account');
+const jwt = require('jsonwebtoken');
+
 const bycrypt = require('bcryptjs');
 const { validationResult } = require('express-validator');
+
+const Account = require('../models/account');
 const Student = require('../models/student');
 const Teacher = require('../models/teacher');
+const {
+	errorResponse,
+	throwError,
+	successResponse,
+} = require('../util/helper');
+const { where } = require('sequelize');
+const Permission_Group = require('../models/permission_group');
 
 exports.signup = async (req, res, next) => {
 	try {
@@ -13,9 +23,7 @@ exports.signup = async (req, res, next) => {
 				.array()
 				.map((err) => err.msg)
 				.join(',');
-			const error = new Error(messages);
-			error.statusCode = 400;
-			throw error;
+			throwError(messages, 422);
 		}
 
 		const { username, password, type, fullname, dob } = req.body;
@@ -26,14 +34,6 @@ exports.signup = async (req, res, next) => {
 
 		const foreignKey =
 			upperCaseType === 'GV' ? req.body.departmentId : req.body.majorId;
-
-		const accountIsExist = await model.findOne({
-			where: { id: username },
-		});
-		if (accountIsExist) {
-			return res.status(422).json({ message: 'Account already exists' });
-		}
-
 		const account = await model.createAccount({
 			id: username,
 			fullname,
@@ -42,7 +42,8 @@ exports.signup = async (req, res, next) => {
 			upperCaseType,
 			foreignKey,
 		});
-		res.status(201).json({ message: 'Account created successfully', account });
+
+		return successResponse(res, 201, account, req.method);
 	} catch (error) {
 		res.status(error.statusCode || 500).json({ error: error.message });
 		console.log(error);
@@ -52,23 +53,34 @@ exports.signup = async (req, res, next) => {
 exports.login = async (req, res, next) => {
 	try {
 		const { username, password } = req.body;
-		const student = await Student.findOne({ id: username, include: Account });
-		const teacher = await Teacher.findOne({ id: username, include: Account });
+		const student = await Student.findOne({
+			where: { id: username },
+			include: Account,
+		});
+		const teacher = await Teacher.findOne({
+			where: { id: username },
+			include: Account,
+		});
 		const { account } = student || teacher;
+
 		if (!account) {
-			const error = new Error('Username or password was wrong');
-			error.statusCode = 401;
-			throw error;
+			throwError('Username or password is incorrect', 401);
 		}
-		const isValid = bycrypt.compare(password, account.password);
+
+		const isValid = bycrypt.compareSync(password, account.password);
 		if (!isValid) {
-			const error = new Error('Username or password was wrong');
-			error.statusCode = 401;
-			throw error;
+			throwError('Username or password is incorrect', 401);
 		}
-		res.status(200).json(student || teacher);
+
+		// if (!account.isActive) {
+		// 	throwError('Account is not active', 401);
+		// }
+
+		const token = jwt.sign({ id: account.id }, 'group5', {
+			expiresIn: '1h',
+		});
+		res.status(200).json(token);
 	} catch (error) {
-		console.log(error);
-		res.status(error.statusCode || 500).json({ error: error.message });
+		errorResponse(res, error);
 	}
 };

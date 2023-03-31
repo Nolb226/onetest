@@ -9,9 +9,11 @@ const Class = sequelize.define(
 	'class',
 	{
 		id: {
-			type: DataTypes.STRING(10),
+			type: DataTypes.INTEGER,
+			// type: DataTypes.STRING(10),
 			allowNull: false,
 			unique: true,
+			autoIncrement: true,
 			primaryKey: true,
 		},
 		totalStudent: {
@@ -30,7 +32,7 @@ const Class = sequelize.define(
 			type: DataTypes.DATEONLY,
 			allowNull: false,
 			get: function () {
-				return dayjs(this.getDataValue('year')).format('YYYY');
+				return dayjs(this.getDataValue('year')).format('YY');
 			},
 		},
 		semester: {
@@ -94,5 +96,14 @@ Class.prototype.destroyClass = async function () {
 Class.prototype.test = async function () {
 	console.log(this.lectureId);
 };
+
+Class.addHook('beforeCreate', async function (classInstanse, options) {
+	const lectureId = classInstanse.lectureId;
+	const number = await Class.count({ where: { lectureId } });
+	console.log(number);
+	classInstanse.id = `${lectureId}${classInstanse.year}${
+		classInstanse.semester
+	}-${number + 1}`;
+});
 
 module.exports = Class;

@@ -47,6 +47,9 @@ const app = express();
 	Lecture.hasMany(Chapter);
 	Chapter.belongsTo(Lecture);
 
+	Chapter.belongsToMany(Exam, { through: Exam_Result });
+	Exam.belongsToMany(Lecture, { through: Exam_Result });
+
 	Chapter.hasMany(Question);
 	Question.belongsTo(Chapter);
 
@@ -59,8 +62,8 @@ const app = express();
 	Student.belongsTo(Major);
 	Major.hasMany(Student);
 
-	Major.belongsTo(Teacher, { foreignKey: 'headOfMajor' });
-	Teacher.hasOne(Major, { foreignKey: 'headOfMajor' });
+	// Major.belongsTo(Teacher, { foreignKey: 'headOfMajor' });
+	// Teacher.hasOne(Major, { foreignKey: 'headOfMajor' });
 
 	Student.belongsToMany(Class, {
 		through: classDetails,
@@ -101,8 +104,8 @@ const app = express();
 	Department.belongsTo(Teacher, { foreignKey: 'headOfDepartment' });
 	Teacher.hasOne(Department, { foreignKey: 'headOfDepartment' });
 
-	Teacher.hasOne(Lecture, { foreignKey: 'headOfLecture' });
-	Lecture.belongsTo(Teacher, { foreignKey: 'headOfLecture' });
+	// Teacher.hasOne(Lecture, { foreignKey: 'headOfLecture' });
+	// Lecture.belongsTo(Teacher, { foreignKey: 'headOfLecture' });
 
 	Teacher.belongsToMany(Lecture, { through: 'teach', timestamps: false });
 	Lecture.belongsToMany(Teacher, { through: 'teach', timestamps: false });
@@ -119,16 +122,16 @@ const app = express();
 	// Exam.belongsToMany(Question, { through: Exam_Result });
 	// Question.belongsToMany(Exam, { through: Exam_Result });
 
-	Student.belongsToMany(Exam, {
-		through: Exam_Result,
-		timestamps: false,
-		foreignKey: 'studentId',
-	});
-	Exam.belongsToMany(Student, {
-		through: Exam_Result,
-		timestamps: false,
-		foreignKey: 'examId',
-	});
+	// Student.belongsToMany(Exam, {
+	// 	through: Exam_Result,
+	// 	timestamps: false,
+	// 	foreignKey: 'studentId',
+	// });
+	// Exam.belongsToMany(Student, {
+	// 	through: Exam_Result,
+	// 	timestamps: false,
+	// 	foreignKey: 'examId',
+	// });
 
 	Class.hasMany(Notification);
 	Notification.belongsTo(Class);
@@ -136,6 +139,7 @@ const app = express();
 	Account.belongsToMany(Permission_Group, {
 		through: 'groupdetail',
 		timestamps: false,
+		as: 'permissions',
 	});
 	Permission_Group.belongsToMany(Account, {
 		through: 'groupdetail',
@@ -166,10 +170,14 @@ const storage = multer.diskStorage({
 const authRoutes = require('./routes/auth');
 const questionsRoutes = require('./routes/question');
 const classesRoutes = require('./routes/class');
+const chaptersRoutes = require('./routes/chapter');
+const testRoutes = require('./routes/test');
 const Class = require('./models/class');
 const Exam = require('./models/exam');
 const Lecture = require('./models/lecture');
 const Chapter = require('./models/chapter');
+const Account = require('./models/account');
+const { checkPermission } = require('./middleware/check-permission');
 //Middleware
 
 app.use(bodyParser.json());
@@ -181,22 +189,21 @@ app.use((req, res, next) => {
 	res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
 	next();
 });
-
 //Routes seperate paths
 
 app.use('/auth', authRoutes);
 app.use('/questions', questionsRoutes);
 app.use('/classes', classesRoutes);
-
+app.use('/chapters', chaptersRoutes);
+app.use('/test', testRoutes);
 //App start when connected to database
 sequelize
 	// .sync({ force: true })
 	.sync()
 
 	.then(() => {
-		console.log('Connected');
 		app.listen(8080);
-		console.log(path.join(__dirname, 'excels'));
+		console.log('Connected to database');
 	})
 
 	.catch((err) => console.log('Fail to connect to the database ' + err));

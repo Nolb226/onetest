@@ -3,6 +3,8 @@ const Account = require('./account');
 const DataTypes = require('sequelize').DataTypes;
 const dayjs = require('dayjs');
 const classDetails = require('./classdetail');
+const Permission_Group = require('./permission_group');
+const { errorResponse, throwError } = require('../util/helper');
 
 const Student = sequelize.define('student', {
 	id: {
@@ -13,11 +15,11 @@ const Student = sequelize.define('student', {
 	},
 	fullname: {
 		type: DataTypes.STRING(50),
-		allowNull: false,
+		// allowNull: false,
 	},
 	dob: {
 		type: DataTypes.DATEONLY,
-		allowNull: false,
+		// allowNull: false,
 		get: function () {
 			return dayjs(this.getDataValue('dob')).format('D-M-YYYY');
 		},
@@ -29,23 +31,32 @@ const Student = sequelize.define('student', {
 });
 
 Student.createAccount = async function (studentData) {
-	const { password, id, fullname, type, foreignKey, dob } = studentData;
-	console.log(id);
-	const account = await Account.create({
-		password: password || '',
-		type: 'SV',
-		classDetails: {},
-	});
-	const student = await Student.create({
-		id,
-		dob,
-		fullname,
-		majorId: foreignKey,
-	});
+	try {
+		const { password, id, fullname, type, foreignKey, dob } = studentData;
+		console.log(id);
+		const account = await Account.create({
+			password: password || '',
+			type: 'SV',
+			classDetails: {},
+		});
+		const student = await Student.create({
+			id,
+			dob,
+			fullname,
+			majorId: foreignKey,
+		});
 
-	await student.setAccount(account);
-	const result = await Student.findOne({ where: { id }, include: Account });
-	return result;
+		const permission = await Permission_Group.findOne({
+			where: { name: 'SV' },
+		});
+
+		await account.addPermission(permission);
+		await student.setAccount(account);
+		const result = await Student.findOne({ where: { id }, include: Account });
+		return result;
+	} catch (error) {
+		throwError(error.message, 401);
+	}
 };
 
 module.exports = Student;

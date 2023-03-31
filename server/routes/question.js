@@ -8,6 +8,4 @@ router.get('/:questionId', questionController.getQuestion);
 
 router.post('/', questionController.handleQuestion);
 
-router.post('/test', questionController.test);
-
 module.exports = router;
