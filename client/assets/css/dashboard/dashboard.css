@@ -1,3 +1,7 @@
+:root {
+    --btn-list-color : #2B99FF;
+}
+
 #main-layout {
     width: 100vw;
     height: 100vh;
@@ -189,10 +193,16 @@
     border-bottom: solid 2px #D5D5D5;
 }
 
+
 .table__content--heading {
     font-weight: 600;
     color: #333333;
     border-bottom: solid 2px #D5D5D5;
+}
+
+.table__content--list{
+    overflow: auto;
+    height: 430px;
 }
 
 .table__content .row {
@@ -203,10 +213,22 @@
 
 .table__content--item {
     transition: all .2s linear;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 
 .table__content--item:hover {
     cursor: pointer;
     transition: all .2s linear;
     background-color: #ebebeb;
+}
+
+
+.list_btn {
+    border-radius: 2px;
+    border: 1px solid;
+}
+
+.list_btn:hover {
+    opacity: 0.9;
 }

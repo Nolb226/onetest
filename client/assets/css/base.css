@@ -49,10 +49,6 @@ html {
     position: absolute;
 }
 
-.list_btn {
-    
-}
-
 @keyframes buttonHover {
     0% {
         filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 1));

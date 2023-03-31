@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/css/reset.css">
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/grid.css">
+    <link rel="stylesheet" href="../assets/css/dashboard/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/dashboard/teacher/style.css">
+    <link rel="stylesheet" href="../assets/fonts/fontawesome-free-6.1.2-web/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;900&display=swap"
+        rel="stylesheet">
+    <title>Teacher</title>
+</head>
+
+<body>
+    <div id="main-layout" class="grid wide">
+        <div class="row no-gutters layout--body">
+            <div id="left-menu" class="position-relative col l-1">
+                <ul class="menu-list flex-center flex-direction-col">
+                    <li class="menu-item active flex-center">
+                        <img src="../assets/image/exam-icon.png" class="menu-icon" alt="">
+                    </li>
+
+                    <li class="menu-item flex-center">
+                        <i class="menu-icon fa-solid fa-plus"></i>
+                    </li>
+                    
+                    <li class="menu-item flex-center">
+                        <img src="../assets/image/class-icon.png" class="menu-icon" alt="">
+                    </li>
+
+                    <li class="menu-item flex-center">
+                        <img src="../assets/image/dashboard-icon.png" class="menu-icon" alt="">
+                    </li>
+
+                </ul>
+                
+                <div class="themes flex-center position-absolute">
+                    <i class="menu-icon fa-solid fa-circle-half-stroke"></i>
+                   
+                    <ul class="themes-list">
+
+                    </ul>
+                </div>
+            </div>
+
+            <div id="container" class="col l-11">
+                <div class="top-bar">
+                    <header class="header flex-center position-relative">
+                        <div class="header__logo">
+                            <img src="../assets/image/BestOfTest.png" alt="Logo Best of Test">
+                        </div>
+                        <div class="navigation flex-center">
+                            <ul class="nav__list flex-center">
+                                <li class="nav__item flex-center" alt="Viet Nam flag" title="Viet Nam">
+                                    <img src="../assets/image/Flag_of_Vietnam.png" alt="">
+                                </li>
+    
+                                <li class="nav__item flex-center">
+                                    <i class="nav__icon fa-regular fa-bell"></i>
+                                </li>
+    
+                                <li class="nav__item flex-center">
+                                    <i class="nav__icon fa-regular fa-user"></i>
+                                </li>
+                            </ul>
+                        </div>
+                    </header>
+                    <div class="information">
+                        
+                    </div>
+                </div>
+                
+                <div class="content">
+                    <div class="flex-center content">
+                        <div>
+                            <form class="class-editpass-model class-editpass-header">
+                                <div class="row class-create-inp ">
+                                    <label for="" class="l-5 p-6-15 class-create-label">Ngành:</label>
+                                    <input type="text" name="" id="" class="l-7 class-editpass-input">
+                                </div>
+                                
+                                <div class="row class-create-inp">
+                                    <label for="" class="l-5 p-6-15 class-create-label">Mã môn học:</label>
+                                    <input type="text" name="" id="" class="l-7 class-editpass-input">
+                                </div>
+
+                                <div class="row class-create-inp">
+                                    <label for="" class="l-5 p-6-15 class-create-label">Mật khẩu:</label>
+                                    <input type="text" name="" id="" class="l-7 class-editpass-input">
+                                </div>
+
+                                <label for="inputfile" class="class-label-file ">
+                                        <div class="class-create-uploadfile">
+                                        <input type="file" id="inputfile" hidden class="class-input-file">
+                                        <img src="../assets/image/upload.png" alt="">
+                                        <!-- <i class="fa-solid fa-arrow-up-from-bracket" style="font-size: 25px;"></i> -->
+                                        <p>Danh sách sinh viên</p>
+                                        </div>
+                                    </label>
+
+                                <div class="row flex-center">
+                                    <button class="list_btn class-editpass-btn" >TẠO LỚP</button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
