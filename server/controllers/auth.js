@@ -1,0 +1,86 @@
+const jwt = require('jsonwebtoken');
+
+const bycrypt = require('bcryptjs');
+const { validationResult } = require('express-validator');
+
+const Account = require('../models/account');
+const Student = require('../models/student');
+const Teacher = require('../models/teacher');
+const {
+	errorResponse,
+	throwError,
+	successResponse,
+} = require('../util/helper');
+const { where } = require('sequelize');
+const Permission_Group = require('../models/permission_group');
+
+exports.signup = async (req, res, next) => {
+	try {
+		const errors = validationResult(req);
+
+		if (!errors.isEmpty()) {
+			const messages = errors
+				.array()
+				.map((err) => err.msg)
+				.join(',');
+			throwError(messages, 422);
+		}
+
+		const { username, password, type, fullname, dob } = req.body;
+
+		const upperCaseType = type.toUpperCase();
+
+		const model = upperCaseType === 'GV' ? Teacher : Student;
+
+		const foreignKey =
+			upperCaseType === 'GV' ? req.body.departmentId : req.body.majorId;
+		const account = await model.createAccount({
+			id: username,
+			fullname,
+			dob,
+			password: await bycrypt.hash(password, 10),
+			upperCaseType,
+			foreignKey,
+		});
+
+		return successResponse(res, 201, account, req.method);
+	} catch (error) {
+		res.status(error.statusCode || 500).json({ error: error.message });
+		console.log(error);
+	}
+};
+
+exports.login = async (req, res, next) => {
+	try {
+		const { username, password } = req.body;
+		const student = await Student.findOne({
+			where: { id: username },
+			include: Account,
+		});
+		const teacher = await Teacher.findOne({
+			where: { id: username },
+			include: Account,
+		});
+		const { account } = student || teacher;
+
+		if (!account) {
+			throwError('Username or password is incorrect', 401);
+		}
+
+		const isValid = bycrypt.compareSync(password, account.password);
+		if (!isValid) {
+			throwError('Username or password is incorrect', 401);
+		}
+
+		// if (!account.isActive) {
+		// 	throwError('Account is not active', 401);
+		// }
+
+		const token = jwt.sign({ id: account.id }, 'group5', {
+			expiresIn: '1h',
+		});
+		res.status(200).json(token);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
