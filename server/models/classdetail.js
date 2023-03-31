@@ -6,12 +6,19 @@ const Student = require('./student');
 const classDetails = sequelize.define(
 	'classdetail',
 	{
+		id: {
+			type: DataTypes.INTEGER,
+			primaryKey: true,
+			autoIncrement: true,
+			unique: true,
+		},
 		studentId: {
 			type: DataTypes.STRING(10),
 			references: {
 				model: Student,
 				key: 'id',
 			},
+			allowNull: false,
 		},
 		classId: {
 			type: DataTypes.STRING(10),
@@ -19,6 +26,7 @@ const classDetails = sequelize.define(
 				model: Class,
 				key: 'id',
 			},
+			allowNull: false,
 		},
 	},
 

@@ -7,11 +7,15 @@ const Functions = sequelize.define('Function', {
 		autoIncrement: true,
 		primaryKey: true,
 	},
-	name: {
+	method: {
 		type: DataTypes.STRING,
 		allowNull: false,
 	},
 	descripton: {
+		type: DataTypes.STRING,
+		allowNull: false,
+	},
+	path: {
 		type: DataTypes.STRING,
 		allowNull: false,
 	},

@@ -38,6 +38,11 @@ const Question = sequelize.define('question', {
 		type: DataTypes.STRING(10),
 		allowNull: false,
 	},
+	status: {
+		type: DataTypes.INTEGER,
+		defaultValue: 0, //0: normal , 1: edited , 2: deleted
+		allowNull: false,
+	},
 });
 
 module.exports = Question;

@@ -4,6 +4,11 @@ const Student = require('./student');
 const Exam = require('./exam');
 
 const Student_Result = sequelize.define('studentResult', {
+	id: {
+		type: DataTypes.INTEGER,
+		autoIncrement: true,
+		primaryKey: true,
+	},
 	studentId: {
 		type: DataTypes.STRING(10),
 		references: {
@@ -23,6 +28,14 @@ const Student_Result = sequelize.define('studentResult', {
 		allowNull: false,
 	},
 	isLock: {
+		type: DataTypes.BOOLEAN,
+		defaultValue: false,
+	},
+	content: {
+		type: DataTypes.JSON,
+		allowNull: false,
+	},
+	isDone: {
 		type: DataTypes.BOOLEAN,
 		defaultValue: false,
 	},
