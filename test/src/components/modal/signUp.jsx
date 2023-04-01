@@ -1,22 +1,18 @@
 import "./modal.css";
+import "../../css/grid.css";
 import { useState, useEffect } from "react";
 import validator from "./validator.js";
-
-function Options() {
-   return (
-      <select id="majors" name="majors" type="select" className="form-control">
-         <option>Ngành</option>
-         <option>Công nghệ thông tin</option>
-      </select>
-   );
-}
+import Options from "./department";
 
 function StudentSignUp() {
    validator("#form-register");
 
    return (
-      <div id="student-sign-up">
+      <div id="student-sign-up" className="type" name="SV">
          <div className="form-group">
+            <label htmlFor="fullname" className="form-label">
+               Họ và tên
+            </label>
             <input
                rules="require"
                id="fullname"
@@ -29,10 +25,19 @@ function StudentSignUp() {
          </div>
 
          <div
-            className="row flex-center flex-direction-row"
-            style={{ width: "100%", height: "auto", margin: "0" }}
+            style={{
+               width: "100%",
+               height: "auto",
+               margin: "0",
+               display: "grid",
+               gridTemplateColumns: "49.5% 49.5%",
+               gap: "1%",
+            }}
          >
-            <div className="l-5 m-5 form-group position-relative">
+            <div className="form-group position-relative">
+               <label htmlFor="dob" className="form-label">
+                  Ngày tháng năm sinh
+               </label>
                <input
                   rules="require"
                   id="dob"
@@ -43,25 +48,42 @@ function StudentSignUp() {
                <span className="form-message"></span>
             </div>
 
-            <div className="l-7 m-7 form-group position-relative">
-               <Options />
+            <div className="form-group position-relative">
+               <label htmlFor="personalID" className="form-label">
+                  Mã sinh viên
+               </label>
+               <input
+                  rules="require|min:10|max:10"
+                  id="personalID"
+                  name="personalID"
+                  type="text"
+                  placeholder="Nhập mã sinh viên"
+                  className="form-control"
+               />
                <span className="form-message"></span>
             </div>
          </div>
-
-         <div className="form-group">
-            <input
-               rules="require|min:10|max:10"
-               id="personalID"
-               name="username"
-               type="text"
-               placeholder="Nhập mã sinh viên"
-               className="form-control"
-            />
-            <span className="form-message"></span>
+         <div
+            style={{
+               width: "100%",
+               height: "auto",
+               margin: "0",
+               width: "100%",
+               height: "auto",
+               margin: "0",
+               display: "grid",
+               gridTemplateColumns: "49.5% 49.5%",
+               gap: "1%",
+            }}
+         >
+            <Options />
+            <Options />
          </div>
 
          <div className="form-group position-relative">
+            <label htmlFor="password" className="form-label">
+               Mật khẩu
+            </label>
             <input
                rules="require|min:8"
                id="password"
@@ -74,6 +96,9 @@ function StudentSignUp() {
          </div>
 
          <div className="form-group position-relative">
+            <label htmlFor="password-confirm" className="form-label">
+               Xác nhận mật khẩu
+            </label>
             <input
                rules="require"
                id="password-confirm"
@@ -92,8 +117,11 @@ function TeacherSignUp() {
    validator("#form-register");
 
    return (
-      <div id="teacher-sign-up">
+      <div id="teacher-sign-up" className="type" name="GV">
          <div className="form-group">
+            <label htmlFor="fullname" className="form-label">
+               Họ và tên
+            </label>
             <input
                rules="require"
                id="fullname"
@@ -110,6 +138,9 @@ function TeacherSignUp() {
             style={{ width: "100%", height: "auto", margin: "0" }}
          >
             <div className="l-5 m-5 form-group position-relative">
+               <label htmlFor="dob" className="form-label">
+                  Ngày tháng năm sinh:
+               </label>
                <input
                   rules="dateOfBirth"
                   id="dob"
@@ -120,17 +151,17 @@ function TeacherSignUp() {
                <span className="form-message"></span>
             </div>
 
-            <div className="l-7 m-7 form-group position-relative">
-               <Options />
-               <span className="form-message"></span>
-            </div>
+            <Options />
          </div>
 
          <div className="form-group">
+            <label htmlFor="personalID" className="form-label">
+               Mã cán bộ
+            </label>
             <input
                rules="require|min:10|max:10"
                id="personalID"
-               name="username"
+               name="personalID"
                type="text"
                placeholder="Nhập mã cán bộ"
                className="form-control"
@@ -139,6 +170,9 @@ function TeacherSignUp() {
          </div>
 
          <div className="form-group position-relative">
+            <label htmlFor="password" className="form-label">
+               Mật khẩu
+            </label>
             <input
                rules="require|min:8"
                id="password"
@@ -151,6 +185,9 @@ function TeacherSignUp() {
          </div>
 
          <div className="form-group position-relative">
+            <label htmlFor="password-confirm" className="form-label">
+               Xác nhận mật khẩu
+            </label>
             <input
                rules="require"
                id="password-confirm"
@@ -172,6 +209,9 @@ function TypeAccount({ setType }) {
             className="student flex-center flex-direction-col"
             onClick={() => {
                setType.handleSetType("student");
+               document.querySelector(".modal__footer").style.display = "flex";
+               document.querySelector(".modal__back--btn > i").style.display =
+                  "block";
             }}
          >
             <i className="fa-solid fa-user-graduate"></i>
@@ -182,6 +222,9 @@ function TypeAccount({ setType }) {
             className="teacher flex-center flex-direction-col"
             onClick={() => {
                setType.handleSetType("teacher");
+               document.querySelector(".modal__footer").style.display = "flex";
+               document.querySelector(".modal__back--btn > i").style.display =
+                  "block";
             }}
          >
             <i className="fa-solid fa-user-tie"></i>
@@ -201,19 +244,10 @@ function SignUpModal({ toggle1, toggle2 }) {
    useEffect(() => {
       validator("#form-register");
    }, [type]);
+
    return (
-      <div
-         className="modal-layer flex-center"
-         onClick={() => {
-            toggle2.handleSignUp();
-         }}
-      >
-         <div
-            className="sign-up--modal"
-            onClick={(e) => {
-               e.stopPropagation();
-            }}
-         >
+      <div className="modal-layer flex-center">
+         <div className="sign-up--modal">
             <form action="" method="POST" id="form-register">
                <div className="modal__header position-relative">
                   <div className="modal__content flex-center flex-direction-col">
@@ -227,6 +261,12 @@ function SignUpModal({ toggle1, toggle2 }) {
                         className="modal__back--btn"
                         onClick={() => {
                            setType("true");
+                           document.querySelector(
+                              ".modal__footer"
+                           ).style.display = "none";
+                           document.querySelector(
+                              ".modal__back--btn > i"
+                           ).style.display = "none";
                         }}
                      >
                         <i className="fa-solid fa-angle-left"></i>
@@ -257,7 +297,7 @@ function SignUpModal({ toggle1, toggle2 }) {
                   <div className="flex-center form-group accept">
                      <input id="accept-input" name="accept" type="radio" />
                      <span>
-                        Tôi đồng ý với
+                        Đồng ý với
                         <a href="#">&nbsp;điều khoản sử dụng</a>
                         &nbsp;và<a href="#">&nbsp;chính sách bảo mật</a>
                         &nbsp;của Best Of Test

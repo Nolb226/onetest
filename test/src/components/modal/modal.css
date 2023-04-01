@@ -21,7 +21,7 @@
    left: 0;
    height: 100%;
    width: 100%;
-   padding: 40px 15px 120px;
+   padding: 60px 15px 60px;
    background-color: var(--white-color);
 }
 
@@ -63,6 +63,7 @@
 .sign-in--modal {
    width: 380px;
    height: 410px;
+   padding: 0 15px;
    overflow: hidden;
    border-radius: 10px;
    margin-bottom: 20px;
@@ -75,7 +76,10 @@
 }
 
 .sign-in--modal .modal__body {
-   height: calc(var(--modal-sign-in-pc-height) - var(--modal-header-pc-height));
+   padding-top: 10px;
+   height: calc(
+      410 - var(--modal-header-pc-height) - var(--modal-footer-pc-height)
+   );
 }
 
 .modal__body {
@@ -115,7 +119,6 @@
    right: 0;
    left: 0;
    justify-content: space-between;
-   padding: 0 15px;
 }
 
 .modal__back--btn,
@@ -130,8 +133,12 @@
 }
 
 .modal__back--btn > i {
-   font-size: 1.8rem;
-   /* display: none; */
+   font-size: 2em;
+   display: none;
+}
+
+.sign-in--modal .modal__footer {
+   display: flex;
 }
 
 .modal__close--btn > i {
@@ -143,7 +150,7 @@
 .form-group {
    display: flex;
    width: 100%;
-   margin-bottom: 12px;
+   margin-bottom: 15px;
    flex-direction: column;
 }
 
@@ -153,22 +160,22 @@
 }
 
 .form-label {
-   color: var(--sub-text-color);
+   color: var(--text-color);
    font-weight: 500;
    padding-bottom: 5px;
-   line-height: 1.6rem;
-   font-size: 1.4rem;
+   /* line-height: 1.2rem; */
+   font-size: 1.25rem;
 }
 
 .forget-password {
-   bottom: -30px;
+   bottom: -20px;
    right: 0;
    font-size: 1.3rem;
    color: #666;
 }
 
 .form-control {
-   height: 35px;
+   height: 32px;
    padding: 5px 12px;
    border: 1px solid #b3b3b3;
    border-radius: 3px;
@@ -190,12 +197,13 @@
 
 .form-message {
    font-size: 1.2rem;
-   line-height: 1.5rem;
-   height: 1.2rem;
+   line-height: 1.2rem;
    padding: 4px 0 0;
 }
 
 .modal__footer {
+   display: none;
+   width: 100%;
    height: 140px;
 }
 
@@ -231,7 +239,7 @@
 }
 
 .sign-up--modal {
-   width: 420px;
+   width: 450px;
    height: var(--modal-sign-up-pc-height);
    overflow: hidden;
    border-radius: 10px;
@@ -262,7 +270,7 @@
 
 .accept {
    margin: 5px 0 0 0;
-   font-size: 1.2rem;
+   font-size: 1.18rem;
    line-height: 1.5rem;
    flex-direction: row;
    align-items: flex-start;

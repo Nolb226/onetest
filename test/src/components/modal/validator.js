@@ -104,8 +104,8 @@ function validator(formSelector) {
          });
 
          if (isValid) {
-            console.log("submit");
-            // formElement.submit();
+            let typeName = formElement.querySelector(".type");
+            formData.append("type", typeName.getAttribute("name"));
 
             inputs.forEach((input) => {
                formData.append(input.name, input.value);
