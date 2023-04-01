@@ -47,8 +47,8 @@ const app = express();
 	Lecture.hasMany(Chapter);
 	Chapter.belongsTo(Lecture);
 
-	Chapter.belongsToMany(Exam, { through: Exam_Result });
-	Exam.belongsToMany(Lecture, { through: Exam_Result });
+	// Chapter.belongsToMany(Exam, { through: Exam_Result });
+	// Exam.belongsToMany(Chapter, { through: Exam_Result });
 
 	Chapter.hasMany(Question);
 	Question.belongsTo(Chapter);
@@ -90,6 +90,15 @@ const app = express();
 		through: Student_Result,
 		timestamps: false,
 		foreignKey: 'examId',
+	});
+
+	Student_Result.belongsToMany(Chapter, {
+		through: 'examchapter',
+		timestamps: false,
+	});
+	Chapter.belongsToMany(Student_Result, {
+		through: 'examchapter',
+		timestamps: false,
 	});
 
 	Exam.hasMany(Student_Result);
@@ -172,11 +181,9 @@ const questionsRoutes = require('./routes/question');
 const classesRoutes = require('./routes/class');
 const chaptersRoutes = require('./routes/chapter');
 const testRoutes = require('./routes/test');
-const Class = require('./models/class');
-const Exam = require('./models/exam');
-const Lecture = require('./models/lecture');
-const Chapter = require('./models/chapter');
-const Account = require('./models/account');
+const departmentRoutes = require('./routes/department');
+const majorRoutes = require('./routes/major');
+const lectureRoutes = require('./routes/lecture');
 const { checkPermission } = require('./middleware/check-permission');
 //Middleware
 
@@ -192,6 +199,9 @@ app.use((req, res, next) => {
 //Routes seperate paths
 
 app.use('/auth', authRoutes);
+app.use('/departments', departmentRoutes);
+app.use('/majors', majorRoutes);
+app.use('/lectures', lectureRoutes);
 app.use('/questions', questionsRoutes);
 app.use('/classes', classesRoutes);
 app.use('/chapters', chaptersRoutes);
