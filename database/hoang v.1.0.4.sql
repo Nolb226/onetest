@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3307
--- Generation Time: Mar 31, 2023 at 03:09 AM
+-- Generation Time: Apr 01, 2023 at 09:12 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.29
 
@@ -80,7 +80,7 @@ CREATE TABLE `chapters` (
 --
 
 INSERT INTO `chapters` (`id`, `name`, `numberOfQuestions`, `createdAt`, `updatedAt`, `lectureId`) VALUES
-('WEBC1', 'HTML', 2, '2023-03-18 15:49:49', '2023-03-18 15:49:49', '841109'),
+('WEBC1', 'HTML', 41, '2023-03-18 15:49:49', '2023-03-18 15:49:49', '841109'),
 ('WEBC2', 'CSS', 20, '2023-03-23 09:17:46', '2023-03-23 09:17:46', '841109');
 
 -- --------------------------------------------------------
@@ -100,7 +100,8 @@ CREATE TABLE `classdetail` (
 --
 
 INSERT INTO `classdetail` (`id`, `studentId`, `classId`) VALUES
-(68, '19', 'a111');
+(68, '19', 'a111'),
+(69, '2', 'a111');
 
 -- --------------------------------------------------------
 
@@ -153,7 +154,35 @@ CREATE TABLE `departments` (
 --
 
 INSERT INTO `departments` (`id`, `name`, `createdAt`, `updatedAt`, `headOfDepartment`) VALUES
-('CNTT', 'Công Nghệ Thông Tin', '2023-03-18 16:50:20', '2023-03-18 16:50:20', '10991');
+('', 'Khoa chung', '2023-03-31 08:21:31', '2023-03-31 08:21:31', NULL),
+('CT', 'Công Nghệ Thông Tin', '2023-03-18 16:50:20', '2023-03-18 16:50:20', '10991'),
+('DV', 'Điện tử viễn thông', '2023-03-31 09:57:53', '2023-03-31 09:57:53', NULL),
+('GM', 'Giáo dục Mầm non', '2023-03-31 09:58:38', '2023-03-31 09:58:38', NULL),
+('GT', 'Giáo dục Tiểu học', '2023-03-31 10:39:38', '2023-03-31 10:39:38', NULL),
+('LC', ' Giáo dục chính trị', '2023-03-31 10:26:22', '2023-03-31 10:26:22', NULL),
+('LU', 'Luật', '2023-03-31 10:36:05', '2023-03-31 10:36:05', NULL),
+('MO', 'Môi Trường', '2023-03-31 09:57:53', '2023-03-31 09:57:53', NULL),
+('NN', 'Ngoại ngữ', '2023-03-31 09:58:38', '2023-03-31 09:58:38', NULL),
+('NT', 'Nghệ thuật', '2023-03-31 10:00:00', '2023-03-31 10:00:00', NULL),
+('QD', 'Quản trị Kinh doanh', '2023-03-31 10:00:00', '2023-03-31 10:00:00', NULL),
+('QG', 'Giáo dục', '2023-03-31 10:00:45', '2023-03-31 10:00:45', NULL),
+('TD', 'Toán ứng dụng', '2023-03-31 10:00:45', '2023-03-31 10:00:45', NULL),
+('TE', 'Tài chính - Kế toán', '2023-03-31 10:01:32', '2023-03-31 10:01:32', NULL),
+('TN', 'SP Khoa học Tự nhiên', '2023-03-31 10:01:32', '2023-03-31 10:01:32', NULL),
+('TT', 'Thư viện - Văn phòng', '2023-03-31 10:29:07', '2023-03-31 10:29:07', NULL),
+('VD', 'Văn hóa và Du lịch', '2023-03-31 10:02:14', '2023-03-31 10:02:14', NULL),
+('XH', 'SP Khoa học Xã hội', '2023-03-31 10:02:14', '2023-03-31 10:02:14', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `examchapter`
+--
+
+CREATE TABLE `examchapter` (
+  `studentresultId` int(11) NOT NULL,
+  `chapterId` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -162,10 +191,9 @@ INSERT INTO `departments` (`id`, `name`, `createdAt`, `updatedAt`, `headOfDepart
 --
 
 CREATE TABLE `examresults` (
+  `id` int(11) NOT NULL,
   `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL,
-  `examId` varchar(10) NOT NULL,
-  `lectureId` varchar(10) NOT NULL
+  `updatedAt` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -185,15 +213,15 @@ CREATE TABLE `exams` (
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
   `classId` varchar(255) DEFAULT NULL,
-  `isActive` tinyint(1) DEFAULT 0,
-  `type` int(11) NOT NULL
+  `type` int(11) NOT NULL,
+  `isLock` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `exams`
 --
 
-INSERT INTO `exams` (`id`, `name`, `timeStart`, `timeEnd`, `duration`, `totalQuestions`, `ratioQuestions`, `createdAt`, `updatedAt`, `classId`, `isActive`, `type`) VALUES
+INSERT INTO `exams` (`id`, `name`, `timeStart`, `timeEnd`, `duration`, `totalQuestions`, `ratioQuestions`, `createdAt`, `updatedAt`, `classId`, `type`, `isLock`) VALUES
 ('EXM001', 'JavaScript Basics', '2023-04-01 09:00:00', '2023-04-01 10:00:00', 60, 10, 0.5, '2023-03-18 15:49:49', '2023-03-18 15:49:49', 'a111', 0, 0);
 
 -- --------------------------------------------------------
@@ -325,7 +353,43 @@ CREATE TABLE `majors` (
 --
 
 INSERT INTO `majors` (`id`, `name`, `createdAt`, `updatedAt`, `departmentId`) VALUES
-('DKP', 'Kỹ Thuật Phần Mềm', '2023-03-18 16:51:30', '2023-03-18 16:51:30', 'CNTT');
+('DAN', 'Ngôn ngữ Anh', '2023-03-31 10:57:34', '2023-03-31 10:57:34', 'NN'),
+('DCM', 'Công nghệ Kĩ thuật Môi trường', '2023-03-31 10:57:34', '2023-03-31 10:57:34', 'MO'),
+('DCT', 'Công Nghệ Thông Tin', '2023-03-31 07:19:22', '2023-03-31 07:19:22', 'CT'),
+('DCV', 'Công nghệ kỹ thuật điện tử - viễn thông', '2023-03-31 10:13:18', '2023-03-31 10:13:18', 'DV'),
+('DDE', 'Kỹ thuật điện', '2023-03-31 10:13:18', '2023-03-31 10:13:18', 'DV'),
+('DDI', 'SP Địa lý', '2023-03-31 10:30:14', '2023-03-31 10:30:14', 'XH'),
+('DDL', 'Du lịch', '2023-03-31 10:57:34', '2023-03-31 10:57:34', 'VD'),
+('DDV', 'Kỹ thuật điện tử - viễn thông', '2023-03-31 10:13:18', '2023-03-31 10:13:18', 'DV'),
+('DGD', 'Giáo dục Chính trị', '2023-03-31 10:27:27', '2023-03-31 10:27:27', 'LC'),
+('DGM', 'Giáo dục Mầm non', '2023-03-31 10:30:14', '2023-03-31 10:30:14', 'GM'),
+('DGT', 'Giáo dục Tiểu học', '2023-03-31 10:57:34', '2023-03-31 10:57:34', 'GT'),
+('DHO', 'SP Hóa', '2023-03-31 10:13:18', '2023-03-31 10:13:18', 'TN'),
+('DKD', 'Công nghệ Kĩ thuật điện, điện tử', '2023-03-31 10:13:18', '2023-03-31 10:13:18', 'DV'),
+('DKE', 'Kế toán', '2023-03-31 10:12:11', '2023-03-31 10:12:11', 'TE'),
+('DKH', 'SP Khoa học tự nhiên', '2023-03-31 10:13:18', '2023-03-31 10:13:18', 'TN'),
+('DKM', 'Khoa học môi trường', '2023-03-31 10:57:34', '2023-03-31 10:57:34', 'MO'),
+('DKP', 'Kỹ Thuật Phần Mềm', '2023-03-18 16:51:30', '2023-03-18 16:51:30', 'CT'),
+('DLD', 'SP Lịch sử - Địa lý', '2023-03-31 10:30:14', '2023-03-31 10:30:14', 'XH'),
+('DLI', 'SP Vật lí', '2023-03-31 10:13:18', '2023-03-31 10:13:18', 'TN'),
+('DLU', 'Luật', '2023-03-31 10:36:19', '2023-03-31 10:36:19', 'LU'),
+('DMI', 'SP Mỹ thuật', '2023-03-31 10:13:18', '2023-03-31 10:13:18', 'NT'),
+('DNA', 'Thanh nhạc', '2023-03-31 10:13:18', '2023-03-31 10:13:18', 'NT'),
+('DNH', 'SP Âm nhạc', '2023-03-31 10:13:18', '2023-03-31 10:13:18', 'NT'),
+('DQG', 'Quản lý Giáo dục', '2023-03-31 10:36:19', '2023-03-31 10:36:19', 'QG'),
+('DQK', 'Quản trị kinh doanh', '2023-03-31 10:57:34', '2023-03-31 10:57:34', 'QD'),
+('DQT', 'Quốc tế học', '2023-03-31 10:57:34', '2023-03-31 10:57:34', 'VD'),
+('DQV', 'Quản trị văn phòng', '2023-03-31 10:29:23', '2023-03-31 10:29:23', 'TT'),
+('DSA', 'SP Tiếng Anh', '2023-03-31 10:57:34', '2023-03-31 10:57:34', 'NN'),
+('DSI', 'SP Sinh học', '2023-03-31 10:13:18', '2023-03-31 10:13:18', 'TN'),
+('DSU', 'SP Lịch sử', '2023-03-31 10:30:14', '2023-03-31 10:30:14', 'XH'),
+('DTL', 'Tâm lí học', '2023-03-31 10:36:19', '2023-03-31 10:36:19', 'QG'),
+('DTN', 'Tài chính - Ngân hàng', '2023-03-31 10:12:11', '2023-03-31 10:12:11', 'TE'),
+('DTO', 'SP Toán', '2023-03-31 10:57:34', '2023-03-31 10:57:34', 'TD'),
+('DTT', 'Thông tin - Thư viện', '2023-03-31 10:29:23', '2023-03-31 10:29:23', 'TT'),
+('DTU', 'Toán ứng dụng', '2023-03-31 10:09:06', '2023-03-31 10:09:06', 'TD'),
+('DVA', 'SP Ngữ văn', '2023-03-31 10:30:14', '2023-03-31 10:30:14', 'XH'),
+('DVI', 'Việt Nam học', '2023-03-31 10:57:34', '2023-03-31 10:57:34', 'VD');
 
 -- --------------------------------------------------------
 
@@ -443,12 +507,18 @@ CREATE TABLE `studentresults` (
   `studentId` varchar(10) DEFAULT NULL,
   `examId` varchar(10) DEFAULT NULL,
   `grade` int(11) NOT NULL,
-  `isLock` tinyint(1) DEFAULT 0,
   `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`content`)),
   `isDone` tinyint(1) DEFAULT 0,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `studentresults`
+--
+
+INSERT INTO `studentresults` (`id`, `studentId`, `examId`, `grade`, `content`, `isDone`, `createdAt`, `updatedAt`) VALUES
+(1, '2', 'EXM001', 10, '{\"a\":2}', 0, '2023-04-01 06:22:00', '2023-04-01 06:22:00');
 
 -- --------------------------------------------------------
 
@@ -526,7 +596,8 @@ CREATE TABLE `teachers` (
 --
 
 INSERT INTO `teachers` (`id`, `fullname`, `dob`, `accountId`, `createdAt`, `updatedAt`, `departmentId`) VALUES
-('10991', 'Nguyễn Thanh Sang', '2023-03-18 15:49:49', 1, '2023-03-18 15:49:49', '2023-03-18 15:49:49', 'CNTT');
+('10991', 'Nguyễn Thanh Sang', '2023-03-18 15:49:49', 1, '2023-03-18 15:49:49', '2023-03-18 15:49:49', 'CT'),
+('20766', 'Huỳnh Minh Trí', '2023-03-31 08:35:46', 4, '2023-03-31 08:35:46', '2023-03-31 08:35:46', 'CT');
 
 --
 -- Indexes for dumped tables
@@ -572,10 +643,16 @@ ALTER TABLE `departments`
   ADD KEY `headOfDepartment` (`headOfDepartment`);
 
 --
+-- Indexes for table `examchapter`
+--
+ALTER TABLE `examchapter`
+  ADD PRIMARY KEY (`studentresultId`,`chapterId`);
+
+--
 -- Indexes for table `examresults`
 --
 ALTER TABLE `examresults`
-  ADD PRIMARY KEY (`examId`,`lectureId`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `exams`
@@ -653,7 +730,7 @@ ALTER TABLE `questions`
 --
 ALTER TABLE `studentresults`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `studentResults_examId_studentId_unique` (`studentId`,`examId`),
+  ADD UNIQUE KEY `studentresults_examId_studentId_unique` (`studentId`,`examId`),
   ADD KEY `examId` (`examId`);
 
 --
@@ -695,7 +772,13 @@ ALTER TABLE `accounts`
 -- AUTO_INCREMENT for table `classdetail`
 --
 ALTER TABLE `classdetail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
+
+--
+-- AUTO_INCREMENT for table `examresults`
+--
+ALTER TABLE `examresults`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `functions`
@@ -725,7 +808,7 @@ ALTER TABLE `questions`
 -- AUTO_INCREMENT for table `studentresults`
 --
 ALTER TABLE `studentresults`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
@@ -741,15 +824,15 @@ ALTER TABLE `chapters`
 -- Constraints for table `classdetail`
 --
 ALTER TABLE `classdetail`
-  ADD CONSTRAINT `classdetail_ibfk_1751` FOREIGN KEY (`studentId`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `classdetail_ibfk_1752` FOREIGN KEY (`classId`) REFERENCES `classes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `classdetail_ibfk_2119` FOREIGN KEY (`studentId`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `classdetail_ibfk_2120` FOREIGN KEY (`classId`) REFERENCES `classes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `classes`
 --
 ALTER TABLE `classes`
-  ADD CONSTRAINT `classes_ibfk_2687` FOREIGN KEY (`teacherId`) REFERENCES `teachers` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `classes_ibfk_2688` FOREIGN KEY (`lectureId`) REFERENCES `lectures` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `classes_ibfk_3055` FOREIGN KEY (`teacherId`) REFERENCES `teachers` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `classes_ibfk_3056` FOREIGN KEY (`lectureId`) REFERENCES `lectures` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Constraints for table `departments`
@@ -806,15 +889,15 @@ ALTER TABLE `questions`
 -- Constraints for table `studentresults`
 --
 ALTER TABLE `studentresults`
-  ADD CONSTRAINT `studentresults_ibfk_1173` FOREIGN KEY (`studentId`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `studentresults_ibfk_1174` FOREIGN KEY (`examId`) REFERENCES `exams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `studentresults_ibfk_133` FOREIGN KEY (`studentId`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `studentresults_ibfk_134` FOREIGN KEY (`examId`) REFERENCES `exams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `students`
 --
 ALTER TABLE `students`
-  ADD CONSTRAINT `students_ibfk_2691` FOREIGN KEY (`accountId`) REFERENCES `accounts` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  ADD CONSTRAINT `students_ibfk_2692` FOREIGN KEY (`majorId`) REFERENCES `majors` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `students_ibfk_3059` FOREIGN KEY (`accountId`) REFERENCES `accounts` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  ADD CONSTRAINT `students_ibfk_3060` FOREIGN KEY (`majorId`) REFERENCES `majors` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Constraints for table `teach`
@@ -827,8 +910,8 @@ ALTER TABLE `teach`
 -- Constraints for table `teachers`
 --
 ALTER TABLE `teachers`
-  ADD CONSTRAINT `teachers_ibfk_2329` FOREIGN KEY (`accountId`) REFERENCES `accounts` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `teachers_ibfk_2330` FOREIGN KEY (`departmentId`) REFERENCES `departments` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `teachers_ibfk_2693` FOREIGN KEY (`accountId`) REFERENCES `accounts` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `teachers_ibfk_2694` FOREIGN KEY (`departmentId`) REFERENCES `departments` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
