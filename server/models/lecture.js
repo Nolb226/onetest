@@ -3,7 +3,7 @@ const DataTypes = require('sequelize').DataTypes;
 
 const Lecture = sequelize.define('lecture', {
 	id: {
-		type: DataTypes.STRING(10),
+		type: DataTypes.STRING,
 		allowNull: false,
 		unique: true,
 		primaryKey: true,

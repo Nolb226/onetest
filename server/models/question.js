@@ -45,4 +45,6 @@ const Question = sequelize.define('question', {
 	},
 });
 
+Question.addHook('beforeCreate', async function (question) {});
+
 module.exports = Question;

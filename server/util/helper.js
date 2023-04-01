@@ -39,12 +39,11 @@ exports.throwError = function (message, status) {
 	let error;
 	console.log(typeof message);
 	if (typeof message === 'object') {
-		error = message.reduce((acc, error) => {
-			acc[error.param] = error.msg;
-			return acc;
-		}, {});
+		error = message.map(({ value, msg: message, param }) => {
+			return { value, message, param };
+		});
 	} else {
-		error = new Error(message);
+		error = [{ message }];
 	}
 	error.statusCode = status;
 	throw error;

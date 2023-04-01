@@ -19,11 +19,7 @@ exports.signup = async (req, res, next) => {
 		const errors = validationResult(req);
 
 		if (!errors.isEmpty()) {
-			const messages = errors
-				.array()
-				.map((err) => err.msg)
-				.join(',');
-			throwError(messages, 422);
+			throwError(errors.array(), 422);
 		}
 
 		const { username, password, type, fullname, dob } = req.body;
@@ -45,7 +41,7 @@ exports.signup = async (req, res, next) => {
 
 		return successResponse(res, 201, account, req.method);
 	} catch (error) {
-		res.status(error.statusCode || 500).json({ error: error.message });
+		errorResponse(res, error);
 		console.log(error);
 	}
 };
@@ -77,7 +73,7 @@ exports.login = async (req, res, next) => {
 		// }
 
 		const token = jwt.sign({ id: account.id }, 'group5', {
-			expiresIn: '1h',
+			expiresIn: '3d',
 		});
 		res.status(200).json(token);
 	} catch (error) {

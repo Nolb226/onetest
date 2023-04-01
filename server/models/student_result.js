@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize');
 const Student = require('./student');
 const Exam = require('./exam');
 
-const Student_Result = sequelize.define('studentResult', {
+const Student_Result = sequelize.define('studentresult', {
 	id: {
 		type: DataTypes.INTEGER,
 		autoIncrement: true,
@@ -27,10 +27,10 @@ const Student_Result = sequelize.define('studentResult', {
 		type: DataTypes.INTEGER,
 		allowNull: false,
 	},
-	isLock: {
-		type: DataTypes.BOOLEAN,
-		defaultValue: false,
-	},
+	// isLock: {
+	// 	type: DataTypes.BOOLEAN,
+	// 	defaultValue: false,
+	// },
 	content: {
 		type: DataTypes.JSON,
 		allowNull: false,
