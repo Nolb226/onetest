@@ -2,9 +2,13 @@ const router = require('express').Router();
 
 const chapterController = require('../controllers/chapterController');
 
+router.get('/', chapterController.getChapters);
+
+router.get('/:chapterId/questions', chapterController.getChapterQuestions);
+
 router.get(
 	'/:chapterId/question/:questionId',
-	chapterController.getChapterQuestions
+	chapterController.getChapterQuestion
 );
 
 router.post('/:chapterId/question/', chapterController.postQuestion);

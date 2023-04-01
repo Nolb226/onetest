@@ -33,7 +33,7 @@ const Exam = sequelize.define('exam', {
 		type: DataTypes.INTEGER,
 		allowNull: false,
 	},
-	isActive: {
+	isLock: {
 		type: DataTypes.BOOLEAN,
 		defaultValue: false,
 	},

@@ -7,7 +7,48 @@ const {
 	errorResponse,
 } = require('../util/helper');
 
-exports.getChapterQuestions = async (req, res, _) => {
+module.exports.getChapters = async function (req, res, _) {
+	try {
+		const chapters = await Chapter.findAll();
+		successResponse(res, 200, chapters);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
+
+module.exports.getChapter = async function (req, res, _) {};
+
+module.exports.getChapterQuestions = async function (req, res, _) {
+	try {
+		const { chapterId } = req.params;
+		const chapter = await Chapter.findByPk(chapterId);
+		if (!chapter) {
+			throwError('Could not find chapter', 404);
+		}
+		console.log(chapter);
+		console.log(await Question.count({ where: { chapterId } }));
+		const questions = await chapter.getQuestions({
+			attributes: [
+				'id',
+				'correctAns',
+				'description',
+				'answerA',
+				'answerB',
+				'answerC',
+				'answerD',
+				'difficulty',
+				'status',
+			],
+			include: { all: true },
+		});
+
+		successResponse(res, 200, questions);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
+
+module.exports.getChapterQuestion = async (req, res, _) => {
 	try {
 		const { chapterId, questionId } = req.params;
 		const chapter = await Chapter.findByPk(chapterId);

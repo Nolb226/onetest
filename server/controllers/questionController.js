@@ -19,6 +19,7 @@ exports.getQuestions = async function (req, res, _) {
 		successResponse(res, 200, result);
 		// successResponse(res, 200, { questions: result, total });
 	} catch (error) {
+		console.log(error);
 		errorResponse(res, error, [{}]);
 	}
 };
