@@ -27,7 +27,10 @@ exports.signup = async (req, res, next) => {
 		const upperCaseType = type.toUpperCase();
 
 		const model = upperCaseType === 'GV' ? Teacher : Student;
-
+		const isExist = model.findByPk(username);
+		if (isExist.accountId) {
+			throwError('Account is already exist', 409);
+		}
 		const foreignKey =
 			upperCaseType === 'GV' ? req.body.departmentId : req.body.majorId;
 		const account = await model.createAccount({

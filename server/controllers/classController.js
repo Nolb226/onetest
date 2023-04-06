@@ -34,7 +34,7 @@ const deleteExcel = function (filePath) {
 exports.getClasses = async (req, res, _) => {
 	try {
 		const page = req.query.page || 1;
-		const pageSize = 5;
+		const pageSize = 10;
 
 		const { user, account } = req;
 		if (!account.isActive) {

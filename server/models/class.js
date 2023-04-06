@@ -26,7 +26,7 @@ const Class = sequelize.define(
 		},
 		password: {
 			type: DataTypes.STRING,
-			allowNull: false,
+			allowNull: true,
 		},
 		year: {
 			type: DataTypes.DATEONLY,
