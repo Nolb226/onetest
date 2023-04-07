@@ -1,21 +1,25 @@
+import { Route, Routes } from "react-router-dom";
+
 import "./App.css";
 import "./css/reset.css";
 import "./css/grid.css";
 import "./css/base.css";
 import "./fonts/fontawesome-free-6.1.2-web/css/all.min.css";
 
-import Header from "./components/header/header";
-import Footer from "./components/footer/footer";
-import Container from "./components/container/container";
+import Home from "./components/pages/home";
+import Dashboard from "./components/pages/dashboard";
 
 function App() {
-  return (
-    <div id="app" className="position-relative">
-      <Header />
-      <Container />
-      <Footer />
-    </div>
-  );
+   return (
+      <div id="app" className="position-relative">
+         <Routes>
+            <Route exact path="/" element={<Home />}></Route>
+            <Route exact path="/dashboard" element={<Dashboard />}></Route>
+            <Route path="*" element={<Home />}></Route>
+            <Route path="/dashboard/:type" element={<Dashboard />}></Route>
+         </Routes>
+      </div>
+   );
 }
 
 export default App;
