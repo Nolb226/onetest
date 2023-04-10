@@ -1,8 +1,8 @@
-import { Routes, Route } from "react-router-dom";
+// import { Routes, Route } from "react-router-dom";
 
-import "./style.css";
-import "./responsive.css";
-import Exam from "./Exam.jsx";
+import "./css/style.css";
+import "./css/responsive.css";
+import Exam from "./exam/Exam.jsx";
 import Statistics from "./Statistics.jsx";
 import React from "react";
 import { useParams } from "react-router-dom";

@@ -14,10 +14,12 @@ function App() {
       <div id="app" className="position-relative">
          <Routes>
             <Route exact path="/" element={<Home />}></Route>
-            <Route exact path="/dashboard" element={<Dashboard />}></Route>
             <Route path="*" element={<Home />}></Route>
+            <Route exact path="/dashboard" element={<Dashboard />}></Route>
             <Route path="/dashboard/:type" element={<Dashboard />}></Route>
          </Routes>
+
+         {/* <Home /> */}
       </div>
    );
 }

@@ -51,7 +51,6 @@ function Dashboard() {
                </div>
 
                <div className="content">
-                  <div className="empty-space"></div>
                   <Teacher />
                </div>
             </div>

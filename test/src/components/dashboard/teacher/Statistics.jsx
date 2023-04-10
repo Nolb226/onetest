@@ -6,7 +6,7 @@ function Statistics() {
       <>
          <header className="table__header">
             <h1 className="table__heading">Thống kê</h1>
-            <div className="filter-box">
+            {/* <div className="filter-box">
                <div className="custom-select">
                   <span className="selected-option">
                      Tất cả
@@ -18,7 +18,7 @@ function Statistics() {
                      <li className="option flex-center">Chưa làm</li>
                   </ul>
                </div>
-            </div>
+            </div> */}
          </header>
          <div className="grid table__content">
             <ul className="row no-gutters flex-center table__content--heading">
@@ -39,7 +39,7 @@ function Statistics() {
                </li>
                <li className="col l-5-1" />
             </ul>
-            <div className="table__content--list">
+            {/* <div className="table__content--list">
                <ul className="row no-gutters flex-center table__content--item">
                   <li className="col l-2">
                      <h3>information</h3>
@@ -80,7 +80,7 @@ function Statistics() {
                      <button className="inf-btn see-score">Xem điểm</button>
                   </li>
                </ul>
-            </div>
+            </div> */}
          </div>
       </>
    );
