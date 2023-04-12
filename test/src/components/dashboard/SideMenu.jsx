@@ -11,8 +11,8 @@ function SideMenu() {
 
       {
          idPemission: 2,
-         path: "/dashboard/manage-exam",
-         icon: "../../image/exam-icon.png",
+         path: "/dashboard/manage-class",
+         icon: "../../image/class-icon.png",
       },
 
       {
@@ -35,21 +35,19 @@ function SideMenu() {
       <div id="left-menu" className="position-relative col l-1">
          <ul className="menu-list flex-center flex-direction-col">
             {menuItem.map((item) => {
-               if (item.idPemission !== 1)
-                  return (
-                     <Link to={item.path} key={item.idPemission}>
-                        <li
-                           className="menu-item flex-center"
-                           onClick={(e) => {
-                              activeButton(e);
-                           }}
-                           key={item.idPemission}
-                        >
-                           <img src={item.icon} alt="" />
-                        </li>
-                     </Link>
-                  );
-               else return <></>;
+               return (
+                  <Link to={item.path} key={item.idPemission}>
+                     <li
+                        className="menu-item flex-center"
+                        onClick={(e) => {
+                           activeButton(e);
+                        }}
+                        key={item.idPemission}
+                     >
+                        <img src={item.icon} alt="" />
+                     </li>
+                  </Link>
+               );
             })}
 
             {/* <Link to="/dashboard/manage-exam">
