@@ -6,17 +6,13 @@ import Exam from "./exam/Exam.jsx";
 import Statistics from "./statistic/Statistics.jsx";
 import React from "react";
 import { useParams } from "react-router-dom";
-import Class from "../Class/Class";
+import Class from "./Class/Class";
 
 function Teacher() {
    const { type } = useParams();
 
    return (
       <>
-         {/* <Route path="/dashboard" element={<Dashboard />}></Route>
-            {/* <Route path="/dashboard/class" element={}></Route> 
-            <Route path="/exam" element={<Exam />}></Route>
-            <h2>Whale</h2> */}
          {type === "manage-exam" && <Exam />}
          {type === "manage-class" && <Class />}
          {type === "statistics" && <Statistics />}

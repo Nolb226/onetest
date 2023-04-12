@@ -1,38 +1,10 @@
 // import "./style.css";
 // import "./responsive.css";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import CreateExamModal from "./CreateExamModal";
 
 function Exam() {
    const returnBtn = document.querySelector(".return");
-
-   const handleLock = (Class, examID) => {
-      console.log(Class);
-      // console.log(Class.isLock);
-      // console.log(Class.id);
-      // fetch(
-      //    `https://bestoftest.herokuapp.com/classes/${Class.id}/exams/${examID}`,
-      //    {
-      //       method: "PATCH",
-      //       body: JSON.stringify({
-      //          isLock: !Class.isLock,
-      //       }),
-      //       headers: {
-      //          Authorization:
-      //             "Bearer " +
-      //             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxMTIxMjA2LCJleHAiOjE2ODEzODA0MDZ9.MGOsmWFQzyO-m5k4ugL9Z71pQ3hsAzJHeRIegMw8AsE",
-      //          "Content-type": "application/json",
-      //       },
-      //    }
-      // ).then((response) => response.json());
-      // //   .then((json) => console.log(json.data));
-
-      updateLockExam(Class);
-   };
-
-   const updateLockExam = (exam) => {
-      console.log(exam);
-   };
 
    function ExamList() {
       const [examData, setExamData] = useState([]);
@@ -63,6 +35,81 @@ function Exam() {
       //       btn.closest(".table__content--item").getAttribute("key");
       //    });
       // });
+
+      const handleLock = (classID, exam) => {
+         fetch(
+            `https://bestoftest.herokuapp.com/classes/${classID}/exams/${exam.id}`,
+            {
+               method: "PATCH",
+               body: JSON.stringify({
+                  isLock: !exam.isLock,
+               }),
+               headers: {
+                  Authorization:
+                     "Bearer " +
+                     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxMTIxMjA2LCJleHAiOjE2ODEzODA0MDZ9.MGOsmWFQzyO-m5k4ugL9Z71pQ3hsAzJHeRIegMw8AsE",
+                  "Content-type": "application/json",
+               },
+            }
+         ).then((response) => response.json());
+
+         setExamData(updateLockExam(classID, exam.id));
+      };
+
+      const updateLockExam = (classID, examID) => {
+         return examData.map((exam) => {
+            if (exam.class_id === classID && exam.id === examID) {
+               exam.isLock = !exam.isLock;
+            }
+            return exam;
+         });
+      };
+
+      const ExamRender = () => {
+         return examData.map((exam) => {
+            return (
+               <ul
+                  className="row no-gutters flex-center table__content--item"
+                  key={exam.id}
+               >
+                  <li className="col l-3">
+                     <h3>
+                        {exam.name} - {exam.id}
+                     </h3>
+                  </li>
+
+                  <li className="col l-3">
+                     <h3>{exam.lecture_name}</h3>
+                  </li>
+
+                  <li className="col l-2">
+                     <h3>{exam.class_id}</h3>
+                  </li>
+
+                  <li className="col l-1">
+                     <h3>{exam.totals}</h3>
+                  </li>
+
+                  <li
+                     className="col l-1"
+                     onClick={() => {
+                        handleLock(exam.class_id, exam);
+                     }}
+                  >
+                     <input
+                        type="checkbox"
+                        name=""
+                        id=""
+                        checked={!exam.isLock}
+                     />
+                  </li>
+                  <li className="col l-2">
+                     <button className="export-btn">Xuất</button>
+                  </li>
+               </ul>
+            );
+         });
+      };
 
       return (
          <>
@@ -115,45 +162,7 @@ function Exam() {
                      </li>
                   </ul>
                   <div className="table__content--list">
-                     {examData.map((exam) => {
-                        return (
-                           <ul
-                              className="row no-gutters flex-center table__content--item"
-                              key={exam.id}
-                           >
-                              <li className="col l-3">
-                                 <h3>
-                                    {exam.name} - {exam.id}
-                                 </h3>
-                              </li>
-
-                              <li className="col l-3">
-                                 <h3>{exam.lecture_name}</h3>
-                              </li>
-
-                              <li className="col l-2">
-                                 <h3>{exam.class_id}</h3>
-                              </li>
-
-                              <li className="col l-1">
-                                 <h3>{exam.totals}</h3>
-                              </li>
-
-                              <li className="col l-1">
-                                 <input
-                                    type="checkbox"
-                                    name=""
-                                    id=""
-                                    checked={!exam.isLock}
-                                    onChange={handleLock(exam)}
-                                 />
-                              </li>
-                              <li className="col l-2">
-                                 <button className="export-btn">Xuất</button>
-                              </li>
-                           </ul>
-                        );
-                     })}
+                     <ExamRender />
                   </div>
                </div>
             </div>
