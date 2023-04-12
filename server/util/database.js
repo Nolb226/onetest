@@ -6,7 +6,7 @@ const node_env = process.env.NODE_ENV;
 console.log(node_env);
 
 if (node_env === 'production') {
-	sequelize = new Sequelize('bestoftest', 'root', '', {
+	sequelize = new Sequelize(process.env.DB_NAME || 'qlttn', 'root', '', {
 		host: 'localhost',
 		dialect: 'mysql',
 		port: '3306',
