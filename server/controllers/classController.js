@@ -24,6 +24,7 @@ const Major = require('../models/major');
 const Department = require('../models/department');
 const Teacher = require('../models/teacher');
 const Lecture = require('../models/lecture');
+const Student_Result = require('../models/student_result');
 const deleteExcel = function (filePath) {
 	const file = path.join(__dirname, '..', filePath);
 	console.log(file);
@@ -58,18 +59,6 @@ exports.getClasses = async (req, res, _) => {
 exports.getClass = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
-		const { account, user } = req;
-		const isExist = await Classes.findByPk(classId);
-
-		if (!isExist) {
-			throwError('Class not found', 404);
-		}
-
-		// const has = await user.hasClass(classId);
-		// if (!has) {
-		// 	throwError('Can not access this class', 403);
-		// }
-		// const foundedClass = await user.getClasses({ where: { id: classId } });
 		const foundedClass = await Classes.findByPk(classId, {
 			include: [
 				{ model: Teacher, attributes: ['id', 'fullname', 'departmentId'] },
@@ -156,6 +145,86 @@ exports.getStudentInClass = async (req, res, _) => {
 	}
 };
 
+exports.getClassExams = async (req, res, _) => {
+	try {
+		const { classId } = req.params;
+		const foundedClass = await Classes.findByPk(classId);
+		if (!foundedClass) {
+			throwError(`Could not find class`, 404);
+		}
+		const exams = await foundedClass.getExams();
+		successResponse(res, 200, exams);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
+
+exports.getClassExam = async (req, res, _) => {
+	try {
+		const { classId, examId } = req.params;
+		const foundedClass = await Classes.findByPk(classId);
+		if (!foundedClass) {
+			throwError(`Could not find class`, 404);
+		}
+		const exams = await foundedClass.getExams({
+			where: { id: examId },
+			attributes: [
+				'id',
+				'name',
+				'timeStart',
+				'timeEnd',
+				'duration',
+				'totalQuestions',
+				'ratioQuestions',
+				'type',
+				'isLock',
+			],
+			// include: [
+			// 	{
+			// 		model: Student,
+			// 		attributes: ['id', 'fullname'],
+			// 		through: { attributes: ['grade'] },
+			// 	},
+			// ],
+		});
+		if (!exams[0]) {
+			throwError('Could not find exam', 404);
+		}
+		successResponse(res, 200, exams[0]);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
+
+exports.getClassExamStudentResults = async (req, res, _) => {
+	try {
+		const { classId, examId } = req.params;
+		const foundedClass = await Classes.findByPk(classId);
+		if (!foundedClass) {
+			throwError(`Could not find class`, 404);
+		}
+		const exam = await foundedClass.getExams({ where: { id: examId } });
+		if (!exam) {
+			throwError(`Could not find exam`, 404);
+		}
+		const studentresults = await exam[0].getStudents({
+			attributes: ['id', 'fullname'],
+			// through: { attributes: ['grade'] },
+		});
+		successResponse(res, 200, studentresults);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
+
+// exports.getStudentResultInExcel = async (req, res, next) => {
+// 	try {
+// 		const worksheet = XLSX.
+// 	} catch (error) {
+
+// 	}
+// }
+
 exports.postClass = async (req, res, _) => {
 	try {
 		const errors = validationResult(req);
@@ -186,14 +255,7 @@ exports.putClass = async (req, res, _) => {
 
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
-			const messages = errors
-				.array()
-				.map(function (error) {
-					return `${error.param}: ${error.msg}`;
-				})
-				.join(', ');
-
-			throwError(messages, 409);
+			throwError(errors.array(), 409);
 		}
 
 		const { name, password, semester, year, isLock, lectureId } = req.body;

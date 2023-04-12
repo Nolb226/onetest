@@ -67,6 +67,13 @@ get specific students from the current class
 router.get('/:classId/students/:studentId', classController.getStudentInClass);
 // router.use('/:classId/students', checkPermission, passingClass, studentRoutes);
 
+router.get('/:classId/exams', classController.getClassExams);
+router.get('/:classId/exams/:examId', classController.getClassExam);
+router.get(
+	'/:classId/exams/:examId/results',
+	classController.getClassExamStudentResults
+);
+
 //METHOD : POST
 
 router.post(
