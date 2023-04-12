@@ -35,7 +35,13 @@ const passingClass = async (req, res, next) => {
 GET /classes/
 get all classes 
 */
-router.get('/', checkPermission, classController.getClasses);
+router.get(
+	'/',
+	// checkPermission,
+	classController.getClasses
+);
+
+router.get('/exams', classController.getClassesExams);
 
 /* 
 *admin&teacher
@@ -44,8 +50,14 @@ get specific class
 */
 router.get(
 	'/:classId',
-	checkPermission.bind({ path: 'class' }),
+	// checkPermission.bind({ path: 'class' }),
 	classController.getClass
+);
+
+router.get(
+	'/:classId/edit',
+	// checkPermission.bind({ path: 'class' }),
+	classController.getClassEdit
 );
 
 /* 
@@ -55,7 +67,7 @@ get all students from the current class
 */
 router.get(
 	'/:classId/students',
-	checkPermission,
+	// checkPermission,
 	classController.getAllStudent
 );
 
@@ -66,6 +78,8 @@ get specific students from the current class
 */
 router.get('/:classId/students/:studentId', classController.getStudentInClass);
 // router.use('/:classId/students', checkPermission, passingClass, studentRoutes);
+
+router.get('/:classId/exams/results', classController.getClassExamsResult);
 
 router.get('/:classId/exams', classController.getClassExams);
 router.get('/:classId/exams/:examId', classController.getClassExam);
@@ -79,7 +93,6 @@ router.get(
 router.post(
 	'/',
 	[
-		body('name').notEmpty().trim(),
 		body('password').notEmpty().trim(),
 		body('semester')
 			.trim()
@@ -96,7 +109,6 @@ router.post(
 			.isDate()
 			.withMessage('invalid day received'),
 		// .withMessage('must be a date'),
-		body('isLock').notEmpty().trim().isIn([true, false]),
 		body('lectureId')
 			.trim()
 			.notEmpty()
@@ -113,6 +125,14 @@ router.post(
 	],
 	classController.postClass
 );
+
+router.post('/:classId/students', classController.postClassStudent);
+
+router.post('/:classId/exams', classController.postClassExam);
+
+router.post('/:classId/exams/students/:studentsId');
+
+//METHOD : PUT
 
 router.put(
 	'/:classId',
@@ -154,5 +174,16 @@ router.put(
 
 router.put('/:classId/students', classController.putClassStudent);
 
+//METHOD : PATCH
+
+router.patch('/:classId', classController.patchClassIsLock);
+
+router.patch('/:classId/exams/:examId', classController.patchExamIsLock);
+
+//METHOD : DELETE
 router.delete('/:classId/', classController.deleteClass);
+router.delete(
+	'/:classId/students/:studentId',
+	classController.deleteClassStudent
+);
 module.exports = router;
