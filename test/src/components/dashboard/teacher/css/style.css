@@ -1,3 +1,17 @@
+#dashboard-container button {
+   height: 28px;
+   width: 90px;
+   border: none;
+   border-radius: 4px;
+   color: var(--white-color);
+   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+   cursor: pointer;
+}
+
+button:hover {
+   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
+}
+
 .view-class {
    width: 100px;
    height: 20px;
@@ -279,12 +293,14 @@
    background-color: var(--white-color);
    border-radius: 10px;
    color: #555555;
+   margin-top: 60px;
 }
 
 .table__heading {
    width: 100%;
    text-align: center;
-   font-weight: 600;
+   text-transform: uppercase;
+   font-weight: 00;
    font-size: 25px;
    line-height: 60px;
    height: 60px;
@@ -297,18 +313,105 @@
    border-bottom: solid 2px #d5d5d5;
 }
 
+.table__content {
+   overflow: hidden;
+}
+
 .table__content .row {
-   height: 30px;
+   height: 35px;
    font-size: 1.4rem;
    text-align: center;
 }
 
 .table__content--item {
    transition: all 0.2s linear;
+   text-align: left;
+   margin: 2px 0;
 }
 
 .table__content--item:hover {
    cursor: pointer;
    transition: all 0.2s linear;
-   background-color: #ebebeb;
+   background-color: #f5f5f5;
+}
+
+.export-btn {
+   background-color: var(--highlight-color);
+}
+
+.search-bar {
+   height: var(--search-bar-pc-height);
+   width: 100%;
+   position: absolute;
+   left: 0;
+   top: -60px;
+   padding: 12px 25px;
+   justify-content: space-between;
+}
+
+.search-input {
+   width: 300px;
+   height: 100%;
+   padding: 5px 20px;
+   border-radius: 5px;
+   border: none;
+   font-size: 1.4rem;
+}
+
+.search-input:focus {
+   outline: solid 2px #bebdbd;
+}
+
+#dashboard-container .join-button {
+   width: 130px;
+   height: 100%;
+   padding: 0 5px;
+   background-color: var(--backgound-color);
+   color: var(--white-color);
+   font-size: 1.5rem;
+   font-weight: 500;
+   letter-spacing: 1px;
+   justify-content: space-evenly;
+   border: none;
+   border-radius: 4px;
+   filter: drop-shadow(2px 3px 3px rgba(0, 0, 0, 0.5));
+}
+
+.join-button:hover {
+   cursor: pointer;
+   opacity: 0.95;
+}
+
+.join-button > i {
+   color: var(--white-color);
+   font-size: 1.8rem;
+}
+
+.create-exam__option {
+   cursor: pointer;
+   width: 250px;
+   height: 280px;
+   background-color: var(--white-color);
+   border-radius: 10px;
+   margin: 30px 15px;
+   padding: 20px 0;
+   justify-content: space-evenly;
+   box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.create-exam__option > i {
+   font-size: 8rem;
+}
+
+.create-exam__option--title {
+   font-size: 1.8rem;
+   font-weight: 500;
+}
+
+.option-handicraft {
+   color: var(--highlight-color);
+}
+
+.option-bank {
+   color: #03ac84;
 }
