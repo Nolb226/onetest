@@ -40,7 +40,18 @@ function Dashboard() {
                         </ul>
                      </div>
                   </header>
-                  <div className="information">
+                  <div className="information flex-center">
+                     <div
+                        className="return"
+                        style={{
+                           color: "#999",
+                           fontSize: "1.4rem",
+                           fontWeight: "500",
+                        }}
+                        
+                     >
+                        {"<<"} Quay lại
+                     </div>
                      <div className="code inf-children">
                         Mã cá nhân: 3121411320
                      </div>

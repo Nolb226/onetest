@@ -116,6 +116,8 @@
 .information {
    height: 30px;
    display: flex;
+   justify-content: flex-start;
+   margin: 0 50px;
    border-bottom: solid 1px #d5d5d5;
 }
 
@@ -126,6 +128,10 @@
    display: flex;
    justify-content: center;
    align-items: center;
+}
+
+.return {
+   cursor: pointer;
 }
 
 .content {

@@ -1,12 +1,15 @@
 import "./styleExam.css";
 
-export default function CreateExamModal() {
+export default function CreateExamModal({ type, setType }) {
+   console.log(type);
+   // console.log(setType);
    function Handicraft() {
       const layout = {
          width: "900px",
-         margin: "-10px auto 10px",
+         height: "98%",
+         margin: "17px auto",
          overflowY: "scroll",
-         behavior: "smooth",
+         justifyContent: "flex-start",
       };
 
       const infoBox = {
@@ -183,7 +186,7 @@ export default function CreateExamModal() {
                         className="flex-center flex-direction-col position-absolute"
                         style={{
                            right: "-98px",
-                           top: "2px",
+                           top: "0",
                            width: "95px",
                            borderRadius: "5px",
                            backgroundColor: "#f0f0f0",
@@ -282,7 +285,7 @@ export default function CreateExamModal() {
                         className="flex-center flex-direction-col position-absolute"
                         style={{
                            right: "-98px",
-                           top: "2px",
+                           top: "0",
                            width: "95px",
                            borderRadius: "5px",
                            backgroundColor: "#f0f0f0",
@@ -381,7 +384,7 @@ export default function CreateExamModal() {
                         className="flex-center flex-direction-col position-absolute"
                         style={{
                            right: "-98px",
-                           top: "2px",
+                           top: "0",
                            width: "95px",
                            borderRadius: "5px",
                            backgroundColor: "#f0f0f0",
@@ -480,7 +483,7 @@ export default function CreateExamModal() {
                         className="flex-center flex-direction-col position-absolute"
                         style={{
                            right: "-98px",
-                           top: "2px",
+                           top: "0",
                            width: "95px",
                            borderRadius: "5px",
                            backgroundColor: "#f0f0f0",
@@ -572,6 +575,25 @@ export default function CreateExamModal() {
                   </div>
                </div>
             </div>
+            <button
+               className="flex-center flex-direction-col position-absolute"
+               style={{
+                  right: "15px",
+                  top: "0",
+                  width: "99px",
+                  borderRadius: "5px",
+                  backgroundColor: "var(--primary-color)",
+                  color: "fff",
+                  textTransform: "uppercase",
+                  height: "30px",
+                  padding: "4px",
+                  fontWeight: "600",
+                  letterSpacing: "1px",
+                  boxShadow: "rgba(0, 0, 0, 0.25) 0px 1px 4px",
+               }}
+            >
+               tạo đề   
+            </button>
          </>
       );
    }
@@ -581,19 +603,20 @@ export default function CreateExamModal() {
          width: "100%",
          height: "100%",
          marginTop: "1px",
-         padding: "25px",
+         padding: "2%",
          backgroundColor: "#fff",
          position: "absolute",
          right: "0",
          left: "0",
-         top: "-60px",
+         alignItems: "flex-start",
          boxSizing: "border-box",
       };
 
       const inputList = {
-         padding: "45px 0px 0px 12px",
+         padding: "10% 0px 0px 12px",
          width: "100%",
          height: "100%",
+         minHeight: "450px",
          justifyContent: "flex-start",
       };
 
@@ -620,8 +643,8 @@ export default function CreateExamModal() {
 
       const answer = {
          flex: "1",
-         height: "30px",
-         lineHeight: "3rem",
+         height: "20px",
+         lineHeight: "2rem",
          border: "none",
          background: "#fff",
          padding: "0 10px",
@@ -636,7 +659,7 @@ export default function CreateExamModal() {
                className="flex-center position-relative"
                style={{
                   width: "450px",
-                  height: "100%",
+                  maxHeight: "100%",
                   borderRight: "1px solid #d5d5d5",
                   paddingRight: "25px",
                }}
@@ -658,7 +681,7 @@ export default function CreateExamModal() {
                <ul className="flex-center flex-direction-col" style={inputList}>
                   <li
                      className="flex-center"
-                     style={{ width: "100%", margin: "10px 0" }}
+                     style={{ width: "100%", margin: "5px 0" }}
                   >
                      <label htmlFor="name" style={label}>
                         Tên bài thi
@@ -682,7 +705,7 @@ export default function CreateExamModal() {
 
                   <li
                      className="flex-center"
-                     style={{ width: "100%", margin: "10px 0" }}
+                     style={{ width: "100%", margin: "5px 0" }}
                   >
                      <label htmlFor="name" style={label}>
                         Mã đề
@@ -705,7 +728,7 @@ export default function CreateExamModal() {
                   </li>
                   <li
                      className="flex-center"
-                     style={{ width: "100%", margin: "10px 0" }}
+                     style={{ width: "100%", margin: "5px 0" }}
                   >
                      <label htmlFor="name" style={label}>
                         Ngày thi
@@ -729,7 +752,7 @@ export default function CreateExamModal() {
 
                   <li
                      className="flex-center"
-                     style={{ width: "100%", margin: "10px 0" }}
+                     style={{ width: "100%", margin: "5px 0" }}
                   >
                      <label htmlFor="name" style={label}>
                         Giờ thi
@@ -755,7 +778,7 @@ export default function CreateExamModal() {
                      className="flex-center"
                      style={{
                         width: "100%",
-                        margin: "10px 0",
+                        margin: "5px 0",
                         justifyContent: "space-between",
                      }}
                   >
@@ -804,7 +827,7 @@ export default function CreateExamModal() {
                      className="flex-center"
                      style={{
                         width: "100%",
-                        margin: "10px 0",
+                        margin: "5px 0",
                         justifyContent: "space-between",
                      }}
                   >
@@ -849,7 +872,7 @@ export default function CreateExamModal() {
                      className="flex-center"
                      style={{
                         width: "100%",
-                        margin: "10px 0",
+                        margin: "5px 0",
                         justifyContent: "flex-start",
                      }}
                   >
@@ -876,7 +899,7 @@ export default function CreateExamModal() {
                      className="flex-center"
                      style={{
                         width: "100%",
-                        margin: "10px 0",
+                        margin: "5px 0",
                         justifyContent: "flex-start",
                      }}
                   >
@@ -903,7 +926,7 @@ export default function CreateExamModal() {
                      className="flex-center"
                      style={{
                         width: "100%",
-                        margin: "10px 0",
+                        margin: "5px 0",
                         justifyContent: "flex-start",
                      }}
                   >
@@ -933,7 +956,7 @@ export default function CreateExamModal() {
                      backgroundColor: "#1F2EC9",
                      borderRadius: "5px",
                      position: "absolute",
-                     bottom: "0",
+                     bottom: "-10px",
                      left: "auto",
                      right: "auto",
                      textTransform: "uppercase",
@@ -946,107 +969,560 @@ export default function CreateExamModal() {
                </button>
             </div>
 
-            <ul
-               className="flex-center"
-               style={{ flex: "1", height: "100%", paddingLeft: "10px" }}
+            <div
+               style={{
+                  flex: "1",
+                  height: "530px",
+                  marginTop: "20px",
+                  overflow: "hidden",
+               }}
             >
-               <li>
-                  <div style={{ width: "100%" }}>
-                     <div className="flex-center" style={{ width: "100%" }}>
-                        <input
-                           type="checkbox"
-                           name=""
-                           id=""
-                           style={{
-                              width: "18px",
-                              height: "18px",
-                              marginRight: "5px",
-                           }}
-                        />
-                        <h1
-                           name="question"
-                           style={question}
-                           placeholder="Câu hỏi"
-                        >
-                           Câu 1: Nêu quy tắc hoạt động của 1 website
-                        </h1>
-                     </div>
+               <div
+                  className="position-absolute"
+                  style={{ top: "10px", right: "45px" }}
+               >
+                  <label htmlFor="chapter" style={label}>
+                     Chương
+                  </label>
+                  <select
+                     name="chapter"
+                     id="chapter"
+                     style={{
+                        marginLeft: "10px",
+                        height: "20px",
+                        width: "35px",
+                     }}
+                  >
+                     <option value="1">1</option>
+                     <option value="2">2</option>
+                     <option value="3">3</option>
+                     <option value="4">4</option>
+                     <option value="5">5</option>
+                  </select>
+               </div>
+               <ul
+                  className="flex-center flex-direction-col"
+                  style={{
+                     flex: "1",
+                     height: "450px",
+                     paddingLeft: "10px",
+                     overflowY: "scroll",
+                     paddingTop: "547px",
+                  }}
+               >
+                  <li
+                     style={{
+                        width: "100%",
+                        padding: "5px 0",
+                        borderBottom: "solid 1px #d5d5d5",
+                     }}
+                  >
+                     <div style={{ width: "100%" }}>
+                        <div className="flex-center" style={{ width: "100%" }}>
+                           <input
+                              type="checkbox"
+                              name=""
+                              id=""
+                              style={{
+                                 width: "18px",
+                                 height: "18px",
+                                 marginRight: "5px",
+                              }}
+                           />
+                           <h1
+                              name="question"
+                              style={question}
+                              placeholder="Câu hỏi"
+                           >
+                              Câu 1: Nêu quy tắc hoạt động của 1 website
+                           </h1>
+                        </div>
 
-                     <div
-                        className="flex-center flex-direction-col"
-                        style={{ marginTop: "15px", paddingLeft: "20px" }}
-                     >
                         <div
-                           className="flex-center"
-                           style={{ width: "690px", height: "40px" }}
+                           className="flex-center flex-direction-col"
+                           style={{ marginTop: "15px", paddingLeft: "20px" }}
                         >
-                           <input
-                              type="radio"
-                              name="correct"
-                              id="correct"
-                              style={{
-                                 margin: "0",
-                                 width: "15px",
-                                 height: "15px",
-                              }}
-                           />
-                           <p style={answer}>Câu trả lời 1</p>
-                        </div>
-                        <div
-                           className="flex-center"
-                           style={{ width: "690px", height: "40px" }}
-                        >
-                           <input
-                              type="radio"
-                              name="correct"
-                              id="correct"
-                              style={{
-                                 margin: "0",
-                                 width: "15px",
-                                 height: "15px",
-                              }}
-                           />
-                           <p style={answer}>Câu trả lời 1</p>
-                        </div>
-                        <div
-                           className="flex-center"
-                           style={{ width: "690px", height: "40px" }}
-                        >
-                           <input
-                              type="radio"
-                              name="correct"
-                              id="correct"
-                              style={{
-                                 margin: "0",
-                                 width: "15px",
-                                 height: "15px",
-                              }}
-                           />
-                           <p style={answer}>Câu trả lời 1</p>
-                        </div>
-                        <div
-                           className="flex-center"
-                           style={{ width: "690px", height: "40px" }}
-                        >
-                           <input
-                              type="radio"
-                              name="correct"
-                              id="correct"
-                              style={{
-                                 margin: "0",
-                                 width: "15px",
-                                 height: "15px",
-                              }}
-                           />
-                           <p style={answer}>Câu trả lời 1</p>
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
                         </div>
                      </div>
-                  </div>
-               </li>
-            </ul>
+                  </li>
+
+                  <li
+                     style={{
+                        width: "100%",
+                        padding: "5px 0",
+                        borderBottom: "solid 1px #d5d5d5",
+                     }}
+                  >
+                     <div style={{ width: "100%" }}>
+                        <div className="flex-center" style={{ width: "100%" }}>
+                           <input
+                              type="checkbox"
+                              name=""
+                              id=""
+                              style={{
+                                 width: "18px",
+                                 height: "18px",
+                                 marginRight: "5px",
+                              }}
+                           />
+                           <h1
+                              name="question"
+                              style={question}
+                              placeholder="Câu hỏi"
+                           >
+                              Câu 1: Nêu quy tắc hoạt động của 1 website
+                           </h1>
+                        </div>
+
+                        <div
+                           className="flex-center flex-direction-col"
+                           style={{ marginTop: "15px", paddingLeft: "20px" }}
+                        >
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                        </div>
+                     </div>
+                  </li>
+
+                  <li
+                     style={{
+                        width: "100%",
+                        padding: "5px 0",
+                        borderBottom: "solid 1px #d5d5d5",
+                     }}
+                  >
+                     <div style={{ width: "100%" }}>
+                        <div className="flex-center" style={{ width: "100%" }}>
+                           <input
+                              type="checkbox"
+                              name=""
+                              id=""
+                              style={{
+                                 width: "18px",
+                                 height: "18px",
+                                 marginRight: "5px",
+                              }}
+                           />
+                           <h1
+                              name="question"
+                              style={question}
+                              placeholder="Câu hỏi"
+                           >
+                              Câu 1: Nêu quy tắc hoạt động của 1 website
+                           </h1>
+                        </div>
+
+                        <div
+                           className="flex-center flex-direction-col"
+                           style={{ marginTop: "15px", paddingLeft: "20px" }}
+                        >
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                        </div>
+                     </div>
+                  </li>
+
+                  <li
+                     style={{
+                        width: "100%",
+                        padding: "5px 0",
+                        borderBottom: "solid 1px #d5d5d5",
+                     }}
+                  >
+                     <div style={{ width: "100%" }}>
+                        <div className="flex-center" style={{ width: "100%" }}>
+                           <input
+                              type="checkbox"
+                              name=""
+                              id=""
+                              style={{
+                                 width: "18px",
+                                 height: "18px",
+                                 marginRight: "5px",
+                              }}
+                           />
+                           <h1
+                              name="question"
+                              style={question}
+                              placeholder="Câu hỏi"
+                           >
+                              Câu 1: Nêu quy tắc hoạt động của 1 website
+                           </h1>
+                        </div>
+
+                        <div
+                           className="flex-center flex-direction-col"
+                           style={{ marginTop: "15px", paddingLeft: "20px" }}
+                        >
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                        </div>
+                     </div>
+                  </li>
+
+                  <li
+                     style={{
+                        width: "100%",
+                        padding: "5px 0",
+                        borderBottom: "solid 1px #d5d5d5",
+                     }}
+                  >
+                     <div style={{ width: "100%" }}>
+                        <div className="flex-center" style={{ width: "100%" }}>
+                           <input
+                              type="checkbox"
+                              name=""
+                              id=""
+                              style={{
+                                 width: "18px",
+                                 height: "18px",
+                                 marginRight: "5px",
+                              }}
+                           />
+                           <h1
+                              name="question"
+                              style={question}
+                              placeholder="Câu hỏi"
+                           >
+                              Câu 1: Nêu quy tắc hoạt động của 1 website
+                           </h1>
+                        </div>
+
+                        <div
+                           className="flex-center flex-direction-col"
+                           style={{ marginTop: "15px", paddingLeft: "20px" }}
+                        >
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                           <div
+                              className="flex-center"
+                              style={{ width: "100%", height: "40px" }}
+                           >
+                              <input
+                                 type="radio"
+                                 name="correct"
+                                 id="correct"
+                                 style={{
+                                    margin: "0",
+                                    width: "15px",
+                                    height: "15px",
+                                 }}
+                              />
+                              <p style={answer}>Câu trả lời 1</p>
+                           </div>
+                        </div>
+                     </div>
+                  </li>
+               </ul>
+            </div>
          </div>
       );
    }
 
-   return <SelectFromBank />;
+   document.querySelector(".return").addEventListener("click", () => {
+      setType("");
+   });
+
+   return (
+      <>
+         {type === "seclectFromBank" && <SelectFromBank />}
+         {type === "handicraft" && <Handicraft />}
+      </>
+   );
 }
