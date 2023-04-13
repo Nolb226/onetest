@@ -1,6 +1,6 @@
 // import "./style.css";
 // import "./responsive.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CreateExamModal from "./CreateExamModal";
 
 function Exam() {
@@ -21,20 +21,20 @@ function Exam() {
          );
          const response = await request.json();
          if (response.data) {
+            // return response.data;
+            console.log(response.data);
             setExamData(response.data);
          }
       };
 
-      if (examData.length === 0) {
-         getExamData();
-      }
+      // window.onload = setExamData(getExamData());
+      // if (examData.length === 0) {
+      // }
+      // getExamData();
 
-      // const checkedBtn = document.querySelectorAll("input[type=checkbox]");
-      // checkedBtn.forEach((btn) => {
-      //    btn.addEventListener("change", () => {
-      //       btn.closest(".table__content--item").getAttribute("key");
-      //    });
-      // });
+      useEffect(() => {
+         getExamData();
+      }, []);
 
       const handleLock = (classID, exam) => {
          fetch(
