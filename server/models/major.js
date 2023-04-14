@@ -8,6 +8,7 @@ const Major = sequelize.define('major', {
 		primaryKey: true,
 		unique: true,
 	},
+
 	name: {
 		type: DataTypes.STRING(50),
 		allowNull: false,

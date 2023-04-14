@@ -1,46 +1,30 @@
+import { Route, Routes } from "react-router-dom";
 
-import './App.css';
-import './css/reset.css';
-import './css/grid.css';
-import './css/base.css'
-import './css/landing/responsive.css';
-import './fonts/fontawesome-free-6.1.2-web/css/all.min.css';
+import "./App.css";
+import "./css/reset.css";
+import "./css/grid.css";
+import "./css/base.css";
+import "./fonts/fontawesome-free-6.1.2-web/css/all.min.css";
 
-import { useState } from 'react';
-import { useEffect } from 'react';
-
-import Header from './components/header/header';
-import Footer from './components/footer/footer';
-import Container from './components/container/container';
+import Home from "./components/pages/home";
+import Dashboard from "./components/pages/dashboard";
+import Student from "./components/dashboard/student/component-student/Student";
 
 function App() {
+   return (
+      <div id="app" className="position-relative">
+         <Routes>
+            <Route exact path="/" element={<Home />}></Route>
+            <Route path="*" element={<Home />}></Route>
+            <Route exact path="/dashboard" element={<Dashboard />}></Route>
+            <Route path="/dashboard/:type" element={<Dashboard />}></Route>
+            <Route exact path="/student" element={<Student />}></Route>
+            {/* <Route path="/dashboard/:type" element={<Dashboard />}></Route> */}
+         </Routes>
 
-  // const [question, setQuestion] = useState([]);
-
-  // useEffect(() => {
-  //   fetch('http://localhost:8080/classes/')
-  //     .then((response) => response.json())
-  //     .then((questions) => {
-  //       console.log(questions.data.classes);
-  //       setQuestion(questions.data.classes);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error:", error);
-  //     });
-
-  // }, [])
-
-  
-
-  return (
-    <div id="app" className="position-relative">
-      <Header />
-      <Container />
-      <Footer />
-      
-    </div>
-  )
-
+         {/* <Home /> */}
+      </div>
+   );
 }
 
 export default App;

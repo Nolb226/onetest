@@ -1,17 +1,23 @@
 const sequelize = require('../util/database');
-const { DataTypes } = require('sequelize');
+const { DataTypes, Op } = require('sequelize');
 const Exam = require('./exam');
 const Student = require('./student');
 const Account = require('./account');
+const classDetails = require('./classdetail');
+const Major = require('./major');
 const dayjs = require('dayjs');
-
+const bcrypt = require('bcryptjs');
+const { throwError } = require('../util/helper');
+const Lecture = require('./lecture');
 const Class = sequelize.define(
 	'class',
 	{
 		id: {
-			type: DataTypes.STRING(10),
+			type: DataTypes.STRING,
+			// type: DataTypes.STRING(10),
 			allowNull: false,
 			unique: true,
+			// autoIncrement: true,
 			primaryKey: true,
 		},
 		totalStudent: {
@@ -24,16 +30,13 @@ const Class = sequelize.define(
 		},
 		password: {
 			type: DataTypes.STRING,
-			allowNull: false,
+			allowNull: true,
 		},
 		year: {
 			type: DataTypes.DATEONLY,
 			allowNull: false,
 			get: function () {
 				return dayjs(this.getDataValue('year')).format('YYYY');
-			},
-			set: function (value) {
-				return dayjs().year(+value.split('/')[2]);
 			},
 		},
 		semester: {
@@ -56,11 +59,22 @@ Class.prototype.createClassExam = async function (examData) {
 };
 
 Class.prototype.createClassStudent = async function (studentData) {
-	const account = await Account.create({ password: '', type: 'SV' });
-	const student = await account.setStudent(await Student.create(studentData));
-	this.totalStudent += 1;
+	const { id } = studentData;
+	const account = await Account.create({
+		type: 'SV',
+		// password: await bcrypt.hash(studentData.password),
+		password: bcrypt.hash(studentData.password, 10),
+	});
+	const [student, created] = await Student.findOrCreate({
+		where: { id },
+		defaults: studentData,
+	});
+	if (created) {
+		await student.setAccount(account);
+	}
+	const major = await Major.findByPk(studentData.majorId);
+	await student.setMajor(major);
 	await this.addStudent(student);
-	await this.save();
 	return student;
 };
 
@@ -71,5 +85,28 @@ Class.prototype.deleteClassStudent = async function (studentId) {
 	await this.save();
 	return student;
 };
+
+Class.prototype.destroyClass = async function () {
+	await classDetails.destroy({
+		where: { classId: this.id },
+	});
+	await this.destroy();
+};
+
+Class.prototype.test = async function () {
+	console.log(this.lectureId);
+};
+
+Class.beforeValidate(async function (classInstance) {
+	const { lectureId, year, semester } = classInstance;
+	const number = await Class.count({
+		where: { [Op.and]: [{ lectureId }, { year }, { semester }] },
+	});
+	classInstance.id = `${lectureId}${year.slice(-2)}${semester}-${number + 1}`;
+	classInstance.name = `${lectureId} - Nhóm ${(number + 1 + '').padStart(
+		2,
+		'0'
+	)} - ${year}HK${semester}`;
+});
 
 module.exports = Class;

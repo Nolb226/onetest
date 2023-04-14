@@ -7,14 +7,14 @@ const Account = sequelize.define('account', {
 		primaryKey: true,
 		autoIncrement: true,
 	},
-	password: { type: DataTypes.STRING(20), allowNull: false },
+	password: { type: DataTypes.STRING, allowNull: false },
 	type: {
 		type: DataTypes.STRING(10),
 		allowNull: false,
 	},
 	isActive: {
 		type: DataTypes.BOOLEAN,
-		defaultValue: false,
+		defaultValue: true,
 	},
 });
 
