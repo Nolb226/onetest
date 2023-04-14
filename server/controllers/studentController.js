@@ -32,3 +32,6 @@ module.exports.getStudent = async (req, res) => {
 		errorResponse(res, error, [{}]);
 	}
 };
+
+
+

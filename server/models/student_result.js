@@ -24,8 +24,8 @@ const Student_Result = sequelize.define('studentresult', {
 		},
 	},
 	grade: {
-		type: DataTypes.INTEGER,
-		allowNull: false,
+		type: DataTypes.FLOAT,
+		allowNull: true,
 	},
 	// isLock: {
 	// 	type: DataTypes.BOOLEAN,
@@ -34,6 +34,9 @@ const Student_Result = sequelize.define('studentresult', {
 	content: {
 		type: DataTypes.JSON,
 		allowNull: false,
+		get: function () {
+			return JSON.parse(this.getDataValue('content'));
+		},
 	},
 	isDone: {
 		type: DataTypes.BOOLEAN,
