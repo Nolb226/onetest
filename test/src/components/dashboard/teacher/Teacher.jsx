@@ -6,7 +6,7 @@ import Exam from "./exam/Exam.jsx";
 import Statistics from "./statistic/Statistics.jsx";
 import React from "react";
 import { useParams } from "react-router-dom";
-import Class from "../Class/Class";
+import Class from "./Class/Class";
 
 function Teacher() {
    const { type } = useParams();

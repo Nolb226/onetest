@@ -1,0 +1,152 @@
+:root {
+   --btn-list-color : #2B99FF;
+}
+
+.list_btn {
+   border-radius: 2px;
+   border: 1px solid;
+}
+
+.list_btn:hover {
+   opacity: 0.9;
+}
+
+.p-6-15 {
+   padding: 6px 15px;
+}
+
+.p-0 {
+   padding: 0;
+}
+
+.m-10-10 {
+   margin: 10px;
+}
+
+.m-0 {
+   margin: 0;
+}
+
+#dashboard-container .list_btn_class {
+   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+   border-color: #0080f6;
+   background-color: var(--btn-list-color);
+   color: var(--white-color);
+   width: auto ;
+}
+
+#dashboard-container .list_btn_unlock {
+   background: #dedede;
+   border-color: #d5d5d5;
+   color: #999999;
+   padding: 3px 12px;
+   width: min-content;
+}
+
+#dashboard-container .list_btn_lock {
+   background: #1f2ec9;
+   border-color: #d5d5d5;
+   color: var(--white-color);
+   padding: 3px 12px;
+   width: min-content;
+}
+
+.list_btn_edit {
+   background: #d3ae56;
+   border-color: #c8a248;
+   color: var(--white-color);
+   padding: 3px 12px;
+}
+
+.noClass {
+   color: var(--sub-text-color);
+   font-size: 45px;
+}
+
+.class-editpass-model {
+   width: 420px;
+   background-color: var(--white-color);
+   margin: 0;
+}
+
+.class-editpass-header {
+   padding: 8px 15px;
+   color: #555555;
+   font-size: 13.5px;
+   line-height: 20px;
+   border-radius: 4px 4px 0 0;
+   margin: 0;
+}
+
+.class-editpass-body {
+   /* margin-left: -12px; */
+   margin-top: 2px;
+   padding: 10px 15px;
+   color: #333333;
+   font-size: 15px;
+   line-height: 18px;
+   border-radius: 0 0 4px 4px;
+}
+
+.class-editpass-input {
+   color: #555555;
+   font-size: 13px;
+   line-height: 16px;
+   height: 30px;
+   background: #f0f0f0;
+   border: 1px solid #dedede;
+   border-radius: 4px;
+}
+
+#dashboard-container .class-editpass-btn {
+   margin: 10px 0;
+   font-size: 18px;
+   line-height: 38px;
+   font-style: normal;
+   font-weight: bold;
+   width: 150px;
+   background: #161f80;
+   border-radius: 5px;
+   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+   border: none;
+   color: var(--white-color);
+   height: auto ;
+}
+
+.class-create-inp {
+   margin: 10px 10px;
+}
+
+.class-create-label {
+   font-family: "Inter";
+   color: #000000;
+   font-family: "Inter";
+   font-weight: 500;
+}
+
+.class-create-uploadfile {
+   margin: 10px 10px 0px;
+   text-align: center;
+   cursor: pointer;
+   background: #f0f0f0;
+   padding: 15px 0;
+   border-radius: 4px;
+}
+
+.class-input-file {
+   width: 0.1px;
+   height: 0.1px;
+   opacity: 0;
+   overflow: hidden;
+   position: absolute;
+   z-index: -1;
+}
+
+.upload-icon {
+   height: 50px;
+   width: 50px;
+}
+
+.table__content--list {
+   height: 400px
+}
