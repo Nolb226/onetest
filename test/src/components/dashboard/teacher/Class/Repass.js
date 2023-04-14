@@ -5,11 +5,11 @@ function Repass(prop) {
   const [getPassword, setPassword] = useState("");
 
   useEffect(() => {
-    fetch(`https://bestoftest.herokuapp.com/classes/${prop.isClass.id}/edit`, {
+    fetch(`http://192.168.100.37:8080/classes/${prop.isClass.id}/edit`, {
       method: "GET",
       headers: {
         Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxMDQ3ODg3LCJleHAiOjE2ODEzMDcwODd9.Y9dXoVfvWEFEPoVQHn9wKJAjH1Hfz6AiOCpSjGqtuxU",
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxNDQwMjYzLCJleHAiOjE2ODE2OTk0NjN9.hr6m-BXChJbTkSjPv5xEW6kDChuc5O1r927gV3YybWU",
       },
     })
       .then((res) => res.json())
@@ -23,7 +23,7 @@ function Repass(prop) {
     // console.log(Class.isLock);
     // console.log(Class.id);
     fetch(
-      `https://bestoftest.herokuapp.com/classes/${prop.isClass.id}?field=password`,
+      `http://192.168.100.37:8080/classes/${prop.isClass.id}?field=password`,
       {
         method: "PATCH",
         body: JSON.stringify({
@@ -31,7 +31,7 @@ function Repass(prop) {
         }),
         headers: {
           Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxMDQ3ODg3LCJleHAiOjE2ODEzMDcwODd9.Y9dXoVfvWEFEPoVQHn9wKJAjH1Hfz6AiOCpSjGqtuxU",
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxNDQwMjYzLCJleHAiOjE2ODE2OTk0NjN9.hr6m-BXChJbTkSjPv5xEW6kDChuc5O1r927gV3YybWU",
           "Content-type": "application/json",
         },
       }

@@ -2,7 +2,7 @@
 
 function ClassItem(Class) {
 
-    const isLock = Class.Class.isLock ? "list_btn list_btn_lock":"list_btn list_btn_unlock"
+    // const isLock = Class.Class.isLock ? "list_btn list_btn_lock":"list_btn list_btn_unlock"
     // console.log(isLock);
     // console.log(Class);
 
@@ -25,7 +25,7 @@ function ClassItem(Class) {
                                     </li>
     
                                     <li class="col l-6-2">
-                                        <button class = {isLock}  onClick={() => Class.handleLock(Class.Class)}>
+                                        <button className = {`${Class.Class.isLock ? "list_btn list_btn_lock":"list_btn list_btn_unlock"}`}  onClick={() => Class.handleLock(Class.Class)}>
                                             <i class="fa-solid fa-lock"></i>
                                         </button>
                                     </li>

@@ -3,7 +3,7 @@ function Student(prop) {
     function check() {
         if (prop.student.studentresults.length < prop.numberOfTest) {
             for (let index = 0; index < (prop.numberOfTest - prop.student.studentresults.length); index++) {
-                prop.student.studentresults.push({grade : 'Không có trên data'})
+                prop.student.studentresults.push({grade : ''})
             }
         }
     }
@@ -13,7 +13,7 @@ function Student(prop) {
     return (
     <ul class="row no-gutters flex-center table__content--item">
       <li className="col l-1 m-1">
-        <h3>{prop.index + 1}</h3>
+        <h3>{(prop.index + 1)+(prop.page-1)*10 }</h3>
       </li>
 
       <li class="col l-2 m-2">

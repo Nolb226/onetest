@@ -1,17 +1,20 @@
 import { useState,useEffect } from "react";
 import Student from "./Student";
+import Paginator from "./Paginator";
 
 function Classlist(prop) {
   const [studentList, setStudentList] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
 
-  useEffect(() => {
+  const handleClassList = () => {
     fetch(
-      `https://bestoftest.herokuapp.com/classes/${prop.isClass.id}/students`,
+      `http://192.168.100.37:8080/classes/${prop.isClass.id}/students?page=${page}`,
       {
         method: "GET",
         headers: {
           Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxMDQ3ODg3LCJleHAiOjE2ODEzMDcwODd9.Y9dXoVfvWEFEPoVQHn9wKJAjH1Hfz6AiOCpSjGqtuxU",
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxNDQwMjYzLCJleHAiOjE2ODE2OTk0NjN9.hr6m-BXChJbTkSjPv5xEW6kDChuc5O1r927gV3YybWU",
         },
       }
     )
@@ -19,8 +22,16 @@ function Classlist(prop) {
       .then((studentList) => {
         console.log(studentList.data);
         setStudentList(studentList.data.data);
+        setTotalPage(Math.ceil(studentList.data.total / 10))
       });
-  }, []);
+  }
+
+  useEffect(() => {handleClassList()}, [page]);
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    console.log(newPage);
+  };
 
   const array = ["test1", "test2"];
 
@@ -40,7 +51,7 @@ function Classlist(prop) {
         />
       </div>
 
-      <div class="table-zone grid">
+      <div class="table-zone grid position-relative">
         <h1 class="table__heading">Kỹ Thuật Lập Trình 04 </h1>
 
         <div class="grid table__content">
@@ -80,11 +91,13 @@ function Classlist(prop) {
                     student={student}
                     index = {index}
                     numberOfTest = {2}
+                    page = {page}
                   />
                 );
               })
             )}
           </div>
+          <Paginator handlePageChange={handlePageChange} page={page} totalPage = {totalPage} />
         </div>
       </div>
     </>
