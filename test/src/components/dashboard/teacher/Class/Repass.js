@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../../../../config/config.js";
 
-
 function Repass(prop) {
    const [info, setInfo] = useState({});
 
@@ -21,37 +20,37 @@ function Repass(prop) {
    }, []);
 
    return (
-      <form class="flex-center content">
-         <div class="row class-editpass-model class-editpass-header">
-            <div class="l-6 m-6">Mã Lớp: {info.id}</div>
-            <div class="l-6 m-6">Tên Lớp: {info.name}</div>
+      <form className="flex-center content">
+         <div className="row class-editpass-model class-editpass-header">
+            <div className="l-6 m-6">Mã Lớp: {info.id}</div>
+            <div className="l-6 m-6">Tên Lớp: {info.name}</div>
          </div>
 
-         <div class="wide class-editpass-body class-editpass-model">
-            <div class="row p-6-15 flex-center">
-               <label for="" class="l-6 m-6">
+         <div className="wide class-editpass-body class-editpass-model">
+            <div className="row p-6-15 flex-center">
+               <label for="" className="l-6 m-6">
                   Mật khẩu hiện tại:
                </label>
                <input
-                  class="l-6 m-6 class-editpass-input"
+                  className="l-6 m-6 class-editpass-input"
                   type="text"
                   readOnly
                   value={info.password}
                />
             </div>
 
-            <div class="row p-6-15 flex-center">
-               <label for="newPass" class="l-6 m-6">
+            <div className="row p-6-15 flex-center">
+               <label for="newPass" className="l-6 m-6">
                   Mật khẩu mới:
                </label>
                <input
-                  class="l-6 m-6 class-editpass-input"
+                  className="l-6 m-6 class-editpass-input"
                   type="text"
                   id="newPass"
                />
             </div>
-            <div class="row flex-center">
-               <button class="list_btn class-editpass-btn">LƯU</button>
+            <div className="row flex-center">
+               <button className="list_btn class-editpass-btn">LƯU</button>
             </div>
          </div>
       </form>

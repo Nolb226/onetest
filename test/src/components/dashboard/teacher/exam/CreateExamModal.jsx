@@ -83,10 +83,11 @@ export default function CreateExamModal({ type, setType }) {
                   style={infoBox}
                >
                   <div
-                     className="flex-center"
+                     className="flex-center from-group"
                      style={{ width: "89%", margin: "10px 0" }}
                   >
                      <label
+                        className="form-label"
                         htmlFor="name"
                         style={{
                            color: "#222",
@@ -98,6 +99,8 @@ export default function CreateExamModal({ type, setType }) {
                         Tên bài thi
                      </label>
                      <input
+                        rules="require"
+                        className="form-control"
                         type="text"
                         name="name"
                         id="name"
@@ -703,10 +706,12 @@ export default function CreateExamModal({ type, setType }) {
                      className="flex-center"
                      style={{ width: "100%", margin: "5px 0" }}
                   >
-                     <label htmlFor="name" style={label}>
+                     <label htmlFor="name" style={label} className="form-label">
                         Tên bài thi
                      </label>
                      <input
+                        rules="require"
+                        className="form-control"
                         type="text"
                         name="name"
                         id="name"
