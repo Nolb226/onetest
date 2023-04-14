@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import api from "../../../../config/config.js";
+
 
 function Repass(prop) {
    const [info, setInfo] = useState({});
 
    useEffect(() => {
-      fetch(`https://bestoftest.herokuapp.com/classes/${prop.isClass.id}`, {
+      fetch(`${api}/${prop.isClass.id}`, {
          method: "GET",
          headers: {
             Authorization:

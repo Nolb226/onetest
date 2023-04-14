@@ -4,7 +4,6 @@ import Repass from "./Repass";
 import ClassList from "./ClassList";
 import CreateClass from "./CreateClass";
 import "./styleClass.css";
-// import "./gridClass.css";
 
 function Class() {
    const [classesPage, setClassesPage] = useState(true);

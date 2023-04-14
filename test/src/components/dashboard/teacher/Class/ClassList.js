@@ -1,12 +1,14 @@
 import { useState,useEffect } from "react";
 import Student from "./Student";
+import api from "../../../../config/config.js";
+
 
 function Classlist(prop) {
   const [studentList, setStudentList] = useState([]);
 
   useEffect(() => {
     fetch(
-      `https://bestoftest.herokuapp.com/classes/${prop.isClass.id}/students`,
+      `${api}/classes/${prop.isClass.id}/students`,
       {
         method: "GET",
         headers: {

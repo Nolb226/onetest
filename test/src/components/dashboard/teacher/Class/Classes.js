@@ -1,11 +1,13 @@
 import ClassItem from "./ClassItem";
 import { useState, useEffect } from "react";
+import api from "../../../../config/config.js";
+
 
 function Classes(prop) {
    const [classes, setClasses] = useState([]);
 
    useEffect(() => {
-      fetch("https://bestoftest.herokuapp.com/classes", {
+      fetch(`${api}/classes`, {
          method: "GET",
          headers: {
             Authorization:
@@ -34,7 +36,7 @@ function Classes(prop) {
    const handleLock = (Class) => {
       // console.log(Class.isLock);
       // console.log(Class.id);
-      fetch(`https://bestoftest.herokuapp.com/classes/${Class.id}`, {
+      fetch(`${api}/classes/${Class.id}`, {
          method: "PATCH",
          body: JSON.stringify({
             isLock: !Class.isLock,
