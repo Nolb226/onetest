@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import api from "../../../../config/config.js";
 import "./styleExam.css";
 
 export default function CreateExamModal({ type, setType }) {
@@ -592,7 +594,7 @@ export default function CreateExamModal({ type, setType }) {
                   boxShadow: "rgba(0, 0, 0, 0.25) 0px 1px 4px",
                }}
             >
-               tạo đề   
+               tạo đề
             </button>
          </>
       );
@@ -653,6 +655,24 @@ export default function CreateExamModal({ type, setType }) {
          color: "#555",
          marginLeft: "15px",
       };
+
+      const [examData, setExamData] = useState([]);
+
+      useEffect(() => {
+         const getExamData = async () => {
+            const userreq = await fetch(`${api}/classes/exams`, {
+               headers: {
+                  Authorization:
+                     "Bearer " +
+                     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxNDQ0MjI1LCJleHAiOjE2ODE3MDM0MjV9.nd02aUsdaCVSvrIOHXG7rmJaxAW4K5ugCLy8vnhsJ4U",
+               },
+            });
+            const data = await userreq.json();
+            setExamData(data.data);
+         };
+         getExamData();
+      }, []);
+
       return (
          <div className="flex-center" style={selectFromBankLayout}>
             <div
