@@ -6,9 +6,10 @@ function Classes(prop) {
   const [classes, setClasses] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
+  const [search, setSearch] = useState(true)
 
-  const handleClasses = () => {
-    fetch(`http://192.168.100.37:8080/classes?page=${page}`, {
+  const handleClasses = (value) => {
+    fetch(`http://192.168.100.37:8080/classes?search=${value}&page=${page}`, {
       method: "GET",
       headers: {
         Authorization:
@@ -25,8 +26,9 @@ function Classes(prop) {
   };
 
   useEffect(() => {
-    handleClasses();
-  }, [page]);
+    const search_input = document.querySelector(".search-input")
+    handleClasses(search_input.value);
+  }, [page, search]);
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
@@ -64,33 +66,13 @@ function Classes(prop) {
     update(Class);
   };
 
-  const handleSearch = () => {
-    const search_input = document.querySelector(".search-input")
-
-    fetch(`http://192.168.100.37:8080/classes?search=${search_input.value}&`, {
-      method: "GET",
-      headers: {
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxNDQwMjYzLCJleHAiOjE2ODE2OTk0NjN9.hr6m-BXChJbTkSjPv5xEW6kDChuc5O1r927gV3YybWU",
-      },
-    })
-      .then((res) => res.json())
-      .then((classes) => {
-        console.log(classes);
-        setClasses(classes.data.data);
-        setTotalPage(Math.ceil(classes.data.total / 10));
-        // console.log(classes.data.total);
-      });
-    
-  }
-
   return (
     <>
       <div class="flex-center search-bar">
-        <div>
-          <input type="text" class="search-input" placeholder="Nhập mã lớp" />
-          <button className="search-class-btn"><i class="fa-solid fa-magnifying-glass" onClick={() => {handleSearch()}}></i></button>
-        </div>
+        <form>
+          <input type="text" class="search-input" placeholder="Nhập mã lớp"  />
+          <button className="search-class-btn"  onClick={(e) => {e.preventDefault(); page === 1 ? setSearch(!search):setPage(1)}}><i class="fa-solid fa-magnifying-glass"></i></button>
+        </form>
         <button
           class="flex-center join-button"
           onClick={prop.handleCreateClass}
@@ -149,7 +131,7 @@ function Classes(prop) {
             )}
           </div>
         </div>
-        <Paginator
+         <Paginator
           handlePageChange={handlePageChange}
           page={page}
           totalPage={totalPage}

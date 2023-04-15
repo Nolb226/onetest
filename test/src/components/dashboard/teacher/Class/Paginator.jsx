@@ -15,11 +15,11 @@ function Paginator({ handlePageChange, page, totalPage }) {
         </button>
       )}
 
-      {numbers.map((num) => (
+      {(totalPage != 1) ? numbers.map((num) => (
         <button key={num+1} className={`page-num ${page===num+1 ? "current":""}`} onClick={() => handlePageChange(num+1)} > 
           {num + 1}
         </button>
-      ))}
+      )): ''}
       {(page < totalPage) && (
         <button
           className="page-btn"

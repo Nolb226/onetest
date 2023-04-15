@@ -1,8 +1,12 @@
-import { useEffect } from "react";
-
+import { useEffect,useState } from "react";
+import excel from "../../../../image/excel.svg"
 function CreateClass({ handleCreateClass }) {
-
+    const [file, setFile] = useState ({img:'../../image/upload.png',name:"Danh sách sinh viên"})
     
+    const handleFile = (value) => {
+        console.log(value.split('/\\/'));
+        setFile({img:excel,name:value.split('\\')[2]})
+    } 
 
   const handleCreate = (e) => {
     e.preventDefault()
@@ -99,10 +103,11 @@ function CreateClass({ handleCreateClass }) {
                 id="inputfile"
                 hidden
                 class="class-input-file"
+                onChange={(e) => {handleFile(e.target.value)}}
               />
-              <img src="../../image/upload.png" alt="" />
+              <img style={{width: "25px"}} src={file.img} alt="" />
               {/* <i class="fa-solid fa-arrow-up-from-bracket" style="font-size: 25px;"></i> */}
-              <p>Danh sách sinh viên</p>
+              <p>{file.name}</p>
             </div>
           </label>
 
