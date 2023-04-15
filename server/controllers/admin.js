@@ -40,7 +40,16 @@ exports.getAccount = async (req, res, _) => {
 		let account;
 		if (type === 'SV') {
 			account = await sequelize.query(
-				`SELECT 	students.id as id,students.fullname,students.dob,departments.name as department_name,departments.id as department_id,accounts.createdAt,majors.name as major_name,majors.id as major_id,accounts.type,accounts.isActive 
+				`SELECT 	students.id as id,
+							students.fullname,students.dob,
+							departments.name as department_name,
+							departments.id as department_id,
+							accounts.createdAt,
+							majors.name as major_name,
+							majors.id as major_id,
+							accounts.type,
+							accounts.isActive 
+							
 				 FROM 		departments JOIN majors 
 				 ON 		departments.id 		= majors.departmentId 
 				 JOIN		students 
@@ -54,7 +63,17 @@ exports.getAccount = async (req, res, _) => {
 		if (type === 'GV') {
 			account = await sequelize.query(
 				`
-				SELECT 		teachers.id as id,teachers.fullname,teachers.dob,departments.name as department_name,departments.id as department_id,accounts.createdAt,majors.name as major_name,majors.id as major_id,accounts.type,accounts.isActive  
+				SELECT 		teachers.id as id,
+							teachers.fullname,
+							teachers.dob,
+							departments.name as department_name,
+							departments.id as department_id,
+							accounts.createdAt,
+							majors.name as major_name,
+							majors.id as major_id,
+							accounts.type,
+							accounts.isActive
+
 				FROM 		departments JOIN majors 
 				ON 			departments.id 			= majors.departmentId 
 				JOIN 		teachers 

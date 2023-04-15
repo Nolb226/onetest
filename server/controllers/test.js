@@ -3,34 +3,96 @@ const Functions = require('../models/function');
 const Permission_Group = require('../models/permission_group');
 const Student = require('../models/student');
 const Teacher = require('../models/teacher');
+const sequelize = require('../util/database');
+const { errorResponse, successResponse } = require('../util/helper');
 
 module.exports.test = async (req, res) => {
-	const { account } = req;
+	try {
+		const result = await sequelize.query(
+			`
+		SELECT * FROM (
+			(
+				SELECT  questions.id,
+						description,
+						correctAns,
+						answerA,
+						answerB,
+						answerC,
+						answerD,
+						difficulty
 
-	const user = await Account.findByPk(1, {
-		include: [
-			{
-				model: Permission_Group,
-				as: 'permissions',
-				attributes: ['name'],
-				through: {
-					attributes: [],
-				},
-				include: [
-					{
-						model: Functions,
-						attributes: ['id', 'method', 'path'],
-						through: {
-							attributes: [],
-						},
-					},
-				],
-			},
-		],
-		attributes: ['id', 'password', 'type', 'isActive'],
+				FROM	exams
+				JOIN	classes
+				ON		exams.classId 			= classes.id
+				JOIN	lectures
+				ON		lectures.id 			= classes.lectureId
+				JOIN	chapters
+				ON		lectures.id 			= chapters.lectureId
+				JOIN	questions
+				ON		chapters.id 			= questions.chapterId
+				WHERE	chapters.id 			= "WEBC1"
+				AND		questions.difficulty 	= "Dễ"
+				LIMIT	10 
+			)
+				UNION ALL 
+			(
+				SELECT  questions.id,
+						description,
+						correctAns,
+						answerA,
+						answerB,
+						answerC,
+						answerD,
+						difficulty
 
-		required: false,
-	});
+				FROM	exams
+				JOIN	classes
+				ON		exams.classId 			= classes.id
+				JOIN	lectures
+				ON		lectures.id 			= classes.lectureId
+				JOIN	chapters
+				ON		lectures.id 			= chapters.lectureId
+				JOIN	questions
+				ON		chapters.id 			= questions.chapterId
+				WHERE	chapters.id 			= "WEBC1"
+				AND		questions.difficulty 	= "Khó"
+				LIMIT	10 
+			)
+		) as q 
+		ORDER BY RAND()
+		
+		`,
+			{ type: sequelize.QueryTypes.SELECT }
+		);
 
-	res.status(200).json(user);
+		// const test = await sequelize.query(
+		// 	`
+		// SELECT * FROM(
+		// 	(
+		// 		SELECT 	fullname,student,
+		// 		FROM	classes
+		// 		JOIN	exams
+		// 		ON		classes.id = exams.classId
+		// 		JOIN	classdetail
+		// 		ON		classes.id = classdetail.classId
+		// 		JOIN  	students
+		// 		ON 		classdetail.studentId = students.id
+		// 	)
+		// 	UNION
+		// 	(
+		// 		SELECT	*
+		// 	)
+
+		// ) as q
+
+		// `,
+		// 	{
+		// 		type: sequelize.QueryTypes.SELECT,
+		// 	}
+		// );
+
+		successResponse(res, 200, result);
+	} catch (error) {
+		errorResponse(res, error);
+	}
 };
