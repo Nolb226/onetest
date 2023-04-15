@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import api from "../../../../config/config.js";
 import "./styleExam.css";
 
 export default function CreateExamModal({ type, setType }) {
@@ -81,10 +83,11 @@ export default function CreateExamModal({ type, setType }) {
                   style={infoBox}
                >
                   <div
-                     className="flex-center"
+                     className="flex-center from-group"
                      style={{ width: "89%", margin: "10px 0" }}
                   >
                      <label
+                        className="form-label"
                         htmlFor="name"
                         style={{
                            color: "#222",
@@ -96,6 +99,8 @@ export default function CreateExamModal({ type, setType }) {
                         Tên bài thi
                      </label>
                      <input
+                        rules="require"
+                        className="form-control"
                         type="text"
                         name="name"
                         id="name"
@@ -592,7 +597,7 @@ export default function CreateExamModal({ type, setType }) {
                   boxShadow: "rgba(0, 0, 0, 0.25) 0px 1px 4px",
                }}
             >
-               tạo đề   
+               tạo đề
             </button>
          </>
       );
@@ -653,6 +658,24 @@ export default function CreateExamModal({ type, setType }) {
          color: "#555",
          marginLeft: "15px",
       };
+
+      const [examData, setExamData] = useState([]);
+
+      useEffect(() => {
+         const getExamData = async () => {
+            const userreq = await fetch(`${api}/classes/exams`, {
+               headers: {
+                  Authorization:
+                     "Bearer " +
+                     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxNDQ0MjI1LCJleHAiOjE2ODE3MDM0MjV9.nd02aUsdaCVSvrIOHXG7rmJaxAW4K5ugCLy8vnhsJ4U",
+               },
+            });
+            const data = await userreq.json();
+            setExamData(data.data);
+         };
+         getExamData();
+      }, []);
+
       return (
          <div className="flex-center" style={selectFromBankLayout}>
             <div
@@ -683,10 +706,12 @@ export default function CreateExamModal({ type, setType }) {
                      className="flex-center"
                      style={{ width: "100%", margin: "5px 0" }}
                   >
-                     <label htmlFor="name" style={label}>
+                     <label htmlFor="name" style={label} className="form-label">
                         Tên bài thi
                      </label>
                      <input
+                        rules="require"
+                        className="form-control"
                         type="text"
                         name="name"
                         id="name"

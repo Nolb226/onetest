@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import validator from "./validator.js";
 import StudentSelect from "./studentSelect";
 import Department from "./department";
+
 // import Majors from "./major";
 
 function StudentSignUp() {
@@ -274,20 +275,20 @@ function SignUpModal({ toggle1, toggle2 }) {
                   id="modal__body"
                   className="modal__body flex-center flex-direction-col position-relative"
                >
-                  {type == "true" && (
+                  {type === "true" && (
                      <TypeAccount setType={{ handleSetType }} />
                   )}
-                  {type == "student" && <StudentSignUp />}
+                  {type === "student" && <StudentSignUp />}
 
-                  {type == "teacher" && <TeacherSignUp />}
+                  {type === "teacher" && <TeacherSignUp />}
                </div>
                <div className="modal__footer flex-center flex-direction-col">
                   <div className="flex-center form-group accept">
                      <input id="accept-input" name="accept" type="radio" />
                      <span>
                         Đồng ý với
-                        <a href="#">&nbsp;điều khoản sử dụng</a>
-                        &nbsp;và<a href="#">&nbsp;chính sách bảo mật</a>
+                        <a href="/">&nbsp;điều khoản sử dụng</a>
+                        &nbsp;và<a href="/">&nbsp;chính sách bảo mật</a>
                         &nbsp;của Best Of Test
                      </span>
                      {document

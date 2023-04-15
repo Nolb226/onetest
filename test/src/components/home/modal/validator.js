@@ -1,3 +1,5 @@
+import api from "../../../config/config.js";
+
 function validator(formSelector) {
    let formElement = document.querySelector(formSelector);
    let formRules = {};
@@ -111,7 +113,7 @@ function validator(formSelector) {
                formData.append(input.name, input.value);
             });
          }
-         fetch("https://bestoftest.herokuapp.com/auth/signup", {
+         fetch(`${api}/auth/signup`, {
             body: formData,
             method: "post",
          });
@@ -121,4 +123,3 @@ function validator(formSelector) {
 
 export default validator;
 
-class Validate {}

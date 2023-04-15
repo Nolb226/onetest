@@ -1,4 +1,5 @@
 import "./modal.css";
+import api from "../../../config/config.js";
 
 function SignInModal({ toggle1, toggle2 }) {
    async function checkSignIn(event) {
@@ -13,13 +14,10 @@ function SignInModal({ toggle1, toggle2 }) {
          formData.append(input.name, input.value);
       });
       try {
-         const resonse = await fetch(
-            "https://bestoftest.herokuapp.com/auth/login",
-            {
-               body: formData,
-               method: "post",
-            }
-         );
+         const resonse = await fetch(`${api}/auth/login`, {
+            body: formData,
+            method: "post",
+         });
 
          if (!resonse.ok) return alert("Loi roi ban oi!");
          const data = await resonse.json();
