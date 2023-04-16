@@ -20,6 +20,11 @@ function SideMenu() {
          path: "/dashboard/statistics",
          icon: "../../image/dashboard-icon.png",
       },
+      {
+         idPemission: 3,
+         path: "/dashboard/admin",
+         icon: "../../image/dashboard-icon.png",
+      },
 
       // {
       //    idPemission: 6,

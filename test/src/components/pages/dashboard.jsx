@@ -1,6 +1,7 @@
 import SideMenu from "../dashboard/SideMenu";
 import Student from "../dashboard/student/component-student/Student";
 import Teacher from "../dashboard/teacher/Teacher";
+import Admin from "../dashboard/admin/Admin.jsx";
 import "./dashboard.css";
 
 function Dashboard() {
@@ -64,6 +65,7 @@ function Dashboard() {
                <div className="content">
                   <Teacher />
                   <Student />
+                  <Admin />
                </div>
             </div>
          </div>
