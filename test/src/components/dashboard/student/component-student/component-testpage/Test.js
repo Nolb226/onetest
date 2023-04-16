@@ -4,6 +4,8 @@ import ConfirmModel from "./ConfirmModel";
 import AnswerSelectItem from "./AnswerSelectItem";
 import QuestionItem from "./QuestionItem";
 import Info from "../Info";
+import api from "../../../../../config/config";
+
 
 function Test() {
    const [questions, setQuestions] = useState([]); //Chứa mảng câu hỏi
@@ -19,7 +21,7 @@ function Test() {
 
    useEffect(() => {
       fetch(
-         "https://bestoftest.herokuapp.com/questions?chapters=841109-1&limit=30",
+         `${api}/questions?chapters=841109-1&limit=30`,
          {
             headers: {
                Authorization:

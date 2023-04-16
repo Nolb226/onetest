@@ -14,10 +14,11 @@ function ViewClass() {
   let isEmpty = useRef(true);
 
   useEffect(() => {
+    const currentUser = localStorage.getItem('currentUser');
     fetch(`${api}/classes`, {
       headers: {
         Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjEsImlhdCI6MTY4MTQ1MzMxNCwiZXhwIjoxNjgxNzEyNTE0fQ.3briev_KWzzaM40jPrPfBGrg06OvCjU0vpBoismBVW8",
+          "Bearer " + currentUser,
       },
     })
       .then((response) => response.json())

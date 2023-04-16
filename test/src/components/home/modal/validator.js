@@ -16,7 +16,7 @@ function validator(formSelector) {
    var validatorRules = {
       require: (value) => {
          return value ? undefined : "Vui lòng nhập thông tin";
-      },
+      }, 
 
       dateOfBirth: (value) => {
          return value ? undefined : "Vui lòng chọn ngày tháng năm sinh";

@@ -39,7 +39,7 @@ function Dashboard() {
                   <header className="header flex-center position-relative">
                      <div className="header__logo">
                         <img
-                           src="/image/logo-no-background.png"  
+                           src="/image/BestOfTest.png"  
                            alt="Logo Best of Test"
                         />
                      </div>
