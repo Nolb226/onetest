@@ -97,7 +97,7 @@ exports.getClasses = async (req, res, _) => {
 				{ model: Teacher, attributes: ['id', 'fullname'] },
 				{ model: Lecture, attributes: ['id', 'name'] },
 			],
-			attributes: ['id', 'name', 'isLock'],
+			attributes: ['id', 'name', 'isLock', 'year', 'semester', 'totalStudent'],
 			offset: pageSize * (page - 1),
 			limit: pageSize,
 		});
@@ -405,6 +405,29 @@ exports.getClassExamStudentResults = async (req, res, _) => {
 	}
 };
 
+exports.getStudentResultInClass = async (req, res, _) => {
+	try {
+		const { classId, examId } = req.params;
+		const classroom = await Class.findByPk(classId);
+		const exams = await classroom.getExams(examId);
+		const result = await exams[0].getStudents({
+			where: {
+				id: req.user.id,
+			},
+			include: [
+				{
+					model: Student_Result,
+				},
+			],
+		});
+		const content = result[0].studentresults[0].content;
+		successResponse(res, 200, content);
+	} catch (error) {
+		console.log(error);
+		errorResponse(res, error);
+	}
+};
+
 exports.postClass = async (req, res, _) => {
 	let file = req.file;
 	try {
@@ -488,6 +511,7 @@ exports.postClassExam = async (req, res) => {
 			duration,
 			totalQuestions,
 			ratioQuestions,
+			quetions,
 		} = req.body;
 		const exam = await classroom.createExam({
 			type,

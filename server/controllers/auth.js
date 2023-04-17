@@ -76,11 +76,12 @@ exports.login = async (req, res, next) => {
 		// if (!account.isActive) {
 		// 	throwError('Account is not active', 401);
 		// }
+		console.log(account.id);
 
 		const token = jwt.sign({ id: account.id }, 'group5', {
 			expiresIn: '3d',
 		});
-		res.status(200).json(token);
+		res.status(200).json({ token, type: account.type });
 	} catch (error) {
 		errorResponse(res, error);
 	}

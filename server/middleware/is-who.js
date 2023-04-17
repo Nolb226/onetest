@@ -11,6 +11,7 @@ module.exports.isWho = async (req, res, next) => {
 				attributes: ['id', 'fullname'],
 				include: {
 					model: Account,
+					where: { id: account.id },
 					attributes: ['isActive', 'type'],
 				},
 			});
@@ -22,6 +23,8 @@ module.exports.isWho = async (req, res, next) => {
 
 				include: {
 					model: Account,
+					where: { id: account.id },
+
 					attributes: ['isActive', 'type'],
 				},
 			});
