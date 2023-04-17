@@ -1,4 +1,4 @@
-import { Outlet, Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 
 import "./App.css";
 import "./css/reset.css";
@@ -13,6 +13,7 @@ import Teacher from "./components/dashboard/teacher/Teacher";
 import ViewClass from "./components/dashboard/student/component-student/component-joinclasspage/ViewClass";
 import JoinClass from "./components/dashboard/student/component-student/component-joinclasspage/JoinClass";
 import StudentPage from "./components/dashboard/student/component-student/component-studentpage/StudentPage";
+import Test from "./components/dashboard/student/component-student/component-testpage/Test";
 
 function App() {
    return (
@@ -21,11 +22,13 @@ function App() {
             <Route exact path="/" element={<Home />}></Route>
             <Route path="*" element={<Home />}></Route>
             <Route exact path="/dashboard" element={<Dashboard />}>
-                  <Route path="student" element={<Student/>}>
-                     <Route path="viewclass/:idStudent/:nameStudent" element={<ViewClass/>}/>
-                     <Route path="joinclass/:idStudent/:nameStudent" element={<JoinClass/>}/>
-                     <Route path="studentpage/:idStudent/:nameStudent/:classId" element={<StudentPage/>}/>
-                     
+                  <Route path="student/*" element={<Student/>}>
+                     <Route path="./dashboard/student" element={<Navigate to="/viewclass" replace relative="path"/>}/>
+                     {/* student/classes/ */}
+                     <Route path="viewclass" element={<ViewClass/>}/>
+                        <Route path="studentpage/:classId" element={<StudentPage/>}/>
+                     <Route path="joinclass" element={<JoinClass/>}/>
+                     <Route path="test/:idStudent/:nameStudent/:classId/:examId" element={<Test/>}/>
                      <Route path="*" element={<Student/>}/>
 
                   </Route>

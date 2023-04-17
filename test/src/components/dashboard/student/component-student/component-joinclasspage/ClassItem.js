@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { Link } from "react-router-dom";
 
-function ClassItem({ id, nameClass, semester, total, idStudent, nameStudent }) {
+function ClassItem({ id, nameClass, semester, total}) {
    return (
       <ul className="row no-gutters flex-center table__content--item">
          <li className="col l-5-4">
@@ -22,7 +22,8 @@ function ClassItem({ id, nameClass, semester, total, idStudent, nameStudent }) {
 
          <li className="col l-5-1">
             <Link
-               to={`../studentpage/${idStudent}/${nameStudent}/${id}`}
+               to={`./studentpage/${id}`}
+               relative="path"
             >
                <button className="view-class">Xem lớp</button>
             </Link>

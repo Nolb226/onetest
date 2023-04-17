@@ -40,13 +40,13 @@ function SideMenu({info}) {
    const studentAccount = [
       {
          idPemission: 4,
-         path: `student/viewclass/${info.id}/${info.fullname}`,
+         path: `student/viewclass`,
          icon: "menu-icon fa-solid fa-file-pen",
       },
 
       {
          idPemission: 5,
-         path: `student/joinclass/${info.id}/${info.fullname}`,
+         path: `student/joinclass`,
          icon: "menu-icon fa-solid fa-plus",
       },
    ];

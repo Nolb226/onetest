@@ -89,7 +89,7 @@ function StudentPage() {
                 idExam={item.id}
                 nameExam={item.name}
                 subject={item.name}
-                timeStart={item.timeStart}
+                timeStart={item.duration}
                 totalQuestions={item.totalQuestions}
                 idStudent={idStudent}
                 nameStudent={nameStudent}

@@ -35,7 +35,7 @@ function ExamItem({
       </li>
 
       <li class="col l-5-1">
-        <Link to={`/test/${idStudent}/${nameStudent}/${classId}`}>
+        <Link to={`../test/${idStudent}/${nameStudent}/${classId}/${idExam}`}>
           <button class="inf-btn take-test">Làm bài</button>
         </Link>
       </li>
