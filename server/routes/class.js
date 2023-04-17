@@ -88,6 +88,11 @@ router.get(
 	classController.getClassExamStudentResults
 );
 
+router.get(
+	'/:classId/exams/:examId/details',
+	classController.getStudentResultInClass
+);
+
 //METHOD : POST
 
 router.post(
