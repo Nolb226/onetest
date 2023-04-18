@@ -6,6 +6,7 @@ import CreateClass from "./CreateClass";
 import "./gridClass.css";  
 import "./styleClass.css";
 
+
 function Class() {
    const [classesPage, setClassesPage] = useState(true);
    const [repassPage, setRepassPage] = useState(false);

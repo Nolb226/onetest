@@ -1,19 +1,20 @@
 import ClassItem from "./ClassItem";
 import { useState, useEffect } from "react";
 import Paginator from "./Paginator";
+import api from "../../../../config/config";
 
 function Classes(prop) {
   const [classes, setClasses] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
-  const [search, setSearch] = useState(true)
+  const [search, setSearch] = useState(true);
 
   const handleClasses = (value) => {
-    fetch(`http://192.168.100.37:8080/classes?search=${value}&page=${page}`, {
+    const currentUser = localStorage.getItem(`currentUser`);
+    fetch(`${api}/classes?search=${value}&page=${page}`, {
       method: "GET",
       headers: {
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxNDQwMjYzLCJleHAiOjE2ODE2OTk0NjN9.hr6m-BXChJbTkSjPv5xEW6kDChuc5O1r927gV3YybWU",
+        Authorization: "Bearer " + currentUser,
       },
     })
       .then((res) => res.json())
@@ -26,7 +27,7 @@ function Classes(prop) {
   };
 
   useEffect(() => {
-    const search_input = document.querySelector(".search-input")
+    const search_input = document.querySelector(".search-input");
     handleClasses(search_input.value);
   }, [page, search]);
 
@@ -48,16 +49,16 @@ function Classes(prop) {
   }
 
   const handleLock = (Class) => {
+    const currentUser = localStorage.getItem(`currentUser`);
     // console.log(Class.isLock);
     // console.log(Class.id);
-    fetch(`http://192.168.100.37:8080/classes/${Class.id}`, {
+    fetch(`${api}/classes/${Class.id}`, {
       method: "PATCH",
       body: JSON.stringify({
         isLock: !Class.isLock,
       }),
       headers: {
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxNDQwMjYzLCJleHAiOjE2ODE2OTk0NjN9.hr6m-BXChJbTkSjPv5xEW6kDChuc5O1r927gV3YybWU",
+        Authorization: "Bearer " + currentUser,
         "Content-type": "application/json",
       },
     }).then((response) => response.json());
@@ -70,8 +71,16 @@ function Classes(prop) {
     <>
       <div class="flex-center search-bar">
         <form>
-          <input type="text" class="search-input" placeholder="Nhập mã lớp"  />
-          <button className="search-class-btn"  onClick={(e) => {e.preventDefault(); page === 1 ? setSearch(!search):setPage(1)}}><i class="fa-solid fa-magnifying-glass"></i></button>
+          <input type="text" class="search-input" placeholder="Nhập mã lớp" />
+          <button
+            className="search-class-btn"
+            onClick={(e) => {
+              e.preventDefault();
+              page === 1 ? setSearch(!search) : setPage(1);
+            }}
+          >
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
         </form>
         <button
           class="flex-center join-button"
@@ -131,7 +140,7 @@ function Classes(prop) {
             )}
           </div>
         </div>
-         <Paginator
+        <Paginator
           handlePageChange={handlePageChange}
           page={page}
           totalPage={totalPage}

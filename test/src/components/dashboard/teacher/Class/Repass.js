@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
+import api from "../../../../config/config";
 
 function Repass(prop) {
   const [info, setInfo] = useState({});
   const [getPassword, setPassword] = useState("");
 
   useEffect(() => {
-    fetch(`http://192.168.100.37:8080/classes/${prop.isClass.id}/edit`, {
+    const currentUser = localStorage.getItem(`currentUser`)
+    fetch(`${api}/classes/${prop.isClass.id}/edit`, {
       method: "GET",
       headers: {
         Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxNDQwMjYzLCJleHAiOjE2ODE2OTk0NjN9.hr6m-BXChJbTkSjPv5xEW6kDChuc5O1r927gV3YybWU",
+         "Bearer " + currentUser,
       },
     })
       .then((res) => res.json())
@@ -20,10 +22,11 @@ function Repass(prop) {
   }, []);
 
   const handleSubmit = (password) => {
+    const currentUser = localStorage.getItem(`currentUser`)
     // console.log(Class.isLock);
     // console.log(Class.id);
     fetch(
-      `http://192.168.100.37:8080/classes/${prop.isClass.id}?field=password`,
+      `${api}/classes/${prop.isClass.id}?field=password`,
       {
         method: "PATCH",
         body: JSON.stringify({
@@ -31,7 +34,7 @@ function Repass(prop) {
         }),
         headers: {
           Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxNDQwMjYzLCJleHAiOjE2ODE2OTk0NjN9.hr6m-BXChJbTkSjPv5xEW6kDChuc5O1r927gV3YybWU",
+          "Bearer " + currentUser,
           "Content-type": "application/json",
         },
       }
@@ -56,8 +59,8 @@ function Repass(prop) {
     >
       <div>
         <div class="row class-editpass-model class-editpass-header">
-          <div class="l-6 m-6">Mã Lớp: {info.id}</div>
-          <div class="l-6 m-6">Tên Lớp: {info.name}</div>
+          <div class="l-5 m-5">Mã Lớp: {info.id}</div>
+          <div class="l-7 m-7">Tên Lớp: {info.name}</div>
         </div>
 
         <div class="wide class-editpass-body class-editpass-model">
