@@ -1,7 +1,16 @@
 import { Link } from "react-router-dom";
 import "../../image/class-icon.png";
 
-function SideMenu() {
+const IconComponent = ({icon}) => {
+   const iconClass = icon;
+   return (
+     <>
+       <i className={iconClass}></i>
+     </>
+   );
+ };
+
+function SideMenu({info}) {
    const teacherAccount = [
       {
          idPemission: 1,
@@ -31,14 +40,14 @@ function SideMenu() {
    const studentAccount = [
       {
          idPemission: 4,
-         path: "/dashboard/viewclass",
-         icon: "../../image/exam-icon.png",
+         path: `student/viewclass`,
+         icon: "menu-icon fa-solid fa-file-pen",
       },
 
       {
          idPemission: 5,
-         path: "/dashboard/joinclass",
-         icon: "../../image/class-icon.png",
+         path: `student/joinclass`,
+         icon: "menu-icon fa-solid fa-plus",
       },
    ];
    function activeButton(e) {
@@ -53,7 +62,7 @@ function SideMenu() {
    return (
       <div id="left-menu" className="position-relative col l-1">
          <ul className="menu-list flex-center flex-direction-col">
-            {teacherAccount.map((item) => {
+            {studentAccount.map((item) => {
                return (
                   <Link to={item.path} key={item.idPemission}>
                      <li
@@ -63,7 +72,7 @@ function SideMenu() {
                         }}
                         key={item.idPemission}
                      >
-                        <img src={item.icon} alt="" />
+                        <IconComponent icon={item.icon} />
                      </li>
                   </Link>
                );

@@ -1,12 +1,12 @@
+import api from "../../../../../config/config";
 
 
 function ConfirmModel({setIsOpen, isOpen, result, handleSubmit}) {
-    const URL = "https://bestoftest.herokuapp.com"
 
     const sendResult = () => {
         const answer = JSON.stringify(result)
         console.log(answer);
-        fetch(`${URL}/classes/a111/exams`,{
+        fetch(`${api}/classes/a111/exams`,{
             body:answer,
             method:"POST",
         })
