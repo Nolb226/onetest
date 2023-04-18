@@ -874,7 +874,7 @@ exports.deleteClassStudent = async (req, res, _) => {
 		const [student] = await classroom.getStudents({
 			where: { id: studentId },
 		});
-		if (student) {
+		if (!student) {
 			throwError(`Student not found:`, 404);
 		}
 		await classroom.removeStudent(student);
