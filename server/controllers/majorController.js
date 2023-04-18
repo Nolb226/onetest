@@ -9,7 +9,7 @@ const {
 } = require('../util/helper');
 const Question = require('../models/question');
 
-module.exports.getMajors = async function (req, res, _) {
+exports.getMajors = async function (req, res, _) {
 	try {
 		const majors = await Major.findAll({ attributes: ['id', 'name'] });
 		successResponse(res, 200, majors);
@@ -59,14 +59,14 @@ exports.getMajorQuestions = async (req, res, _) => {
 		if (!major) {
 			throwError('Major not found', 404);
 		}
-		const lecture = await major.getLectures({ where: { id: lectureId } });
-		if (!lecture.length) {
+		const [lecture] = await major.getLectures({ where: { id: lectureId } });
+		if (!lecture) {
 			throwError(`Couldn't find lecture`, 404);
 		}
-		const chapter = await lecture[0].getChapters({
+		const [chapter] = await lecture.getChapters({
 			where: { id: `${lectureId}-${chapterId}` },
 		});
-		if (!chapter.length) {
+		if (!chapter) {
 			throwError('Could not find chapter', 404);
 		}
 		const questions = await chapter[0].getQuestions({
@@ -83,6 +83,48 @@ exports.getMajorQuestions = async (req, res, _) => {
 			],
 		});
 		successResponse(res, 200, questions);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
+
+exports.postLecture = async (req, res, _) => {
+	try {
+		const { majorId } = req.params;
+		const major = await Major.findByPk(majorId);
+		const { id, name, credits } = req.body;
+		await major.createLecture({
+			id,
+			name,
+			credits,
+		});
+		successResponse(res, 201, {}, req.method);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
+
+exports.postChapters = async (req, res, _) => {
+	try {
+		const { majorId, lectureId } = req.params;
+		const errors = validationResult(req.body);
+		if (!errors.isEmpty()) {
+			throwError(errors.array(), 409);
+		}
+		const { name } = req.body;
+		const major = await Major.findByPk(majorId);
+		if (!major) {
+			throwError('Major not found', 404);
+		}
+		const [lecture] = await major.getLectures({ where: { id: lectureId } });
+		if (!lecture) {
+			throwError(`Couldn't find lecture`, 404);
+		}
+		const chapters = await lecture.createChapter({
+			name,
+		});
+		console.log(chapters);
+		successResponse(res, 201, {}, req.method);
 	} catch (error) {
 		errorResponse(res, error);
 	}

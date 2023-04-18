@@ -12,52 +12,42 @@ module.exports.test = async (req, res) => {
 			`
 		SELECT * FROM (
 			(
-				SELECT  questions.id,
-						description,
-						correctAns,
-						answerA,
-						answerB,
-						answerC,
-						answerD,
-						difficulty
-
-				FROM	exams
-				JOIN	classes
-				ON		exams.classId 			= classes.id
-				JOIN	lectures
-				ON		lectures.id 			= classes.lectureId
-				JOIN	chapters
-				ON		lectures.id 			= chapters.lectureId
-				JOIN	questions
-				ON		chapters.id 			= questions.chapterId
-				WHERE	chapters.id 			= "WEBC1"
-				AND		questions.difficulty 	= "Dễ"
-				LIMIT	10 
+				SELECT
+					questions.id,
+					description,
+					correctAns,
+					answerA,
+					answerB,
+					answerC,
+					answerD,
+					questions.level
+				FROM
+					lectures
+				JOIN chapters ON lectures.id = chapters.lectureId
+				JOIN questions ON chapters.id = questions.chapterId
+				WHERE
+					chapters.id = "841109-1" AND questions.level = 0
+				LIMIT 10
 			)
 				UNION ALL 
-			(
-				SELECT  questions.id,
+				(
+					SELECT
+						questions.id,
 						description,
 						correctAns,
 						answerA,
 						answerB,
 						answerC,
 						answerD,
-						difficulty
-
-				FROM	exams
-				JOIN	classes
-				ON		exams.classId 			= classes.id
-				JOIN	lectures
-				ON		lectures.id 			= classes.lectureId
-				JOIN	chapters
-				ON		lectures.id 			= chapters.lectureId
-				JOIN	questions
-				ON		chapters.id 			= questions.chapterId
-				WHERE	chapters.id 			= "WEBC1"
-				AND		questions.difficulty 	= "Khó"
-				LIMIT	10 
-			)
+						questions.level
+					FROM
+						lectures
+					JOIN chapters ON lectures.id = chapters.lectureId
+					JOIN questions ON chapters.id = questions.chapterId
+					WHERE
+						chapters.id = "841109-1" AND questions.level = 1
+					LIMIT 10
+				)
 		) as q 
 		ORDER BY RAND()
 		

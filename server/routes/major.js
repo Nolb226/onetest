@@ -4,10 +4,6 @@ const majorController = require('../controllers/majorController');
 
 router.get('/', majorController.getMajors);
 
-router.get('/another-route', (req, res) => {
-	// router code here
-});
-
 router.get('/:majorId/lectures', majorController.getMajorLectures);
 
 router.get(
@@ -41,5 +37,12 @@ router.post(
 	],
 	majorController.postMajorQuestions
 );
+
+router.post(
+	'/:majorId/lectures/:lectureId/chapters',
+	majorController.postChapters
+);
+
+router.post('/:majorId/lectures', majorController.postLecture);
 
 module.exports = router;

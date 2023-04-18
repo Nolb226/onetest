@@ -20,9 +20,9 @@ const Student = sequelize.define('student', {
 	dob: {
 		type: DataTypes.DATEONLY,
 		// allowNull: false,
-		get: function () {
-			return dayjs(this.getDataValue('dob')).format('D-M-YYYY');
-		},
+		// get: function () {
+		// 	return dayjs(this.getDataValue('dob')).format('D-M-YYYY');
+		// },
 	},
 	accountId: {
 		type: DataTypes.INTEGER,

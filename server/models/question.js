@@ -36,8 +36,8 @@ const Question = sequelize.define(
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		difficulty: {
-			type: DataTypes.STRING(10),
+		level: {
+			type: DataTypes.INTEGER(1),
 			allowNull: false,
 		},
 		status: {
