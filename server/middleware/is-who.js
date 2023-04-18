@@ -8,10 +8,9 @@ module.exports.isWho = async (req, res, next) => {
 		const { account } = req;
 		if (account.type === 'GV') {
 			req.user = await Teacher.findOne({
-				attributes: ['dob', 'id', 'fullname', 'departmentId'],
+				attributes: ['id', 'fullname'],
 				include: {
 					model: Account,
-					where: { id: account.id },
 					attributes: ['isActive', 'type'],
 				},
 			});
@@ -19,11 +18,10 @@ module.exports.isWho = async (req, res, next) => {
 		}
 		if (account.type === 'SV') {
 			req.user = await Student.findOne({
-				attributes: ['dob', 'id', 'fullname', 'majorId'],
+				attributes: ['id', 'fullname'],
 
 				include: {
 					model: Account,
-					where: { id: account.id },
 					attributes: ['isActive', 'type'],
 				},
 			});

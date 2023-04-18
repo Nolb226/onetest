@@ -1,4 +1,5 @@
 import SideMenu from "../dashboard/SideMenu";
+import Student from "../dashboard/student/component-student/Student";
 import Teacher from "../dashboard/teacher/Teacher";
 import "./dashboard.css";
 
@@ -48,7 +49,6 @@ function Dashboard() {
                            fontSize: "1.4rem",
                            fontWeight: "500",
                         }}
-                        
                      >
                         {"<<"} Quay lại
                      </div>
@@ -63,6 +63,7 @@ function Dashboard() {
 
                <div className="content">
                   <Teacher />
+                  <Student />
                </div>
             </div>
          </div>

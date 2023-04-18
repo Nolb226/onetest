@@ -1,68 +1,61 @@
 // import "./style.css";
 // import "./responsive.css";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import CreateExamModal from "./CreateExamModal";
+import api from "../../../../config/config.js";
 
 function Exam() {
+   const [examList, setExamList] = useState(true);
+   const [classList, setClassList] = useState(false);
+   const [createMethod, setCreateMethod] = useState(false);
+   const [typeMethod, setTypeMethod] = useState("");
+
    const returnBtn = document.querySelector(".return");
-
-   const handleLock = (Class, examID) => {
-      console.log(Class);
-      // console.log(Class.isLock);
-      // console.log(Class.id);
-      // fetch(
-      //    `https://bestoftest.herokuapp.com/classes/${Class.id}/exams/${examID}`,
-      //    {
-      //       method: "PATCH",
-      //       body: JSON.stringify({
-      //          isLock: !Class.isLock,
-      //       }),
-      //       headers: {
-      //          Authorization:
-      //             "Bearer " +
-      //             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxMTIxMjA2LCJleHAiOjE2ODEzODA0MDZ9.MGOsmWFQzyO-m5k4ugL9Z71pQ3hsAzJHeRIegMw8AsE",
-      //          "Content-type": "application/json",
-      //       },
-      //    }
-      // ).then((response) => response.json());
-      // //   .then((json) => console.log(json.data));
-
-      updateLockExam(Class);
-   };
-
-   const updateLockExam = (exam) => {
-      console.log(exam);
-   };
 
    function ExamList() {
       const [examData, setExamData] = useState([]);
-      const getExamData = async () => {
-         const request = await fetch(
-            "https://bestoftest.herokuapp.com/classes/exams",
-            {
+
+      useEffect(() => {
+         const getExamData = async () => {
+            const userreq = await fetch(`${api}/classes/exams`, {
                headers: {
                   Authorization:
                      "Bearer " +
-                     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxMTIxMjA2LCJleHAiOjE2ODEzODA0MDZ9.MGOsmWFQzyO-m5k4ugL9Z71pQ3hsAzJHeRIegMw8AsE",
+                     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxNDQ0MjI1LCJleHAiOjE2ODE3MDM0MjV9.nd02aUsdaCVSvrIOHXG7rmJaxAW4K5ugCLy8vnhsJ4U",
                },
-            }
-         );
-         const response = await request.json();
-         if (response.data) {
-            setExamData(response.data);
-         }
+            });
+            const data = await userreq.json();
+            setExamData(data.data);
+         };
+         getExamData();
+      }, []);
+
+      const handleLock = (classID, exam) => {
+         fetch(`${api}/classes/${classID}/exams/${exam.id}`, {
+            method: "PATCH",
+            body: JSON.stringify({
+               isLock: !exam.isLock,
+            }),
+            headers: {
+               Authorization:
+                  "Bearer " +
+                  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxNDQ0MjI1LCJleHAiOjE2ODE3MDM0MjV9.nd02aUsdaCVSvrIOHXG7rmJaxAW4K5ugCLy8vnhsJ4U",
+               "Content-type": "application/json",
+            },
+         }).then((response) => response.json());
+
+         setExamData(updateLockExam(classID, exam.id));
       };
 
-      if (examData.length === 0) {
-         getExamData();
-      }
-
-      // const checkedBtn = document.querySelectorAll("input[type=checkbox]");
-      // checkedBtn.forEach((btn) => {
-      //    btn.addEventListener("change", () => {
-      //       btn.closest(".table__content--item").getAttribute("key");
-      //    });
-      // });
+      const updateLockExam = (classID, examID) => {
+         return examData.map((exam) => {
+            if (exam.class_id === classID && exam.id === examID) {
+               exam.isLock = !exam.isLock;
+               console.log(exam.isLock);
+            }
+            return exam;
+         });
+      };
 
       return (
          <>
@@ -110,9 +103,7 @@ function Exam() {
                         <h3>Xem đáp án</h3>
                      </li>
 
-                     <li className="col l-2">
-                        <h3>Xuất File điểm</h3>
-                     </li>
+                     <li className="col l-2">Xuất</li>
                   </ul>
                   <div className="table__content--list">
                      {examData.map((exam) => {
@@ -139,13 +130,17 @@ function Exam() {
                                  <h3>{exam.totals}</h3>
                               </li>
 
-                              <li className="col l-1">
+                              <li
+                                 className="col l-1"
+                                 onClick={() => {
+                                    handleLock(exam.class_id, exam);
+                                 }}
+                              >
                                  <input
                                     type="checkbox"
                                     name=""
                                     id=""
                                     checked={!exam.isLock}
-                                    onChange={handleLock(exam)}
                                  />
                               </li>
                               <li className="col l-2">
@@ -164,16 +159,13 @@ function Exam() {
    function ClassList() {
       const [classes, setClasses] = useState([]);
       const getClassData = async () => {
-         const request = await fetch(
-            "https://bestoftest.herokuapp.com/classes",
-            {
-               headers: {
-                  Authorization:
-                     "Bearer " +
-                     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxMTIxMjA2LCJleHAiOjE2ODEzODA0MDZ9.MGOsmWFQzyO-m5k4ugL9Z71pQ3hsAzJHeRIegMw8AsE",
-               },
-            }
-         );
+         const request = await fetch(`${api}/classes`, {
+            headers: {
+               Authorization:
+                  "Bearer " +
+                  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxNDQ0MjI1LCJleHAiOjE2ODE3MDM0MjV9.nd02aUsdaCVSvrIOHXG7rmJaxAW4K5ugCLy8vnhsJ4U",
+            },
+         });
          const response = await request.json();
          if (response.data.data) {
             setClasses(response.data.data);
@@ -248,8 +240,6 @@ function Exam() {
       );
    }
 
-   const [typeMethod, setTypeMethod] = useState("");
-
    function CreateMethod() {
       returnBtn.addEventListener("click", () => {
          setCreateMethod(false);
@@ -286,13 +276,11 @@ function Exam() {
       );
    }
 
-   const [examList, setExamList] = useState(true);
-   const [classList, setClassList] = useState(false);
-   const [createMethod, setCreateMethod] = useState(false);
-
    return (
       <>
-         {examList && <ExamList />}
+         {examList && (
+            <ExamList setExamList={setExamList} setClassList={setClassList} />
+         )}
          {classList && <ClassList />}
 
          {createMethod && <CreateMethod />}

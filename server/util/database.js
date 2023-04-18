@@ -18,6 +18,7 @@ if (node_env === 'production') {
 		host: 'localhost',
 		dialect: 'mysql',
 		port: '3306',
+		timezone: '+07:00',
 	});
 	console.log(node_env, sequelize);
 } else {

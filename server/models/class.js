@@ -33,11 +33,8 @@ const Class = sequelize.define(
 			allowNull: true,
 		},
 		year: {
-			type: DataTypes.DATEONLY,
+			type: DataTypes.INTEGER,
 			allowNull: false,
-			get: function () {
-				return dayjs(this.getDataValue('year')).format('YYYY');
-			},
 		},
 		semester: {
 			type: DataTypes.TINYINT(1),
@@ -63,7 +60,7 @@ Class.prototype.createClassStudent = async function (studentData) {
 	const account = await Account.create({
 		type: 'SV',
 		// password: await bcrypt.hash(studentData.password),
-		password: bcrypt.hash(studentData.password, 10),
+		password: await bcrypt.hash(studentData.accountpassword + '', 10),
 	});
 	const [student, created] = await Student.findOrCreate({
 		where: { id },
@@ -98,15 +95,26 @@ Class.prototype.test = async function () {
 };
 
 Class.beforeValidate(async function (classInstance) {
-	const { lectureId, year, semester } = classInstance;
-	const number = await Class.count({
-		where: { [Op.and]: [{ lectureId }, { year }, { semester }] },
-	});
-	classInstance.id = `${lectureId}${year.slice(-2)}${semester}-${number + 1}`;
-	classInstance.name = `${lectureId} - Nhóm ${(number + 1 + '').padStart(
-		2,
-		'0'
-	)} - ${year}HK${semester}`;
+	classInstance.id = '';
+	classInstance.name = '';
+});
+
+Class.beforeCreate(async function (classInstance) {
+	try {
+		const { lectureId, year, semester } = classInstance;
+		console.log(lectureId, year, semester);
+		const number = await Class.count({
+			where: { [Op.and]: [{ lectureId }, { year }, { semester }] },
+		});
+		classInstance.id = `${lectureId}${(year + '').slice(-2)}${semester}-${
+			number + 1
+		}`;
+		classInstance.name = `${lectureId} - Nhóm ${
+			number + 1
+		} - ${year}HK${semester}`;
+	} catch (error) {
+		console.log(error);
+	}
 });
 
 module.exports = Class;

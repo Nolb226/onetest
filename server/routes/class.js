@@ -101,14 +101,7 @@ router.post(
 			.withMessage('must be a number')
 			.isIn([1, 2, 3])
 			.withMessage('value is not correct '),
-		body('year')
-			.trim()
-			.notEmpty()
-			.isISO8601()
-			.withMessage('must be in ISO8601 format')
-			.isDate()
-			.withMessage('invalid day received'),
-		// .withMessage('must be a date'),
+		body('year').trim().notEmpty(),
 		body('lectureId')
 			.trim()
 			.notEmpty()
@@ -128,9 +121,38 @@ router.post(
 
 router.post('/:classId/students', classController.postClassStudent);
 
-router.post('/:classId/exams', classController.postClassExam);
+router.post(
+	'/:classId/exams',
 
-router.post('/:classId/exams/students/:studentsId');
+	[
+		body('type').notEmpty().isIn(0, 1, 2),
+		body('id').trim().notEmpty().withMessage('Invalid exam id '),
+		body('name').trim().notEmpty().withMessage('Invalid exam name'),
+		body('timeStart')
+			.trim()
+			.notEmpty()
+			.withMessage('Invalid exam time')
+			.isISO8601()
+			.withMessage('must be in ISO8601 format')
+			.isDate()
+			.withMessage('invalid day received'),
+		body('timeEnd')
+			.trim()
+			.notEmpty()
+			.withMessage('Invalid exam time')
+			.isISO8601()
+			.withMessage('must be in ISO8601 format')
+			.isDate()
+			.withMessage('invalid day received'),
+		body('duration')
+			.trim()
+			.notEmpty()
+			.withMessage('Invalid exam duration')
+			.isInt()
+			.withMessage('Invalid exam duration'),
+	],
+	classController.postClassExam
+);
 
 //METHOD : PUT
 

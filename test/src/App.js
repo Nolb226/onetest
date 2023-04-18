@@ -8,6 +8,7 @@ import "./fonts/fontawesome-free-6.1.2-web/css/all.min.css";
 
 import Home from "./components/pages/home";
 import Dashboard from "./components/pages/dashboard";
+import Student from "./components/dashboard/student/component-student/Student";
 
 function App() {
    return (
@@ -17,6 +18,8 @@ function App() {
             <Route path="*" element={<Home />}></Route>
             <Route exact path="/dashboard" element={<Dashboard />}></Route>
             <Route path="/dashboard/:type" element={<Dashboard />}></Route>
+            <Route exact path="/student" element={<Student />}></Route>
+            {/* <Route path="/dashboard/:type" element={<Dashboard />}></Route> */}
          </Routes>
 
          {/* <Home /> */}

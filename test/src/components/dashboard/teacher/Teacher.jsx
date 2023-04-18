@@ -13,10 +13,6 @@ function Teacher() {
 
    return (
       <>
-         {/* <Route path="/dashboard" element={<Dashboard />}></Route>
-            {/* <Route path="/dashboard/class" element={}></Route> 
-            <Route path="/exam" element={<Exam />}></Route>
-            <h2>Whale</h2> */}
          {type === "manage-exam" && <Exam />}
          {type === "manage-class" && <Class />}
          {type === "statistics" && <Statistics />}

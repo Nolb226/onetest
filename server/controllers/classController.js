@@ -32,6 +32,58 @@ const deleteExcel = function (filePath) {
 
 exports.getClasses = async (req, res, _) => {
 	try {
+		const search = req.query.search;
+		if (search && search !== '') {
+			const page = req.query.page || 1;
+			const pageSize = 10;
+			console.log(1);
+			console.log(req.query.search);
+			const classrooms = await req.user.getClasses({
+				where: {
+					[Op.or]: [
+						{
+							id: {
+								[Op.like]: search + '%',
+							},
+						},
+						{
+							name: {
+								[Op.like]: search + ' %',
+							},
+						},
+					],
+				},
+				include: [
+					{ model: Teacher, attributes: ['id', 'fullname'] },
+					{ model: Lecture, attributes: ['id', 'name'] },
+				],
+				attributes: ['id', 'name', 'isLock'],
+				offset: pageSize * (page - 1),
+				limit: pageSize,
+			});
+			const total = await sequelize.query(
+				`
+			
+				SELECT 	COUNT(classes.id) as id
+			
+				FROM	classes
+				JOIN	lectures
+				ON		lectures.id = classes.lectureId
+				JOIN	teachers
+				ON		teachers.id = classes.teacherId
+				WHERE	classes.id LIKE "${search}%"
+				OR		classes.name LIKE "${search} %"
+				AND		teachers.id = "${req.user.id}"
+			`,
+				{
+					type: sequelize.QueryTypes.SELECT,
+				}
+			);
+			return successResponse(res, 200, {
+				data: classrooms,
+				total: total[0].id,
+			});
+		}
 		const page = req.query.page || 1;
 		const pageSize = 10;
 
@@ -49,7 +101,14 @@ exports.getClasses = async (req, res, _) => {
 			offset: pageSize * (page - 1),
 			limit: pageSize,
 		});
-		const total = await classDetails.count({ where: { studentId: user.id } });
+		let total;
+		if (account.type === 'SV') {
+			total = await classDetails.count({ where: { studentId: user.id } });
+		}
+
+		if (account.type === 'GV') {
+			total = await Class.count({ where: { teacherId: user.id } });
+		}
 
 		return successResponse(res, 200, { data: classes, total });
 	} catch (error) {
@@ -217,6 +276,7 @@ exports.getClassExams = async (req, res, _) => {
 		if (!foundedClass) {
 			throwError(`Could not find class`, 404);
 		}
+		// console.log(user.id);
 		const exams = await foundedClass.getExams({
 			include: [
 				{
@@ -411,8 +471,6 @@ exports.postClass = async (req, res, _) => {
 
 		successResponse(res, 201, {}, req.method);
 	} catch (error) {
-		deleteExcel(file.path);
-
 		errorResponse(res, error);
 	}
 };
