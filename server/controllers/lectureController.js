@@ -57,8 +57,45 @@ exports.getLectureStudentResults = async (req, res) => {
 		if (!lecture) {
 			throwError('Could not find lecture', 404);
 		}
-		const result = await sequelize.query(
-			`SELECT students.id,examId as exam ,fullname,grade,classId,content FROM classes JOIN  classdetail ON classes.id = classdetail.classId JOIN students ON students.id= classdetail.studentId JOIN studentresults ON studentresults.studentId= students.id WHERE classes.lectureId ="${lectureId}"`,
+		const grade = [
+			'grade_0',
+			'grade_1',
+			'grade_2',
+			'grade_3',
+			'grade_4',
+			'grade_5',
+			'grade_6',
+			'grade_7',
+			'grade_8',
+			'grade_9',
+			'grade_10',
+		];
+		const query = grade
+			.map((col, index) => {
+				return `
+			(SELECT 	COUNT(grade)
+				FROM 		classes
+				JOIN		exams
+				ON			exams.classId = classes.id
+				JOIN 		studentresults 
+				ON 			studentresults.examId	= exams.id 
+				WHERE 		classes.lectureId 			="${lectureId}"
+				AND			grade IS NOT NULL
+				AND			grade = "${index}")
+				
+			 as ${col}
+			`;
+			})
+			.join(',');
+		console.log(query);
+		console.log(1);
+
+		const [result] = await sequelize.query(
+			`
+				SELECT 	
+							${query}
+				
+			`,
 			{ type: sequelize.QueryTypes.SELECT }
 		);
 		successResponse(res, 200, result, req.method);

@@ -4,7 +4,7 @@ const { isAuth } = require('../middleware/is-auth');
 
 const router = require('express').Router();
 
-router.get('/', test);
+router.post('/', test);
 
 router.get('/another-route', (req, res) => {
 	// router code here

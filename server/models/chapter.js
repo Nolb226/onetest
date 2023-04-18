@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const sequelize = require('../util/database');
 const Lecture = require('./lecture');
 const Question = require('./question');
@@ -17,26 +18,27 @@ const Chapter = sequelize.define('chapter', {
 	numberOfQuestions: {
 		type: DataTypes.INTEGER(11),
 		allowNull: false,
+		defaultValue: 0,
 	},
 });
 
-Chapter.addHook('beforeCreate', async function (chapter) {
+Chapter.addHook('beforeValidate', async function (chapter) {
 	const { lectureId } = chapter;
 	const lecture = await Lecture.findByPk(lectureId);
 
-	const number = await Question.count({ where: { lectureId } });
-	chapter.id = `${lecture.name}-${number + 1}`;
+	const [result] = await sequelize.query(
+		`
+		SELECT 		COUNT(chapters.id) as number
+		FROM		chapters
+		WHERE		chapters.lectureId = "${lectureId}"
+		AND	NOT		chapters.id = "${lectureId}-0"
+	`,
+		{
+			type: sequelize.QueryTypes.SELECT,
+		}
+	);
+	console.log(result);
+	chapter.id = `${lectureId}-${result.number + 1}`;
 });
-
-Chapter.prototype.addChapterQuestion = async function ({
-	id,
-	correctAns,
-	answerA,
-	answerB,
-	answerC,
-	answerD,
-	desciption,
-	difficulty,
-}) {};
 
 module.exports = Chapter;

@@ -1,8 +1,10 @@
 'use strict';
+const port = process.env.PORT || 8080;
 
 //Packages
 const path = require('path');
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
@@ -10,6 +12,7 @@ const { v4: uuidv4 } = require('uuid');
 //Utils
 const sequelize = require('./util/database');
 const app = express();
+require('dotenv').config();
 
 //Models
 
@@ -41,8 +44,8 @@ const app = express();
 	Department.hasMany(Major);
 	Major.belongsTo(Department);
 
-	Major.belongsToMany(Lecture, { through: 'lectureDetail' });
-	Lecture.belongsToMany(Major, { through: 'lectureDetail' });
+	Major.belongsToMany(Lecture, { through: 'lecturedetail' });
+	Lecture.belongsToMany(Major, { through: 'lecturedetail' });
 
 	Lecture.hasMany(Chapter);
 	Chapter.belongsTo(Lecture);
@@ -145,22 +148,20 @@ const app = express();
 	Class.hasMany(Notification);
 	Notification.belongsTo(Class);
 
-	Account.belongsToMany(Permission_Group, {
-		through: 'groupdetail',
+	Account.belongsTo(Permission_Group, {
 		timestamps: false,
-		as: 'permissions',
+		// as: 'permissions',
 	});
-	Permission_Group.belongsToMany(Account, {
-		through: 'groupdetail',
+	Permission_Group.hasMany(Account, {
 		timestamps: false,
 	});
 
 	Permission_Group.belongsToMany(Function, {
-		through: 'functionDetail',
+		through: 'functiondetail',
 		timestamps: false,
 	});
 	Function.belongsToMany(Permission_Group, {
-		through: 'functionDetail',
+		through: 'functiondetail',
 		timestamps: false,
 	});
 })();
@@ -175,45 +176,82 @@ const storage = multer.diskStorage({
 	},
 });
 
+const fileFilter = (req, file, cb) => {
+	const filetypes = /xlsx|xls/;
+	const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+	if (extname) {
+		return cb(null, true);
+	} else {
+		cb('Error: The file must be an XLS or XLSX file!');
+	}
+};
+
 //Routes define
 const authRoutes = require('./routes/auth');
 const questionsRoutes = require('./routes/question');
 const classesRoutes = require('./routes/class');
 const chaptersRoutes = require('./routes/chapter');
 const testRoutes = require('./routes/test');
+const accountRoutes = require('./routes/account');
 const departmentRoutes = require('./routes/department');
 const majorRoutes = require('./routes/major');
+const studentRoutes = require('./routes/student');
 const lectureRoutes = require('./routes/lecture');
+const adminRoutes = require('./routes/admin');
 const { checkPermission } = require('./middleware/check-permission');
+const { errorResponse, throwError } = require('./util/helper');
 //Middleware
 
 app.use(bodyParser.json());
-app.use(multer({ storage }).single('fileInput'));
+app.use(multer({ storage, fileFilter }).single('classExcel'));
 // app.use(express.static(path.join(__dirname, 'excels')));
 app.use((req, res, next) => {
 	res.setHeader('Access-Control-Allow-Origin', '*');
-	res.setHeader('Access-Control-Allow-Methods', 'OPTIONS,GET,POST,PUT,DELETE');
+	res.setHeader(
+		'Access-Control-Allow-Methods',
+		'OPTIONS,GET,POST,PUT,DELETE,PATCH'
+	);
 	res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
 	next();
 });
 //Routes seperate paths
 
+app.use(cors());
 app.use('/auth', authRoutes);
+app.use('/accounts', accountRoutes);
+app.use('/students', studentRoutes);
 app.use('/departments', departmentRoutes);
 app.use('/majors', majorRoutes);
 app.use('/lectures', lectureRoutes);
 app.use('/questions', questionsRoutes);
 app.use('/classes', classesRoutes);
 app.use('/chapters', chaptersRoutes);
+app.use('/admin', adminRoutes);
 app.use('/test', testRoutes);
 //App start when connected to database
+app.get('/', (req, res) => {
+	res.send(Hiii);
+});
+
+app.use(function (err, req, res, next) {
+	// Handle the error
+	console.error(err);
+
+	// Send an error response to the client
+	errorResponse(res, err);
+});
+
 sequelize
 	// .sync({ force: true })
 	.sync()
 
 	.then(() => {
-		app.listen(8080);
-		console.log('Connected to database');
+		app.listen(port, '0.0.0.0', function () {
+			console.log(
+				'Express server listening on port %d in %s mode',
+				this.address().port,
+				app.settings.env
+			);
+		});
 	})
-
 	.catch((err) => console.log('Fail to connect to the database ' + err));

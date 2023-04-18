@@ -1,0 +1,13 @@
+.create-handicraft::-webkit-scrollbar {
+   width: 5px;
+}
+
+.create-handicraft::-webkit-scrollbar-thumb {
+   background-color: var(--primary-color);
+   border-radius: 5px;
+}
+
+.create-handicraft::-webkit-scrollbar-track {
+   background-color: #d1d1d1;
+   border-radius: 5px;
+}

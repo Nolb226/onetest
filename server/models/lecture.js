@@ -19,6 +19,7 @@ const Lecture = sequelize.define('lecture', {
 	totalChapters: {
 		type: DataTypes.INTEGER,
 		allowNull: false,
+		defaultValue: 0,
 	},
 });
 

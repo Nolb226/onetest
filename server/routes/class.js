@@ -35,7 +35,13 @@ const passingClass = async (req, res, next) => {
 GET /classes/
 get all classes 
 */
-router.get('/', checkPermission, classController.getClasses);
+router.get(
+	'/',
+	// checkPermission,
+	classController.getClasses
+);
+
+router.get('/exams', classController.getClassesExams);
 
 /* 
 *admin&teacher
@@ -44,8 +50,14 @@ get specific class
 */
 router.get(
 	'/:classId',
-	checkPermission.bind({ path: 'class' }),
+	// checkPermission.bind({ path: 'class' }),
 	classController.getClass
+);
+
+router.get(
+	'/:classId/edit',
+	// checkPermission.bind({ path: 'class' }),
+	classController.getClassEdit
 );
 
 /* 
@@ -55,7 +67,7 @@ get all students from the current class
 */
 router.get(
 	'/:classId/students',
-	checkPermission,
+	// checkPermission,
 	classController.getAllStudent
 );
 
@@ -65,13 +77,25 @@ GET /classes/{classId}/student/{studentId}
 get specific students from the current class 
 */
 router.get('/:classId/students/:studentId', classController.getStudentInClass);
-// router.use('/:classId/students', checkPermission, passingClass, studentRoutes);
+router.get(
+	'/:classId/students/:studentId/edit',
+	classController.getStudentInClass
+);
+
+router.get('/:classId/exams/results', classController.getClassExamsResult);
 
 router.get('/:classId/exams', classController.getClassExams);
+
 router.get('/:classId/exams/:examId', classController.getClassExam);
+
 router.get(
 	'/:classId/exams/:examId/results',
 	classController.getClassExamStudentResults
+);
+
+router.get(
+	'/:classId/exams/:examId/details',
+	classController.getStudentResultInClass
 );
 
 //METHOD : POST
@@ -79,7 +103,6 @@ router.get(
 router.post(
 	'/',
 	[
-		body('name').notEmpty().trim(),
 		body('password').notEmpty().trim(),
 		body('semester')
 			.trim()
@@ -88,15 +111,7 @@ router.post(
 			.withMessage('must be a number')
 			.isIn([1, 2, 3])
 			.withMessage('value is not correct '),
-		body('year')
-			.trim()
-			.notEmpty()
-			.isISO8601()
-			.withMessage('must be in ISO8601 format')
-			.isDate()
-			.withMessage('invalid day received'),
-		// .withMessage('must be a date'),
-		body('isLock').notEmpty().trim().isIn([true, false]),
+		body('year').trim().notEmpty(),
 		body('lectureId')
 			.trim()
 			.notEmpty()
@@ -114,6 +129,43 @@ router.post(
 	classController.postClass
 );
 
+router.post('/:classId/students', classController.postClassStudent);
+
+router.post(
+	'/:classId/exams',
+
+	[
+		body('type').notEmpty().isIn(0, 1, 2),
+		body('id').trim().notEmpty().withMessage('Invalid exam id '),
+		body('name').trim().notEmpty().withMessage('Invalid exam name'),
+		body('timeStart')
+			.trim()
+			.notEmpty()
+			.withMessage('Invalid exam time')
+			.isISO8601()
+			.withMessage('must be in ISO8601 format')
+			.isDate()
+			.withMessage('invalid day received'),
+		body('timeEnd')
+			.trim()
+			.notEmpty()
+			.withMessage('Invalid exam time')
+			.isISO8601()
+			.withMessage('must be in ISO8601 format')
+			.isDate()
+			.withMessage('invalid day received'),
+		body('duration')
+			.trim()
+			.notEmpty()
+			.withMessage('Invalid exam duration')
+			.isInt()
+			.withMessage('Invalid exam duration'),
+	],
+	classController.postClassExam
+);
+
+//METHOD : PUT
+
 router.put(
 	'/:classId',
 	[
@@ -126,13 +178,7 @@ router.put(
 			.withMessage('must be a number')
 			.isIn([1, 2, 3])
 			.withMessage('value is not correct '),
-		body('year')
-			.trim()
-			.notEmpty()
-			.isISO8601()
-			.withMessage('must be in ISO8601 format')
-			.isDate()
-			.withMessage('invalid day received'),
+		body('year').trim().notEmpty(),
 		// .withMessage('must be a date'),
 		body('isLock').notEmpty().trim().isIn([true, false]),
 		body('lectureId')
@@ -152,7 +198,18 @@ router.put(
 	classController.putClass
 );
 
-router.put('/:classId/students', classController.putClassStudent);
+router.put('/:classId/students/:studentId', classController.putClassStudent);
 
+//METHOD : PATCH
+
+router.patch('/:classId', classController.patchClassIsLock);
+
+router.patch('/:classId/exams/:examId', classController.patchExamIsLock);
+
+//METHOD : DELETE
 router.delete('/:classId/', classController.deleteClass);
+router.delete(
+	'/:classId/students/:studentId',
+	classController.deleteClassStudent
+);
 module.exports = router;

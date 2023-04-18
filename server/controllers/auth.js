@@ -22,17 +22,19 @@ exports.signup = async (req, res, next) => {
 			throwError(errors.array(), 422);
 		}
 
-		const { username, password, type, fullname, dob } = req.body;
+		const { username, password, type, fullname, dob, majors, department } =
+			req.body;
 
 		const upperCaseType = type.toUpperCase();
 
 		const model = upperCaseType === 'GV' ? Teacher : Student;
+
 		const isExist = model.findByPk(username);
 		if (isExist.accountId) {
 			throwError('Account is already exist', 409);
 		}
-		const foreignKey =
-			upperCaseType === 'GV' ? req.body.departmentId : req.body.majorId;
+		const foreignKey = majors || department;
+		upperCaseType === 'GV' ? req.body.departmentId : req.body.majorId;
 		const account = await model.createAccount({
 			id: username,
 			fullname,
@@ -42,7 +44,7 @@ exports.signup = async (req, res, next) => {
 			foreignKey,
 		});
 
-		return successResponse(res, 201, account, req.method);
+		return successResponse(res, 201, '', req.method);
 	} catch (error) {
 		errorResponse(res, error);
 		console.log(error);
@@ -74,10 +76,12 @@ exports.login = async (req, res, next) => {
 		// if (!account.isActive) {
 		// 	throwError('Account is not active', 401);
 		// }
+		console.log(account.id);
 
 		const token = jwt.sign({ id: account.id }, 'group5', {
 			expiresIn: '3d',
 		});
+		// res.status(200).json({ token, type: account.type });
 		res.status(200).json(token);
 	} catch (error) {
 		errorResponse(res, error);
