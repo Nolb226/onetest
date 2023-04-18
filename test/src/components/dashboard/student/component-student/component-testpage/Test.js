@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ConfirmModel from "./ConfirmModel";
 import AnswerSelectItem from "./AnswerSelectItem";
 import QuestionItem from "./QuestionItem";
@@ -16,11 +16,11 @@ function Test() {
   }); //Chứa trạng thái thí sinh đã nộp bài hay chưa
 
   const params = useParams();
-  const { idStudent, nameStudent, classId } = params;
+  const { classId, examId } = params;
 
   useEffect(() => {
     const currentUser = localStorage.getItem("currentUser");
-    fetch(`${api}/classes/${classId}/exams/EXM001/details`, {
+    fetch(`${api}/classes/${classId}/exams/${examId}/details`, {
       headers: {
         Authorization: "Bearer " + currentUser,
       },
@@ -125,9 +125,9 @@ function Test() {
           </div>
           <div className="test-submit flex-center">
             {submitted.status ? (
-              <a href="/result">
+              <Link to={`../result/${examId}`}>
                 <button className="test-submit-btn to-submit">Xem điểm</button>
-              </a>
+              </Link>
             ) : (
               <button
                 className="test-submit-btn to-submit"

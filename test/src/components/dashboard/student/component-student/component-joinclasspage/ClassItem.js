@@ -22,7 +22,7 @@ function ClassItem({ id, nameClass, semester, total}) {
 
          <li className="col l-5-1">
             <Link
-               to={`./studentpage/${id}`}
+               to={`../studentpage/${id}`}
                relative="path"
             >
                <button className="view-class">Xem lớp</button>

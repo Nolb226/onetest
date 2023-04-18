@@ -8,7 +8,7 @@ function StudentPage() {
   const [exams, setExams] = useState([]);
 
   const params = useParams();
-  const { idStudent, nameStudent, classId } = params;
+  const { classId } = params;
 
   useEffect(() => {
     const currentUser = localStorage.getItem('currentUser');
@@ -91,8 +91,6 @@ function StudentPage() {
                 subject={item.name}
                 timeStart={item.duration}
                 totalQuestions={item.totalQuestions}
-                idStudent={idStudent}
-                nameStudent={nameStudent}
                 classId={classId}
               />
             ))}

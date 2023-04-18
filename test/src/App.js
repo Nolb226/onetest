@@ -14,6 +14,7 @@ import ViewClass from "./components/dashboard/student/component-student/componen
 import JoinClass from "./components/dashboard/student/component-student/component-joinclasspage/JoinClass";
 import StudentPage from "./components/dashboard/student/component-student/component-studentpage/StudentPage";
 import Test from "./components/dashboard/student/component-student/component-testpage/Test";
+import Result from "./components/dashboard/student/component-student/component-testpage/Result";
 
 function App() {
    return (
@@ -22,13 +23,14 @@ function App() {
             <Route exact path="/" element={<Home />}></Route>
             <Route path="*" element={<Home />}></Route>
             <Route exact path="/dashboard" element={<Dashboard />}>
-                  <Route path="student/*" element={<Student/>}>
-                     <Route path="./dashboard/student" element={<Navigate to="/viewclass" replace relative="path"/>}/>
+                  <Route path="student" element={<Student/>}>
+                     {/* <Route path="./dashboard/student" element={<Navigate to="/viewclass" replace relative="path"/>}/> */}
                      {/* student/classes/ */}
                      <Route path="viewclass" element={<ViewClass/>}/>
-                        <Route path="studentpage/:classId" element={<StudentPage/>}/>
+                     <Route path="studentpage/:classId" element={<StudentPage/>}/>
                      <Route path="joinclass" element={<JoinClass/>}/>
-                     <Route path="test/:idStudent/:nameStudent/:classId/:examId" element={<Test/>}/>
+                     <Route path="test/:classId/:examId" element={<Test/>}/>
+                     <Route path="result/:examId" element={<Result/>}/>
                      <Route path="*" element={<Student/>}/>
 
                   </Route>
