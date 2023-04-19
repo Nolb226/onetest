@@ -39,7 +39,7 @@ function Student(prop) {
 				} else {
 					col = Math.ceil(5 / prop.numberOfTest);
 				}
-				if (index < 5) {
+				if (index < prop.numberOfTest && index < 5) {
 					return (
 						<li className={`col l-${col} m-${col}`}>
 							<h3>{grade.grade}</h3>
