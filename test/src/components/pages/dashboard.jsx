@@ -1,4 +1,3 @@
-
 import api from "../../config/config.js";
 import { useEffect, useState } from "react";
 import SideMenu from "../dashboard/SideMenu";
@@ -7,27 +6,25 @@ import Teacher from "../dashboard/teacher/Teacher";
 import Admin from "../dashboard/admin/Admin.jsx";
 import "./dashboard.css";
 import { Outlet } from "react-router";
-import logo from '../../image/logo-no-background.png'
+import logo from "../../image/logo-no-background.png";
 
 function Dashboard() {
-
-   const [info, setInfo] = useState([])
+   const [info, setInfo] = useState([]);
 
    useEffect(() => {
-      const currentUser = localStorage.getItem('currentUser');
+      const currentUser = localStorage.getItem("currentUser");
       fetch(`${api}/accounts`, {
-        headers: {
-          Authorization:
-            "Bearer " + currentUser,
-        },
+         headers: {
+            Authorization: "Bearer " + currentUser,
+         },
       })
-        .then((response) => response.json())
-        .then((infoAPI) => {
-          setInfo(infoAPI.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+         .then((response) => response.json())
+         .then((infoAPI) => {
+            setInfo(infoAPI.data);
+         })
+         .catch((error) => {
+            console.log(error);
+         });
    }, []);
 
    return (
@@ -40,7 +37,7 @@ function Dashboard() {
                   <header className="header flex-center position-relative">
                      <div className="header__logo">
                         <img
-                           src="/image/BestOfTest.png"  
+                           src="/image/BestOfTest.png"
                            alt="Logo Best of Test"
                         />
                      </div>
@@ -79,24 +76,16 @@ function Dashboard() {
                         {"<<"} Quay lại
                      </div>
                      <div className="code inf-children">
-                        Mã cá nhân: {info.id || ''}
+                        Mã cá nhân: {info.id || ""}
                      </div>
                      <div className="name inf-children">
-                        Họ và tên: {info.fullname || ''}
+                        Họ và tên: {info.fullname || ""}
                      </div>
                   </div>
                </div>
 
                <div className="content">
-<<<<<<< HEAD
-                  <Teacher />
-                  <Student />
-                  <Admin />
-=======
-                  <Outlet/>
-                  {/* <Teacher /> */}
-                  {/* <Student idStudent={info.id} nameStudent={info.fullname} /> */}
->>>>>>> aedafabaed266d482eb1b63a2788c4aa2042117f
+                  <Outlet />
                </div>
             </div>
          </div>

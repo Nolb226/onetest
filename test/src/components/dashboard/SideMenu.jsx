@@ -1,40 +1,34 @@
 import { Link } from "react-router-dom";
 import "../../image/class-icon.png";
 
-const IconComponent = ({icon}) => {
+const IconComponent = ({ icon }) => {
    const iconClass = icon;
    return (
-     <>
-       <i className={iconClass}></i>
-     </>
+      <>
+         <i className={iconClass}></i>
+      </>
    );
- };
+};
 
-function SideMenu({info}) {
+function SideMenu({ info }) {
    const teacherAccount = [
       {
          idPemission: 1,
-         path: "/dashboard/manage-exam",
+         path: `teacher/manage-exam/${info.id}/${info.fullname}`,
          icon: "../../image/exam-icon.png",
       },
 
       {
          idPemission: 2,
-         path: "/dashboard/manage-class",
+         path: `teacher/manage-class/${info.id}/${info.fullname}`,
          icon: "../../image/class-icon.png",
       },
 
       {
          idPemission: 3,
-         path: "/dashboard/statistics",
+         path: `teacher/statistics/${info.id}/${info.fullname}`,
          icon: "../../image/dashboard-icon.png",
       },
-      {
-         idPemission: 3,
-         path: "/dashboard/admin",
-         icon: "../../image/dashboard-icon.png",
-      },
-
       // {
       //    idPemission: 6,
       //    path: "/dashboard/statistics",
@@ -55,6 +49,20 @@ function SideMenu({info}) {
          icon: "menu-icon fa-solid fa-plus",
       },
    ];
+
+   const adminAccount = [
+      {
+         idPemission: 7,
+         path: `admin/permission/${info.id}/${info.fullname}`,
+         icon: "menu-icon fa-solid fa-plus",
+      },
+      {
+         idPemission: 6,
+         path: `admin/manage-account/${info.id}/${info.fullname}`,
+         icon: "menu-icon fa-solid fa-file-pen",
+      },
+   ];
+
    function activeButton(e) {
       let buttons = document.querySelectorAll(".menu-item");
       buttons.forEach((button) => {
@@ -67,7 +75,7 @@ function SideMenu({info}) {
    return (
       <div id="left-menu" className="position-relative col l-1">
          <ul className="menu-list flex-center flex-direction-col">
-            {studentAccount.map((item) => {
+            {teacherAccount.map((item) => {
                return (
                   <Link to={item.path} key={item.idPemission}>
                      <li

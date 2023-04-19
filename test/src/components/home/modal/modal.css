@@ -188,7 +188,7 @@
 }
 
 .form-group.invalid .form-control {
-   border-color: #f33a58;
+   border-color: #f33a58 !important;
 }
 
 .form-group.invalid .form-message {

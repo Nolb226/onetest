@@ -8,7 +8,7 @@ import Department from "./department";
 // import Majors from "./major";
 
 function StudentSignUp() {
-   validator("#form-register");
+   // validator("#form-register");
 
    return (
       <div id="student-sign-up" className="type" name="SV">
@@ -103,7 +103,7 @@ function StudentSignUp() {
 }
 
 function TeacherSignUp() {
-   validator("#form-register");
+   // validator("#form-register");
 
    return (
       <div id="teacher-sign-up" className="type" name="GV">
@@ -124,9 +124,16 @@ function TeacherSignUp() {
 
          <div
             className="row flex-center flex-direction-row"
-            style={{ width: "100%", height: "auto", margin: "0" }}
+            style={{
+               width: "100%",
+               height: "auto",
+               margin: "0",
+               display: "grid",
+               gridTemplateColumns: "49.5% 49.5%",
+               gap: "1%",
+            }}
          >
-            <div className="l-5 m-5 form-group position-relative">
+            <div className=" form-group position-relative">
                <label htmlFor="dob" className="form-label">
                   Ngày tháng năm sinh:
                </label>
@@ -148,7 +155,7 @@ function TeacherSignUp() {
                Mã cán bộ
             </label>
             <input
-               rules="require|min:10|max:10"
+               rules="require|min:5|max:5"
                id="username"
                name="username"
                type="text"

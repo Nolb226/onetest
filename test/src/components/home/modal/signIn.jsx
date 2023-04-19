@@ -46,7 +46,6 @@ function SignInModal({ toggle1, toggle2 }) {
                action="#"
                method="POST"
                id="form-sign-in"
-               // onSubmit={() => checkSignIn}
             >
                <div className="modal__header position-relative">
                   <div className="modal__content flex-center flex-direction-col">

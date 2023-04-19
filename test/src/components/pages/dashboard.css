@@ -136,6 +136,7 @@
 
 .content {
    position: relative;
-   height: calc(100% - 95px);
+   height: 100%;
+   max-height: calc(100% - 95px);
    padding: 0 25px 25px 25px;
 }
