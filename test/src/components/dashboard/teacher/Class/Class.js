@@ -5,6 +5,7 @@ import ClassList from "./ClassList";
 import CreateClass from "./CreateClass";
 import "./gridClass.css";  
 import "./styleClass.css";
+import "./reponsive.css";
 
 
 function Class() {

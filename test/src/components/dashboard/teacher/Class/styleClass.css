@@ -67,7 +67,7 @@
 }
 
 .class-editpass-model {
-  min-width: 480px;
+  width: 480px;
   background-color: var(--white-color);
   margin: 0;
 }

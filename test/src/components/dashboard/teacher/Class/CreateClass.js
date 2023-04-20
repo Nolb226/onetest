@@ -53,21 +53,21 @@ function CreateClass({ handleCreateClass }) {
       <div>
         <form class="class-editpass-model class-editpass-header" id="create-class" onSubmit={handleCreate}>
           <div class="row class-create-inp ">
-            <label for="" class="l-5 p-6-15 class-create-label">
+            <label for="" class="l-5 m-5 c-5 p-6-15 class-create-label">
               Ngành:
             </label>
             <input type="text" name="" id="major" class="l-7 class-editpass-input" />
           </div>
 
           <div class="row class-create-inp">
-            <label for="" class="l-5 p-6-15 class-create-label">
+            <label for="" class="l-5 m-5 c-5 p-6-15 class-create-label">
               Mã môn học:
             </label>
             <input type="text" name="" id="lecture" class="l-7 class-editpass-input" />
           </div>
 
           <div class="row class-create-inp">
-            <label for="" class="l-5 p-6-15 class-create-label">
+            <label for="" class="l-5 m-5 c-5 p-6-15 class-create-label">
               Kỳ:
             </label>
             <select type="text" name="" id="semester" class="l-7 class-editpass-input"> 
@@ -78,21 +78,21 @@ function CreateClass({ handleCreateClass }) {
           </div>
 
           <div class="row class-create-inp">
-            <label for="" class="l-5 p-6-15 class-create-label">
+            <label for="" class="l-5 m-5 c-5 p-6-15 class-create-label">
               Năm học:
             </label>
             <input type="number" min="2020" max="2099" name="" id="year" class="l-7 class-editpass-input" />
           </div>
 
           <div class="row class-create-inp">
-            <label for="" class="l-5 p-6-15 class-create-label">
+            <label for="" class="l-5 m-5 c-5 p-6-15 class-create-label">
               Mật khẩu:
             </label>
             <input type="text" name="" id="password" class="l-7 class-editpass-input" />
           </div>
 
           <div class="row class-create-inp">
-            <label for="" class="l-5 p-6-15 class-create-label">
+            <label for="" class="l-5 m-5 c-5 p-6-15 class-create-label">
               Mật khẩu chung:
             </label>
             <input type="text" name="" id="accountpassword" class="l-7 class-editpass-input" />

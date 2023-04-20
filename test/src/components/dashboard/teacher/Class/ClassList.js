@@ -95,15 +95,15 @@ function Classlist(prop) {
 
 				<div class="grid table__content position-relative">
 					<ul class="row no-gutters flex-center table__content--heading">
-						<li className="col l-1 m-1">
+						<li className="col l-1 m-1 c-1">
 							<h3>STT</h3>
 						</li>
 
-						<li class="col l-2 m-2">
+						<li class="col l-2 m-2 c-2">
 							<h3>MSSV</h3>
 						</li>
 
-						<li class="col l-3 m-3">
+						<li class="col l-3 m-3 c-3">
 							<h3>Họ và Tên</h3>
 						</li>
 
@@ -116,14 +116,14 @@ function Classlist(prop) {
 							}
 							if (index < 5) {
 								return (
-									<li className={`col l-${col} m-${col}`}>
+									<li className={`col l-${col} m-${col} c-${col}`}>
 										<h3>{value.name}</h3>
 									</li>
 								);
 							}
 						})}
              
-						<li className="col l-1 m-1"></li>
+						<li className="col l-1 m-1 c-1"></li>
 
 					</ul>
 

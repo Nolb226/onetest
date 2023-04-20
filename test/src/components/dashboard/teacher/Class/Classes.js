@@ -105,27 +105,27 @@ function Classes(prop) {
 
 				<div class="grid table__content ">
 					<ul class="row no-gutters flex-center table__content--heading">
-						<li class="col l-6-4">
+						<li class="col l-6-4 m-6-4">
 							<h3>Mã Lớp</h3>
 						</li>
 
-						<li class="col l-6-4">
+						<li class="col l-6-4 m-6-4">
 							<h3>Tên Lớp</h3>
 						</li>
 
-						<li class="col l-6-4">
+						<li class="col l-6-4 m-6-4">
 							<h3>Môn</h3>
 						</li>
 
-						<li class="col l-6-4">
+						<li class="col l-6-4 m-6-4">
 							<h3>Danh sách sinh viên</h3>
 						</li>
 
-						<li class="col l-6-2">
+						<li class="col l-6-2 m-6-2">
 							<h3>Khóa Lớp</h3>
 						</li>
 
-						<li class="col l-6-2">
+						<li class="col l-6-2 m-6-2">
 							<h3>Chỉnh sửa</h3>
 						</li>
 					</ul>
