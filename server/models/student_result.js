@@ -35,6 +35,11 @@ const Student_Result = sequelize.define('studentresult', {
 		type: DataTypes.JSON,
 		allowNull: false,
 		get: function () {
+			typeof this.getDataValue('content') === 'object' &&
+				this.setDataValue(
+					'content',
+					JSON.stringify(this.getDataValue('content'))
+				);
 			return JSON.parse(this.getDataValue('content'));
 		},
 	},
@@ -43,5 +48,13 @@ const Student_Result = sequelize.define('studentresult', {
 		defaultValue: false,
 	},
 });
+
+Student_Result.beforeUpdate = async (instance) => {
+	try {
+		const { content } = instance;
+		instance.content = JSON.stringify(content);
+		await instance.save();
+	} catch (error) {}
+};
 
 module.exports = Student_Result;

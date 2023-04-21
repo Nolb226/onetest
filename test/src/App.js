@@ -28,10 +28,12 @@ function App() {
 				<Route path="*" element={<Home />}></Route>
 				<Route exact path="/dashboard" element={<Dashboard />}>
 					<Route path="student" element={<Student />}>
+						<Route path="" element={<Navigate to="class" replace={true} />} />
+
 						{/* <Route path="./dashboard/student" element={<Navigate to="/viewclass" replace relative="path"/>}/> */}
 						{/* student/classes/ */}
-						<Route path="viewclass" element={<ViewClass />} />
-						<Route path="studentpage/:classId" element={<StudentPage />} />
+						<Route path="class" element={<ViewClass />} />
+						<Route path="class/:classId/exams" element={<StudentPage />} />
 						<Route path="joinclass" element={<JoinClass />} />
 						<Route path="test/:classId/:examId" element={<Test />} />
 						<Route path="result/:examId" element={<Result />} />
@@ -39,9 +41,11 @@ function App() {
 					</Route>
 					<Route path="teacher" element={<Teacher />}>
 						<Route path="" element={<Navigate to="class" replace={true} />} />
-						<Route path="class" element={<Classes />} />
-						<Route path="class/:classId" element={<Classlist />} />
-						<Route path="class/:classId/edit" element={<Repass />} />
+						<Route path="class" element={<Class />}>
+							<Route path="" element={<Classes />} />
+							<Route path=":classId" element={<Classlist />} />
+							<Route path=":classId/edit" element={<Repass />} />
+						</Route>
 						{/* <Route path="class/:classId/student/:studentId/edit" element={<Student />} /> */}
 					</Route>
 				</Route>
