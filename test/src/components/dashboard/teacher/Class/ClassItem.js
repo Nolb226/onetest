@@ -39,7 +39,7 @@ function ClassItem(Class) {
 					}`}
 					onClick={() => Class.handleLock(Class.Class)}
 				>
-					<i class="fa-solid fa-lock"></i>
+					<i class={`fa-solid fa-${Class.Class.isLock?"":"un"}lock`}></i>
 				</button>
 			</li>
 

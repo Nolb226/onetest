@@ -13,7 +13,7 @@ function Classlist(prop) {
 	const [totalPage, setTotalPage] = useState(1);
 	const [isOpenModal, setIsOpenModal] = useState(false);
 	const [studentId, setStudentId] = useState('');
-	const [student, setStudent] = useSearchParams();
+	const [student, setStudent] = useSearchParams(); 
 	const [className, setClassName] = useState('');
 	const [totalExam, setTotalExam] = useState(0);
 	const [examName, setExamName] = useState([]);
@@ -107,8 +107,6 @@ function Classlist(prop) {
 							<h3>Họ và Tên</h3>
 						</li>
 
-						<li className="col l-1 m-1"></li>
-
 						{examName.map((value, index) => {
 							let col;
 							if (totalExam < 6) {
@@ -124,6 +122,9 @@ function Classlist(prop) {
 								);
 							}
 						})}
+             
+						<li className="col l-1 m-1"></li>
+
 					</ul>
 
 					<div class="table__content--list">
