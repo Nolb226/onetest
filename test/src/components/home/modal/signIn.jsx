@@ -22,8 +22,13 @@ function SignInModal({ toggle1, toggle2 }) {
          if (!resonse.ok) return alert("Loi roi ban oi!");
          const data = await resonse.json();
 
-         localStorage.setItem("currentUser", data);
-         window.location.href = "./dashboard";
+         localStorage.setItem("currentUser", data.token);
+         if(data.type == "SV") {
+            window.location.href = "./dashboard/student";
+         }
+         if(data.type == "GV") {
+            window.location.href = "./dashboard/teacher";
+         }
       } catch (error) {
          console.log(error);
       }

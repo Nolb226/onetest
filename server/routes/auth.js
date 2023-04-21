@@ -4,7 +4,18 @@ const { body } = require('express-validator');
 const Account = require('../models/account');
 const Student = require('../models/student');
 const Teacher = require('../models/teacher');
-router.post('/login', authController.login);
+router.post(
+	'/login',
+	[
+		body('username')
+			.trim()
+			.notEmpty()
+			.isInt()
+			.withMessage('Username must be your personal ID'),
+		body('password').trim().notEmpty(),
+	],
+	authController.login
+);
 
 router.post(
 	'/signup',

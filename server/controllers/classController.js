@@ -8,6 +8,7 @@ const path = require('path');
 const Excel = require('exceljs');
 const Classes = require('../models/class');
 const classDetails = require('../models/classdetail');
+const Chapter = require('../models/chapter');
 
 //helper
 const {
@@ -23,8 +24,9 @@ const Exam = require('../models/exam');
 const Class = require('../models/class');
 const e = require('express');
 const sequelize = require('../util/database');
-const { Op } = require('sequelize');
+const { Op, QueryTypes } = require('sequelize');
 const Student = require('../models/student');
+const Question = require('../models/question');
 const deleteExcel = function (filePath) {
 	const file = path.join(__dirname, '..', filePath);
 	fs.unlink(file, (err) => console.log(err));
@@ -36,7 +38,6 @@ exports.getClasses = async (req, res, _) => {
 		if (search && search !== '') {
 			const page = req.query.page || 1;
 			const pageSize = 10;
-			console.log(1);
 			console.log(req.query.search);
 			const classrooms = await req.user.getClasses({
 				where: {
@@ -97,20 +98,20 @@ exports.getClasses = async (req, res, _) => {
 				{ model: Teacher, attributes: ['id', 'fullname'] },
 				{ model: Lecture, attributes: ['id', 'name'] },
 			],
-			attributes: ['id', 'name', 'isLock'],
+			attributes: ['id', 'name', 'isLock', 'year', 'semester', 'totalStudent'],
 			offset: pageSize * (page - 1),
 			limit: pageSize,
 		});
 		let total;
 		if (account.type === 'SV') {
 			total = await classDetails.count({ where: { studentId: user.id } });
+			return successResponse(res, 200, { data: classes, total });
 		}
 
 		if (account.type === 'GV') {
 			total = await Class.count({ where: { teacherId: user.id } });
+			return successResponse(res, 200, { data: classes, total });
 		}
-
-		return successResponse(res, 200, { data: classes, total });
 	} catch (error) {
 		errorResponse(res, error, [{}]);
 	}
@@ -167,18 +168,20 @@ exports.getAllStudent = async (req, res, _) => {
 		}
 		const { classId } = req.params;
 
-		const classDetail = await Classes.findByPk(classId);
-		if (!classDetail) {
+		const classroom = await Classes.findByPk(classId);
+		if (!classroom) {
 			throwError(`Could not find class`, 404);
 		}
-		const students = await classDetail.getStudents({
-			attributes: ['id', 'dob', 'fullname', 'majorId'],
+		const students = await classroom.getStudents({
+			attributes: ['id', 'fullname'],
 			include: [
 				{
 					model: Student_Result,
 					attributes: ['grade'],
 				},
 			],
+			order: ['fullname', 'id'],
+
 			joinTableAttributes: [],
 			// raw: true,
 			// nest: true,
@@ -186,8 +189,17 @@ exports.getAllStudent = async (req, res, _) => {
 			limit: perPage,
 		});
 		const total = await classDetails.count({ where: { classId } });
-
-		const data = { data: students, total };
+		const total_exam = await Exam.count({ where: { classId } });
+		const exam_name = await classroom.getExams({
+			attributes: ['examId', 'name'],
+		});
+		const data = {
+			exam_name,
+			class_name: classroom.name,
+			data: students,
+			total,
+			total_exam,
+		};
 		// data.totals = totals;
 		return successResponse(res, 200, data);
 	} catch (error) {
@@ -237,14 +249,14 @@ exports.getClassesExams = async (req, res, _) => {
 						lectures.name as lecture_name,
 						exams.name,
 						exams.id,
-						classes.isLock
+						exams.isLock
 
 			FROM      	classes 
 			JOIN		exams 
 			ON 			classes.id = exams.classId 
 			JOIN      	lectures 
 			ON 			classes.lectureId = lectures.id 
-			WHERE 		classes.teacherId = "10991" 
+			WHERE 		classes.teacherId = "${req.user.id}" 
 			LIMIT 		${perPage}
 			OFFSET 		${perPage * (page - 1)}
 		`,
@@ -271,25 +283,46 @@ exports.getClassExams = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
 		const { user } = req;
-		const foundedClass = await Classes.findByPk(classId);
+		// const foundedClass = await Classes.findByPk(classId);
 
-		if (!foundedClass) {
-			throwError(`Could not find class`, 404);
-		}
-		// console.log(user.id);
-		const exams = await foundedClass.getExams({
-			include: [
-				{
-					model: Student_Result,
-					where: { studentId: user.id },
-					attributes: ['isDone'],
-				},
-			],
-			attributes: ['name', 'id', 'duration', 'totalQuestions'],
-			// raw: true,
-			// nest: false,
-		});
+		// if (!foundedClass) {
+		// 	throwError(`Could not find class`, 404);
+		// }
+		// // console.log(user.id);
+		// const exams = await foundedClass.getExams({
+		// 	include: [
+		// 		{
+		// 			model: Student_Result,
+		// 			where: { studentId: user.id },
+		// 			attributes: ['isDone'],
+		// 		},
+		// 	],
+		// 	attributes: ['name', 'id', 'duration', 'totalQuestions'],
+		// 	// raw: true,
+		// 	// nest: false,
+		// });
+		const { sort } = req.query;
+		const exams = await sequelize.query(
+			`
+				SELECT	exams.id,duration,exams.examId as exam_id,exams.name as exam_name,lectures.name as lecture_name,isDone,totalQuestions,exams.isLock
+				FROM	lectures
+				JOIN	classes
+				ON 		classes.lectureId 			= lectures.id
+				JOIN	exams
+				ON		classes.id 					= exams.classId
+				JOIN	studentresults
+				ON		exams.id 					= studentresults.examId
+				JOIN	students
+				ON		students.id 				= studentresults.studentId
+				WHERE	classes.id 					= "${classId}"
+				AND		students.id 				= "${user.id}"
+				${sort !== '' ? `AND		studentresults.isDone		= "${sort}"` : ''}
 
+			`,
+			{
+				type: QueryTypes.SELECT,
+			}
+		);
 		successResponse(res, 200, exams);
 	} catch (error) {
 		errorResponse(res, error);
@@ -343,35 +376,86 @@ exports.getClassExamsResult = async (req, res, _) => {
 exports.getClassExam = async (req, res, _) => {
 	try {
 		const { classId, examId } = req.params;
-		const foundedClass = await Classes.findByPk(classId);
-		if (!foundedClass) {
-			throwError(`Could not find class`, 404);
+		// const foundedClass = await Classes.findByPk(classId);
+		// if (!foundedClass) {
+		// 	throwError(`Could not find class`, 404);
+		// }
+		// const exams = await foundedClass.getExams({
+		// 	where: { id: examId },
+		// 	attributes: [
+		// 		'id',
+		// 		'name',
+		// 		'timeStart',
+		// 		'timeEnd',
+		// 		'duration',
+		// 		'totalQuestions',
+		// 		// 'ratioQuestions',
+		// 		'easy',
+		// 		'hard',
+		// 		'type',
+		// 		'isLock',
+		// 	],
+		// 	include: [
+		// 		{
+		// 			model: Student,
+		// 			attributes: ['id', 'fullname'],
+		// 			through: { attributes: ['grade'] },
+		// 		},
+		// 	],
+		// });
+		// if (!exams[0]) {
+		// 	throwError('Could not find exam', 404);
+		// }
+		const { sort } = req.query;
+
+		const [result] = await sequelize.query(
+			`
+				SELECT	lectures.name as lecture_name,
+						students.fullname as student_name,
+						exams.name as exam_name,
+						exams.examId as exam_id,
+						duration,
+						totalQuestions,
+						grade,
+						content,
+						isDone
+
+				FROM	lectures
+				JOIN	classes
+				ON		lectures.id 				= classes.lectureId
+				JOIN	exams
+				ON		classes.id 					= exams.classId
+				JOIN 	studentresults
+				ON		studentresults.examId 		= exams.id
+				JOIN	students
+				ON		studentresults.studentId 	= students.id
+				WHERE	classes.id 					= "${classId}"
+				AND		exams.id					= "${examId}"
+				AND		students.id 				= "${req.user.id}"
+
+			`,
+			{
+				type: QueryTypes.SELECT,
+			}
+		);
+		if (!result.isDone) {
+			throwError(`Result is empty`);
 		}
-		const exams = await foundedClass.getExams({
-			where: { id: examId },
-			attributes: [
-				'id',
-				'name',
-				'timeStart',
-				'timeEnd',
-				'duration',
-				'totalQuestions',
-				'ratioQuestions',
-				'type',
-				'isLock',
-			],
-			// include: [
-			// 	{
-			// 		model: Student,
-			// 		attributes: ['id', 'fullname'],
-			// 		through: { attributes: ['grade'] },
-			// 	},
-			// ],
-		});
-		if (!exams[0]) {
-			throwError('Could not find exam', 404);
-		}
-		successResponse(res, 200, exams[0]);
+
+		const content = JSON.parse(result.content);
+
+		const correct = content.reduce((acc, question) => {
+			if (question.studentAns === question.correctAns) {
+				return acc + 1;
+			}
+			return acc;
+		}, 0);
+		console.log(content.length);
+		const wrong = result.totalQuestions - correct;
+		result.content = null;
+		result.correct = correct;
+		result.wrong = wrong;
+		successResponse(res, 200, result);
 	} catch (error) {
 		errorResponse(res, error);
 	}
@@ -390,7 +474,7 @@ exports.getClassExamStudentResults = async (req, res, _) => {
 		}
 		const studentresults = await exam[0].getStudents({
 			attributes: ['id', 'fullname'],
-			// through: { attributes: ['grade'] },
+			through: { attributes: ['grade'] },
 		});
 
 		// const studentresults = await sequelize.query(
@@ -400,6 +484,109 @@ exports.getClassExamStudentResults = async (req, res, _) => {
 		// 	{ type: sequelize.QueryTypes.SELECT }
 		// );
 		successResponse(res, 200, studentresults);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
+
+exports.getStudentResultInClass = async (req, res, _) => {
+	try {
+		const { classId, examId } = req.params;
+		// const classroom = await Class.findByPk(classId);
+		// const exams = await classroom.getExams(examId);
+		// const result = await exams[0].getStudents({
+		// 	where: {
+		// 		id: req.user.id,
+		// 	},
+		// 	include: [
+		// 		{
+		// 			model: Student_Result,
+		// 		},
+		// 	],
+		// });
+		// const [content] = result[0].studentresults;
+
+		const [result] = await sequelize.query(
+			`
+			SELECT  timeStart, timeEnd, content, duration,isDone
+			FROM	classes
+			JOIN	exams
+			ON		exams.classId 	= classes.id
+			JOIN	studentresults 
+			ON		exams.id 		= studentresults.examId
+			JOIN	students
+			ON		students.id 	= studentresults.studentId
+			WHERE	exams.id 		= "${examId}"
+			AND		classes.id		= "${classId}"
+			AND		students.id		= "${req.user.id}"
+		`,
+			{
+				type: sequelize.QueryTypes.SELECT,
+			}
+		);
+		const { content: newContent } = result;
+		result.content = JSON.parse(newContent);
+		successResponse(res, 200, result);
+	} catch (error) {
+		console.log(error);
+		errorResponse(res, error);
+	}
+};
+
+exports.getChaptersInClass = async (req, res, _) => {
+	try {
+		const { classId } = req.params;
+		const classroom = await Class.findByPk(classId);
+		const chapters = await Chapter.findAll({
+			where: {
+				lectureId: classroom.lectureId,
+			},
+		});
+		successResponse(res, 200, chapters);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
+
+exports.getQuestionInClassByChapter = async (req, res, _) => {
+	try {
+		const { classId } = req.params;
+		const { chapters } = req.query;
+
+		const classroom = await Class.findByPk(classId);
+		const query = chapters
+			?.split(',')
+			.join(`" OR chapters.id = "${classroom.lectureId}-`);
+
+		console.log(`"${classroom.lectureId}-${query}`);
+		const questions = await sequelize.query(
+			`
+			SELECT  questions.id,
+					description,
+					correctAns,
+					answerA,
+					answerB,
+					answerC,
+					answerD,
+					level
+
+			FROM	classes
+
+			JOIN	lectures
+			ON		lectures.id 			= classes.lectureId
+			JOIN	chapters
+			ON		lectures.id 			= chapters.lectureId
+			JOIN	questions
+			ON		chapters.id 			= questions.chapterId
+			WHERE	chapters.id 			= "${classroom.lectureId}-${query}"
+			AND		classes.id              = "${classId}"
+	
+			`,
+			{
+				type: QueryTypes.SELECT,
+			}
+		);
+		successResponse(res, 200, questions);
 	} catch (error) {
 		errorResponse(res, error);
 	}
@@ -429,37 +616,33 @@ exports.postClass = async (req, res, _) => {
 			const filePath = await file.path;
 			const extname = /xls/.test(path.extname(file.originalname).toLowerCase());
 
-			let data;
-			if (extname) {
-				const workbook = new Excel.Workbook();
-				await workbook.xlsx.readFile(filePath);
-				const worksheet = workbook.getWorksheet('Sheet1');
-				console.log(workbook + '1');
-			} else {
-				const workbook = XLSX.readFile(
-					// path.join(__dirname, '..', 'excels/Book1.xlsx')
-					filePath
-				);
-				data = XLSX.utils.sheet_to_json(
-					workbook.Sheets[workbook.SheetNames[0]]
-				);
-			}
+			const workbook = XLSX.readFile(
+				// path.join(__dirname, '..', 'excels/Book1.xlsx')
+				filePath
+			);
+			const data = XLSX.utils.sheet_to_json(
+				workbook.Sheets[workbook.SheetNames[0]]
+			);
+
 			console.log(data);
-			data.forEach(async (student, number) => {
-				const cuttedDOB = student['ngày sinh']?.split('/') || new Date();
-				const year = cuttedDOB[2];
-				const month = cuttedDOB[1];
-				const day = cuttedDOB[0];
-				console.log(student['Mã lớp'].slice(0, 3));
-				await newClass.createClassStudent({
-					accountpassword,
-					id: student['MSSV'] || student['Mã sinh viên'],
-					dob: new Date(year, month, day),
-					fullname:
-						student['Họ tên'] || student['Họ lót'] + ' ' + student['Tên'],
-					majorId: student['chuyên ngành'] || student['Mã lớp'].slice(0, 3),
-				});
-			});
+			await Promise.all(
+				data.map(async (student, number) => {
+					const cuttedDOB = student['ngày sinh']?.split('/') || new Date();
+					const year = cuttedDOB[2];
+					const month = cuttedDOB[1];
+					const day = cuttedDOB[0];
+					console.log(student['Mã lớp'].slice(0, 3));
+					await newClass.createClassStudent({
+						accountpassword,
+						id: student['MSSV'] || student['Mã sinh viên'],
+						dob: new Date(year, month, day),
+						fullname:
+							student['Họ tên'] || student['Họ lót'] + ' ' + student['Tên'],
+						majorId: student['chuyên ngành'] || student['Mã lớp'].slice(0, 3),
+					});
+				})
+			);
+
 			const newTotal = await classDetails.count({
 				where: { classId: newClass.id },
 			});
@@ -477,55 +660,186 @@ exports.postClass = async (req, res, _) => {
 
 exports.postClassExam = async (req, res) => {
 	try {
+		const errors = validationResult(req.body);
+		if (!errors.isEmpty()) {
+			throwError(errors.array(), 409);
+		}
 		const { classId } = req.params;
 		const classroom = await Class.findByPk(classId);
 		const {
 			type,
-			id,
+			examId,
 			name,
 			timeStart,
 			timeEnd,
 			duration,
 			totalQuestions,
-			ratioQuestions,
+			easy,
+			hard,
+			questions,
 		} = req.body;
 		const exam = await classroom.createExam({
 			type,
-			id,
+			examId,
 			name,
 			timeStart,
 			timeEnd,
 			duration,
-			ratioQuestions,
+			easy,
+			hard,
 			totalQuestions,
 		});
 		const students = await classroom.getStudents();
-		if (type === 0) {
+		const questionList = JSON.parse(questions);
+		if (type === '0') {
+			console.log('Đây nè');
+			try {
+				const [chapter, created] = await Chapter.findOrCreate({
+					where: {
+						[Op.and]: [
+							{
+								lectureId: classroom.lectureId,
+							},
+							{
+								name: 'Chương chung',
+							},
+						],
+					},
+					defaults: {
+						lectureId: classroom.lectureId,
+						id: `${classroom.lectureId}-0`,
+						name: 'Chương chung',
+						numberOfQuestions: 0,
+					},
+				});
+				console.log(3);
+
+				const newQuestions = await Promise.all(
+					questionList.map(async (question) => {
+						const createdQuestion = await chapter.createQuestion(question);
+
+						return {
+							id: createdQuestion.id,
+							description: createdQuestion.description,
+							answerA: createdQuestion.answerA,
+							answerB: createdQuestion.answerB,
+							answerC: createdQuestion.answerC,
+							answerD: createdQuestion.answerD,
+						};
+					})
+				);
+				console.log(2);
+
+				const total = await Question.count({
+					where: { chapterId: chapter.id },
+				});
+				await chapter.update({
+					numberOfQuestions: total,
+				});
+				const result = await Promise.all(
+					students.map(async (student) => {
+						console.log('sd');
+						return await student.addExam(exam, {
+							through: { content: newQuestions },
+						});
+					})
+				);
+				console.log(1);
+				successResponse(res, 200, result);
+			} catch (error) {
+				console.log(error);
+				throwError(error);
+			}
 		}
+
 		if (type === 1) {
+			try {
+				const examContent = await Promise.all(
+					questions.map(async (question) => {
+						const chapter = await Chapter.findByPk(question.id);
+						return {
+							id: chapter.id,
+							description: chapter.description,
+							answerA: chapter.answerA,
+							answerB: chapter.answerB,
+							answerC: chapter.answerC,
+							answerD: chapter.answerD,
+						};
+					})
+				);
+				const result = await Promise.all(
+					students.map(async (student) => {
+						try {
+							return await student.addExam(exam, {
+								through: { content: examContent },
+							});
+						} catch (error) {
+							console.log(error);
+						}
+					})
+				);
+				successResponse(res, 200, result);
+			} catch (error) {
+				console.log(error);
+				errorResponse(res, error);
+			}
+		}
+
+		if (type === 2) {
 			const content = await sequelize.query(
 				`
-				SELECT 		questions.id,
+			SELECT * FROM (
+				(
+					SELECT  questions.id,
 							description,
 							correctAns,
 							answerA,
 							answerB,
 							answerC,
-							answerD 
-
-				FROM 		exams 
-				JOIN 		classes 
-				ON 			exams.classId 		= classes.id 
-				JOIN 		lectures 
-				ON 			classes.lectureId	= lectures.id 
-				JOIN 		Chapters 
-				ON 			lectures.Id			= chapters.lectureId 
-				JOIN 		questions 
-				ON 			questions.chapterId	= chapters.id 
-				WHERE 		chapterId 			= "WEBC1" 
-				AND NOT 	questions.status	= "2"
-				ORDER BY 	Rand() 
-				LIMIT 		10;`,
+							answerD,
+							difficulty
+	
+					FROM	exams
+					JOIN	classes
+					ON		exams.classId 			= classes.id
+					JOIN	lectures
+					ON		lectures.id 			= classes.lectureId
+					JOIN	chapters
+					ON		lectures.id 			= chapters.lectureId
+					JOIN	questions
+					ON		chapters.id 			= questions.chapterId
+					WHERE	chapters.id 			= "WEBC1"
+					AND		questions.level 		= 0
+					LIMIT	10 
+				)
+					UNION ALL 
+				(
+					SELECT  questions.id,
+							description,
+							correctAns,
+							answerA,
+							answerB,
+							answerC,
+							answerD,
+							difficulty
+	
+					FROM	exams
+					JOIN	classes
+					ON		exams.classId 			= classes.id
+					JOIN	lectures
+					ON		lectures.id 			= classes.lectureId
+					JOIN	chapters
+					ON		lectures.id 			= chapters.lectureId
+					JOIN	questions
+					ON		chapters.id 			= questions.chapterId
+					WHERE	chapters.id 			= "WEBC1"
+					AND		questions.level	 		= 1
+					LIMIT	10 
+				)
+			) as q 
+			ORDER BY RAND()
+			
+			`,
 				{ type: sequelize.QueryTypes.SELECT }
 			);
 			const result = await Promise.all(
@@ -539,38 +853,71 @@ exports.postClassExam = async (req, res) => {
 			successResponse(res, 200, result);
 			return;
 		}
-		if (type === 2) {
+		if (type === 3) {
 			const result = await Promise.all(
 				students.map(async (student) => {
 					const content = await sequelize.query(
 						`
-						SELECT 		questions.id,
+					SELECT * FROM (
+						(
+							SELECT  questions.id,
 									description,
 									correctAns,
 									answerA,
 									answerB,
 									answerC,
-									answerD 
-
-						FROM 		exams 
-						JOIN 		classes 
-						ON 			exams.classId 		= classes.id 
-						JOIN 		lectures 
-						ON 			classes.lectureId	= lectures.id 
-						JOIN 		Chapters 
-						ON 			lectures.Id			= chapters.lectureId 
-						JOIN 		questions 
-						ON 			questions.chapterId	= chapters.id 
-						WHERE 		chapterId 			= "WEBC1" 
-						AND NOT 	questions.status	= "2"
-						ORDER BY 	Rand() 
-						LIMIT 		10;`,
+									answerD,
+									level
+			
+							FROM	exams
+							JOIN	classes
+							ON		exams.classId 			= classes.id
+							JOIN	lectures
+							ON		lectures.id 			= classes.lectureId
+							JOIN	chapters
+							ON		lectures.id 			= chapters.lectureId
+							JOIN	questions
+							ON		chapters.id 			= questions.chapterId
+							WHERE	chapters.id 			= "WEBC1"
+							AND		questions.level 		= 0
+							LIMIT	10 
+						)
+							UNION ALL 
+						(
+							SELECT  questions.id,
+									description,
+									correctAns,
+									answerA,
+									answerB,
+									answerC,
+									answerD,
+									level
+			
+							FROM	exams
+							JOIN	classes
+							ON		exams.classId 			= classes.id
+							JOIN	lectures
+							ON		lectures.id 			= classes.lectureId
+							JOIN	chapters
+							ON		lectures.id 			= chapters.lectureId
+							JOIN	questions
+							ON		chapters.id 			= questions.chapterId
+							WHERE	chapters.id 			= "WEBC1"
+							AND		questions.level	 		= 1
+							LIMIT	10 
+						)
+					) as q 
+					ORDER BY RAND()
+					
+					`,
 						{ type: sequelize.QueryTypes.SELECT }
 					);
 					console.log(content);
-					return await student.addExam(exam, {
+					await student.addExam(exam, {
 						through: { content },
 					});
+					successResponse(res, 200, _, req.method);
+					return;
 				})
 			);
 
@@ -610,6 +957,62 @@ exports.postClassStudent = async (req, res, _) => {
 	}
 };
 
+exports.postClassStudentExam = async (req, res, _) => {
+	try {
+		const { examId, classId } = req.params;
+		const classroom = await Classes.findByPk(classId);
+		if (!classroom) {
+			throwError(`Could not find classroom`, 404);
+		}
+
+		const { questions } = req.body;
+		const studentresults = await Student_Result.findOne({
+			where: { studentId: req.user.id, examId },
+		});
+		const { content } = studentresults;
+		let grade = 0;
+		const newContent = await Promise.all(
+			content.map(async (question) => {
+				const isIn = questions.findIndex((object) => object.id === question.id);
+				const questionInBank = await Question.findByPk(question.id, {
+					attributes: [
+						'id',
+						'correctAns',
+						'answerA',
+						'answerB',
+						'answerC',
+						'answerD',
+					],
+				});
+				if (isIn !== -1) {
+					if (questionInBank.correctAns === questions[isIn].studentAns) {
+						grade += 1;
+					}
+
+					console.log(questionInBank.toJSON());
+					return {
+						...questionInBank.toJSON(),
+						...questions[isIn],
+					};
+				}
+				return {
+					...questionInBank.toJSON(),
+					studentAns: 'Bỏ',
+				};
+			})
+		);
+
+		const test = await studentresults.update({
+			content: newContent,
+			grade,
+			isDone: true,
+		});
+		successResponse(res, 200, test, 'POST');
+	} catch (error) {
+		console.log(error);
+		errorResponse(res, error);
+	}
+};
 exports.putClass = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
@@ -646,13 +1049,20 @@ exports.putClassStudent = async (req, res, _) => {
 		if (!foundedClass) {
 			throwError(`Could not find class`, 404);
 		}
-		const student = await foundedClass.getStudents({
+		const [student] = await foundedClass.getStudents({
 			where: {
 				id: studentId,
 			},
 		});
-
-		await student[0].update({});
+		const { id, name, dob } = req.body;
+		if (student) {
+			throwError(`Could not find student`, 404);
+		}
+		await student.update({
+			name,
+			dob,
+		});
+		successResponse(res, 200, _, req.method);
 	} catch (error) {
 		errorResponse(res, error);
 	}
@@ -687,13 +1097,14 @@ exports.patchExamIsLock = async (req, res, _) => {
 		if (!classroom) {
 			throwError('Classroom not found', 404);
 		}
-		const exam = await classroom.getExams({ where: { id: examId } });
-		if (!exam[0]) {
+		const [exam] = await classroom.getExams({ where: { id: examId } });
+		if (!exam) {
 			throwError('Exam not found', 404);
 		}
-		exam[0].isLock = isLock;
-		await exam[0].save();
-		successResponse(res, 200, exam[0], 'PUT');
+		await exam.update({
+			isLock,
+		});
+		successResponse(res, 200, exam, 'PUT');
 	} catch (error) {
 		errorResponse(res, error);
 	}
@@ -721,10 +1132,13 @@ exports.deleteClassStudent = async (req, res, _) => {
 			throwError(`Could not find class`, 404);
 		}
 		const { studentId } = req.params;
-		const student = await classroom.getStudents({
+		const [student] = await classroom.getStudents({
 			where: { id: studentId },
 		});
-		await classroom.removeStudent(student[0]);
+		if (!student) {
+			throwError(`Student not found:`, 404);
+		}
+		await classroom.removeStudent(student);
 		successResponse(res, 200, _, req.method);
 	} catch (error) {
 		errorResponse(res, error);

@@ -3,7 +3,7 @@ import api from "../../../../../config/config.js";
 import ClassItem from "./ClassItem";
 import { useEffect, useRef, useState } from "react";
 import Empty from "../Empty";
-import { useParams } from "react-router-dom";
+import { Outlet, useParams } from "react-router-dom";
 
 function ViewClass() {
   const [classes, setClasses] = useState([]);

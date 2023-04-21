@@ -195,6 +195,7 @@ const testRoutes = require('./routes/test');
 const accountRoutes = require('./routes/account');
 const departmentRoutes = require('./routes/department');
 const majorRoutes = require('./routes/major');
+const studentRoutes = require('./routes/student');
 const lectureRoutes = require('./routes/lecture');
 const adminRoutes = require('./routes/admin');
 const { checkPermission } = require('./middleware/check-permission');
@@ -218,6 +219,7 @@ app.use((req, res, next) => {
 app.use(cors());
 app.use('/auth', authRoutes);
 app.use('/accounts', accountRoutes);
+app.use('/students', studentRoutes);
 app.use('/departments', departmentRoutes);
 app.use('/majors', majorRoutes);
 app.use('/lectures', lectureRoutes);
@@ -227,7 +229,6 @@ app.use('/chapters', chaptersRoutes);
 app.use('/admin', adminRoutes);
 app.use('/test', testRoutes);
 //App start when connected to database
-console.log(port);
 app.get('/', (req, res) => {
 	res.send(Hiii);
 });

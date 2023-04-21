@@ -39,26 +39,24 @@ function Student({ idStudent, nameStudent }) {
          {type === "studentpage" && <StudentPage />}
          {type === "test" && <Test />}
          {type === "result" && <Result />} */}
-      <Routes>
         {/* <Route
           path=":idStudent/:nameStudent"
          //  path="dashboard/viewclass/"
           element={<ViewClass />}
         /> */}
-        <Route
+        {/* <Route
           path="/joinclass/:idStudent/:nameStudent"
           element={<JoinClass />}
-        />
-        <Route
+        /> */}
+        {/* <Route
           path="/studentpage/:idStudent/:nameStudent/:classId"
           element={<StudentPage />}
-        />
-        <Route
+        /> */}
+        {/* <Route
           path="/test/:idStudent/:nameStudent/:classId"
           element={<Test />}
-        />
-        <Route path="/result" element={<Result />} />
-      </Routes>
+        /> */}
+        {/* <Route path="/result" element={<Result />} /> */}
 
       <Outlet/>
 

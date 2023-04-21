@@ -11,8 +11,6 @@ if (node_env === 'production') {
 		dialect: 'mysql',
 		port: '3306',
 	});
-
-	console.log(node_env);
 } else if (node_env === 'test ') {
 	sequelize = new Sequelize('hoang', 'root', '', {
 		host: 'localhost',
@@ -20,7 +18,6 @@ if (node_env === 'production') {
 		port: '3306',
 		timezone: '+07:00',
 	});
-	console.log(node_env, sequelize);
 } else {
 	throw new Error(`Invalid NODE_ENV value: ${node_env}`);
 }

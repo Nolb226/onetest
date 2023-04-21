@@ -3,13 +3,18 @@ const { DataTypes } = require('sequelize');
 
 const Exam = sequelize.define('exam', {
 	id: {
-		type: DataTypes.STRING(10),
+		type: DataTypes.INTEGER,
 		allowNull: false,
 		unique: true,
 		primaryKey: true,
+		autoIncrement: true,
+	},
+	examId: {
+		type: DataTypes.INTEGER(3),
+		allowNull: false,
 	},
 	name: {
-		type: DataTypes.STRING(50),
+		type: DataTypes.STRING,
 		allowNull: false,
 	},
 	timeStart: {
@@ -25,8 +30,12 @@ const Exam = sequelize.define('exam', {
 		type: DataTypes.INTEGER,
 		allowNull: false,
 	},
-	ratioQuestions: {
-		type: DataTypes.FLOAT,
+	easy: {
+		type: DataTypes.INTEGER,
+		allowNull: false,
+	},
+	hard: {
+		type: DataTypes.INTEGER,
 		allowNull: false,
 	},
 	type: {

@@ -77,15 +77,32 @@ GET /classes/{classId}/student/{studentId}
 get specific students from the current class 
 */
 router.get('/:classId/students/:studentId', classController.getStudentInClass);
-// router.use('/:classId/students', checkPermission, passingClass, studentRoutes);
+router.get(
+	'/:classId/students/:studentId/edit',
+	classController.getStudentInClass
+);
+
+router.get('/:classId/chapters', classController.getChaptersInClass);
+
+router.get(
+	'/:classId/chapters/questions',
+	classController.getQuestionInClassByChapter
+);
 
 router.get('/:classId/exams/results', classController.getClassExamsResult);
 
 router.get('/:classId/exams', classController.getClassExams);
+
 router.get('/:classId/exams/:examId', classController.getClassExam);
+
 router.get(
 	'/:classId/exams/:examId/results',
 	classController.getClassExamStudentResults
+);
+
+router.get(
+	'/:classId/exams/:examId/details',
+	classController.getStudentResultInClass
 );
 
 //METHOD : POST
@@ -154,6 +171,8 @@ router.post(
 	classController.postClassExam
 );
 
+router.post('/:classId/exams/:examId', classController.postClassStudentExam);
+
 //METHOD : PUT
 
 router.put(
@@ -168,13 +187,7 @@ router.put(
 			.withMessage('must be a number')
 			.isIn([1, 2, 3])
 			.withMessage('value is not correct '),
-		body('year')
-			.trim()
-			.notEmpty()
-			.isISO8601()
-			.withMessage('must be in ISO8601 format')
-			.isDate()
-			.withMessage('invalid day received'),
+		body('year').trim().notEmpty(),
 		// .withMessage('must be a date'),
 		body('isLock').notEmpty().trim().isIn([true, false]),
 		body('lectureId')
@@ -194,7 +207,7 @@ router.put(
 	classController.putClass
 );
 
-router.put('/:classId/students', classController.putClassStudent);
+router.put('/:classId/students/:studentId', classController.putClassStudent);
 
 //METHOD : PATCH
 

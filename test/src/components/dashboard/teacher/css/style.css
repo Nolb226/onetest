@@ -43,10 +43,10 @@ button:hover {
 
 .filter-box {
    position: absolute;
-   top: 40%;
+   top: 25%;
    right: 3%;
    border: none;
-   background-color: transparent;
+   /* background-color: transparent; */
    color: #888;
    font-weight: 500;
 }
@@ -58,23 +58,17 @@ button:hover {
    cursor: pointer;
 }
 
-.custom-select:hover .custom-select__option-list {
-   display: flex;
-}
+
 
 .custom-select__option-list {
    border: none;
    margin-top: 1.2rem;
-   display: none;
+   /* display: none; */
    justify-content: center;
    flex-direction: column;
    background-color: #fff;
    border-radius: 5px;
    box-shadow: inset 0px 0px 0px 1px #888;
-}
-
-.option {
-   height: 30px;
 }
 
 .inf-btn {
