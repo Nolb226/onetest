@@ -82,6 +82,13 @@ router.get(
 	classController.getStudentInClass
 );
 
+router.get('/:classId/chapters', classController.getChaptersInClass);
+
+router.get(
+	'/:classId/chapters/questions',
+	classController.getQuestionInClassByChapter
+);
+
 router.get('/:classId/exams/results', classController.getClassExamsResult);
 
 router.get('/:classId/exams', classController.getClassExams);
@@ -163,6 +170,8 @@ router.post(
 	],
 	classController.postClassExam
 );
+
+router.post('/:classId/exams/:examId', classController.postClassStudentExam);
 
 //METHOD : PUT
 

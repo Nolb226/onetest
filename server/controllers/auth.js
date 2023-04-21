@@ -81,8 +81,8 @@ exports.login = async (req, res, next) => {
 		const token = jwt.sign({ id: account.id }, 'group5', {
 			expiresIn: '3d',
 		});
-		res.status(200).json({ token, type: account.type });
-		// res.status(200).json(token);
+		// res.status(200).json({ token, type: account.type });
+		res.status(200).json(token);
 	} catch (error) {
 		errorResponse(res, error);
 	}
