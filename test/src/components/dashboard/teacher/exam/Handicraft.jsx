@@ -150,6 +150,7 @@ function QuestionBox({ answers, index }) {
             <input
                rules="require"
                className="form-control"
+               type="text"
                name="description"
                id="description"
                style={questionInput}
@@ -220,7 +221,7 @@ function Handicraft() {
                   >
                      <label
                         className="form-label"
-                        htmlFor="id"
+                        htmlFor="examId"
                         style={{
                            color: "#222",
                            fontSize: "1.4rem",
@@ -243,8 +244,8 @@ function Handicraft() {
                            rules="require"
                            className="form-control"
                            type="text"
-                           name="id"
-                           id="id"
+                           name="examId"
+                           id="examId"
                            placeholder="Nhập mã đề"
                            style={{
                               fontSize: "1.4rem",
@@ -255,7 +256,10 @@ function Handicraft() {
                               border: "solid 2px #BFBFBF",
                            }}
                         />
-                        <label htmlFor="id" className="form-message"></label>
+                        <label
+                           htmlFor="examId"
+                           className="form-message"
+                        ></label>
                      </div>
                   </div>
 

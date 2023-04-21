@@ -138,6 +138,7 @@ function validator(formSelector) {
                   isValid = false;
                }
             });
+            const currentUser = localStorage.getItem("currentUser");
 
             if (isValid) {
                var easy = 0;
@@ -178,12 +179,66 @@ function validator(formSelector) {
                formData.append("totalQuestions", questionBoxes.length);
                formData.append("easy", easy);
                formData.append("hard", hard);
+               formData.append("type", 0);
+               formData.append("questions", JSON.stringify(questionArray));
+            }
+
+            fetch(`${api}/classes/841109222-12/exams?type`, {
+               body: formData,
+               method: "POST",
+               headers: {
+                  Authorization: "Bearer " + currentUser,
+               },
+            });
+         };
+      }
+
+      // Create handicraft exam
+      if (formSelector === "#form--create-exam__selectFromBank") {
+         formElement.onsubmit = (event) => {
+            event.preventDefault();
+            var isValid = true;
+            let questionArray = [];
+            let arr = [];
+            let formData = new FormData();
+            const questionList = formElement.querySelector(".question-list");
+            let questionBoxes = questionList.querySelectorAll(".question-box");
+
+            inputs.forEach((input) => {
+               if (!handelValidate({ target: input })) {
+                  isValid = false;
+               }
+            });
+            const currentUser = localStorage.getItem("currentUser");
+
+            if (isValid) {
+               // Get data from exam information
+               inputs.forEach((input) => {
+                  if (input.closest(".exam-information")) {
+                     arr.push({ [input.name]: input.value });
+                     formData.append(input.name, input.value);
+                  }
+               });
+
+               // Get data from every question box
+               questionBoxes.forEach((box) => {
+                  let question = {};
+
+                  question["id"] = box.id;
+
+                  questionArray.push(question);
+               });
+
+               formData.append("type", 1);
                formData.append("questions", JSON.stringify(questionArray));
             }
 
             fetch(`${api}/test`, {
                body: formData,
-               method: "post",
+               method: "POST",
+               headers: {
+                  Authorization: "Bearer " + currentUser,
+               },
             });
          };
       }
