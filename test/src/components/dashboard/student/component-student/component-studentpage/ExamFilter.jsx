@@ -11,7 +11,7 @@ function ExamFilter({ isOpen, setIsOpen, setSearchParams }) {
 	};
 	return (
 		<div>
-			<div class="filter-box">
+			<div class="filter-box" onClick={(e) => e.stopPropagation()}>
 				<div class="custom-select">
 					<span
 						class="selected-option"

@@ -34,7 +34,7 @@ function App() {
 						{/* student/classes/ */}
 						<Route path="class" element={<ViewClass />} />
 						<Route path="class/:classId/exams" element={<StudentPage />} />
-						<Route path="joinclass" element={<JoinClass />} />
+						<Route path="class/join" element={<JoinClass />} />
 						<Route path="test/:classId/:examId" element={<Test />} />
 						<Route path="result/:examId" element={<Result />} />
 						<Route path="*" element={<Student />} />

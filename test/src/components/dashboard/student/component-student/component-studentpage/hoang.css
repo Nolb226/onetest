@@ -6,6 +6,21 @@
 }
 
 
+/* 
+    black: {
+        100: "#d0d2e6",
+        200: "#a2a5cc",
+        300: "#7379b3",
+        400: "#454c99",
+        500: "#161f80",
+        600: "#121966",
+        700: "#0d134d",
+        800: "#090c33",
+        900: "#04061a"
+},
+*/
+
+
 
 .container__row {
     font-size: 1.4rem;
@@ -20,6 +35,23 @@
     font-size: 1.6rem;
     font-weight: 600;
     box-shadow: 0 0 0 1px #ccc;
+}
+
+.joinclass-button:hover {
+    opacity: 0.8;
+}
+
+.enter-password {
+    color: #04061a;
+
+    border: none;
+    padding: .5rem 1.2rem;
+    font-size: 1.6rem;
+}
+
+.enter-password:focus {
+    outline: none;
+    box-shadow: inset 0 0 0px 3px  #454c99;
 }
 
 @media (min-width: 768px) and (max-width: 1250px) {

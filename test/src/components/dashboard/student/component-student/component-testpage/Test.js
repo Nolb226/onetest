@@ -36,6 +36,7 @@ function Test() {
 					...submitted,
 					status: questionsAPI.data.isDone,
 				});
+				console.log(submitted.status);
 				if (!submitted.status) {
 					startTimer(questionsAPI.data.duration);
 				}
@@ -50,6 +51,8 @@ function Test() {
 
 	const startTimer = (duration) => {
 		const countDownDuration = () => {
+			let minutes = String(parseInt(time / 60, 10)).padStart(2, '0');
+			let seconds = String(parseInt(time % 60, 10)).padStart(2, '0');
 			// console.log(duration);
 			if (duration === 0) {
 				// alert('hét giờ');
@@ -58,9 +61,10 @@ function Test() {
 			}
 			// setDuration((duration) => duration - 1);
 			// duration--;
-			setDuration(--duration);
+			time--;
+			setDuration({ minutes, seconds });
 		};
-
+		let time = duration * 60;
 		countDownDuration();
 		const timer = setInterval(countDownDuration, 1000);
 		return timer;
