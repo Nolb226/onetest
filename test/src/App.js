@@ -20,17 +20,23 @@ import Classes from './components/dashboard/teacher/Class/Classes';
 import Classlist from './components/dashboard/teacher/Class/ClassList';
 import Repass from './components/dashboard/teacher/Class/Repass';
 import Exam from './components/dashboard/teacher/exam/Exam';
+import ClassList from './components/dashboard/teacher/exam/ClassList';
+import ExamList from './components/dashboard/teacher/exam/ExamList';
 
 function App() {
-	return (
-		<div id="app" className="position-relative">
-			<Routes>
-				<Route exact path="/" element={<Home />}></Route>
-				<Route path="*" element={<Home />}></Route>
-				<Route exact path="/dashboard" element={<Dashboard />}>
-					<Route path="student" element={<Student />}>
-						<Route path="" element={<Navigate to="class" replace={true} />} />
+   return (
+      <div id="app" className="position-relative">
+         <Routes>
+            <Route exact path="/" element={<Home />}></Route>
+            <Route path="*" element={<Home />}></Route>
+            <Route exact path="/dashboard" element={<Dashboard />}>
+               <Route path="student" element={<Student />}>
+                  <Route
+                     path=""
+                     element={<Navigate to="class" replace={true} />}
+                  />
 
+<<<<<<<<< Temporary merge branch 1
 						{/* <Route path="./dashboard/student" element={<Navigate to="/viewclass" replace relative="path"/>}/> */}
 						{/* student/classes/ */}
 						<Route path="class" element={<ViewClass />} />
@@ -46,7 +52,6 @@ function App() {
 							<Route path="" element={<Classes />} />
 							<Route path=":classId" element={<Classlist />} />
 							<Route path=":classId/edit" element={<Repass />} />
-							<Route path="test" element={<Exam />} />
 						</Route>
 						{/* <Route path="class/:classId/student/:studentId/edit" element={<Student />} /> */}
 					</Route>
