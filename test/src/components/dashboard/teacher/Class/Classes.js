@@ -1,5 +1,6 @@
 import ClassItem from './ClassItem';
 import { useState, useEffect, Suspense } from 'react';
+import { Link } from 'react-router-dom';
 import Paginator from './Paginator';
 import api from '../../../../config/config';
 import { Outlet, useOutlet, useSearchParams } from 'react-router-dom';
@@ -95,13 +96,16 @@ function Classes(prop) {
 								<i class="fa-solid fa-magnifying-glass"></i>
 							</button>
 						</form>
-						<button
-							class="flex-center join-button"
-							onClick={prop.handleCreateClass}
-						>
-							<i class="menu-icon fa-solid fa-plus"></i>
-							<span>Tạo lớp mới</span>
-						</button>
+						<Link class="flex-center join-button" to={`create`} relative="path" style={{padding: '0'}}>
+							<button
+								class="flex-center join-button"
+								
+								// onClick={prop.handleCreateClass}
+							>
+									<i class="menu-icon fa-solid fa-plus"></i>
+									<span>Tạo lớp mới</span>
+							</button>
+						</Link>
 					</div>
 					<div class="table-zone grid position-relative">
 						<h1 class="table__heading">DANH SÁCH NHÓM LỚP</h1>

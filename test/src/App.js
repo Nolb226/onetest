@@ -19,6 +19,7 @@ import Class from './components/dashboard/teacher/Class/Class';
 import Classes from './components/dashboard/teacher/Class/Classes';
 import Classlist from './components/dashboard/teacher/Class/ClassList';
 import Repass from './components/dashboard/teacher/Class/Repass';
+import CreateClass from './components/dashboard/teacher/Class/CreateClass';
 
 function App() {
 	return (
@@ -45,6 +46,7 @@ function App() {
 							<Route path="" element={<Classes />} />
 							<Route path=":classId" element={<Classlist />} />
 							<Route path=":classId/edit" element={<Repass />} />
+							<Route path="create" element={<CreateClass />}/>
 						</Route>
 						{/* <Route path="class/:classId/student/:studentId/edit" element={<Student />} /> */}
 					</Route>
