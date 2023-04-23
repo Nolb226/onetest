@@ -124,6 +124,7 @@ function validator(formSelector) {
 
       // Create handicraft exam
       if (formSelector === "#form--create-exam") {
+         console.log("validate for handily exam");
          formElement.onsubmit = (event) => {
             event.preventDefault();
             var isValid = true;
@@ -193,7 +194,7 @@ function validator(formSelector) {
          };
       }
 
-      // Create handicraft exam
+      // Create select from bank exam
       if (formSelector === "#form--create-exam__selectFromBank") {
          formElement.onsubmit = (event) => {
             event.preventDefault();
@@ -201,8 +202,18 @@ function validator(formSelector) {
             let questionArray = [];
             let arr = [];
             let formData = new FormData();
+
             const questionList = formElement.querySelector(".question-list");
             let questionBoxes = questionList.querySelectorAll(".question-box");
+
+            const type = formElement.querySelector("select[name=type]");
+            // console.log(type.value);
+
+            // if (type.value === 1) {
+            //    document.getElementById("hard").style.disabled = "true";
+            // }
+
+            // --- Validate for question list
 
             inputs.forEach((input) => {
                if (!handelValidate({ target: input })) {
@@ -229,7 +240,7 @@ function validator(formSelector) {
                   questionArray.push(question);
                });
 
-               formData.append("type", 1);
+               formData.append("type", type.value);
                formData.append("questions", JSON.stringify(questionArray));
             }
 

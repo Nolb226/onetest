@@ -23,10 +23,10 @@ function SignInModal({ toggle1, toggle2 }) {
          const data = await resonse.json();
 
          localStorage.setItem("currentUser", data.token);
-         if(data.type == "SV") {
+         if (data.type === "SV") {
             window.location.href = "./dashboard/student";
          }
-         if(data.type == "GV") {
+         if (data.type === "GV") {
             window.location.href = "./dashboard/teacher";
          }
       } catch (error) {
@@ -47,11 +47,7 @@ function SignInModal({ toggle1, toggle2 }) {
                e.stopPropagation();
             }}
          >
-            <form
-               action="#"
-               method="POST"
-               id="form-sign-in"
-            >
+            <form action="#" method="POST" id="form-sign-in">
                <div className="modal__header position-relative">
                   <div className="modal__content flex-center flex-direction-col">
                      <h3 className="modal--heading">Đăng nhập</h3>

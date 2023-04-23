@@ -6,8 +6,8 @@ import SelectFromBank from "./SelectFromBank.jsx";
 
 export default function CreateExamModal({ type, setType }) {
    useEffect(() => {
-      validator("#form--create-exam");
-      // validator("#form--create-exam__selectFromBank");
+      let formElement = document.querySelector("form");
+      validator("#" + formElement.id);
    }, [type]);
 
    document.querySelector(".return").addEventListener("click", () => {

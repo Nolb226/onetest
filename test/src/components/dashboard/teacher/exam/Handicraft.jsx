@@ -70,7 +70,7 @@ const questionSideMenu = {
 };
 
 function AnswerListInput({ answerArray, questionIndex }) {
-   console.log(answerArray);
+   // console.log(answerArray);
    return answerArray.map((item) => (
       <div
          className="flex-center form-group"
@@ -355,7 +355,6 @@ function Handicraft() {
                            type="datetime-local"
                            name="timeStart"
                            id="timeStart"
-                           placeholder="Nhập mã đề"
                            style={{
                               fontSize: "1.4rem",
                               paddingLeft: "10px",
