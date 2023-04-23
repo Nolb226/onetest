@@ -24,41 +24,43 @@ import ClassList from './components/dashboard/teacher/exam/ClassList';
 import ExamList from './components/dashboard/teacher/exam/ExamList';
 
 function App() {
-   return (
-      <div id="app" className="position-relative">
-         <Routes>
-            <Route exact path="/" element={<Home />}></Route>
-            <Route path="*" element={<Home />}></Route>
-            <Route exact path="/dashboard" element={<Dashboard />}>
-               <Route path="student" element={<Student />}>
-                  <Route
-                     path=""
-                     element={<Navigate to="class" replace={true} />}
-                  />
+	const currentUser = localStorage.getItem('currentUser');
+	console.log(currentUser);
 
-<<<<<<<<< Temporary merge branch 1
-						{/* <Route path="./dashboard/student" element={<Navigate to="/viewclass" replace relative="path"/>}/> */}
-						{/* student/classes/ */}
-						<Route path="class" element={<ViewClass />} />
-						<Route path="class/:classId/exams" element={<StudentPage />} />
-						<Route path="class/join" element={<JoinClass />} />
-						<Route path="test/:classId/:examId" element={<Test />} />
-						<Route path="result/:examId" element={<Result />} />
-						<Route path="*" element={<Student />} />
-					</Route>
-					<Route path="teacher" element={<Teacher />}>
-						<Route path="" element={<Navigate to="class" replace={true} />} />
-						<Route path="class" element={<Class />}>
-							<Route path="" element={<Classes />} />
-							<Route path=":classId" element={<Classlist />} />
-							<Route path=":classId/edit" element={<Repass />} />
+	return (
+		<div id="app" className="position-relative">
+			<Routes>
+				{!currentUser ? (
+					<Route exact path="/" element={<Home />}></Route>
+				) : (
+					<Route exact path="/" element={<Dashboard />}>
+						(
+						<Route path="student" element={<Student />}>
+							<Route path="" element={<Navigate to="class" replace={true} />} />
+							<Route path="class" element={<ViewClass />} />
+							<Route path="class/:classId/exams" element={<StudentPage />} />
+							<Route path="class/join" element={<JoinClass />} />
+							<Route path="exam/:classId/:examId" element={<Test />} />
+							<Route path="result/:examId" element={<Result />} />
+							<Route path="*" element={<Student />} />
 						</Route>
-						{/* <Route path="class/:classId/student/:studentId/edit" element={<Student />} /> */}
+						): (
+						<Route path="teacher" element={<Teacher />}>
+							<Route path="" element={<Navigate to="class" replace={true} />} />
+							<Route path="class" element={<Class />}>
+								<Route path="" element={<Classes />} />
+								<Route path=":classId" element={<Classlist />} />
+								<Route path=":classId/edit" element={<Repass />} />
+							</Route>
+							<Route path="exam" element={<Exam />}>
+								<Route path="" element={<ExamList />} />
+								<Route path="create" element={<ClassList />} />
+							</Route>
+							{/* <Route path="class/:classId/student/:studentId/edit" element={<Student />} /> */}
+						</Route>
+						)
 					</Route>
-				</Route>
-				{/* <Route path="/dashboard/:type" element={<Dashboard />}></Route> */}
-				{/* <Route exact path="/student" element={<Student />}></Route> */}
-				{/* <Route path="/dashboard/:type" element={<Dashboard />}></Route> */}
+				)}
 			</Routes>
 			{/* <Home /> */}
 		</div>
