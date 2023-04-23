@@ -20,7 +20,6 @@ function Footer() {
       if (flag) {
          footerElement && (footerElement.style.bottom = "auto");
       } else footerElement && (footerElement.style.bottom = "0");
-      console.log(window.innerHeight);
    }, [viewHeight]);
 
    return (
