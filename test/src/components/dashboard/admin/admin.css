@@ -1,0 +1,246 @@
+#admin-layout {
+   height: 100%;
+}
+
+.gridContainer {
+   display: grid;
+   grid-template-columns: 33.33333% 33.33333% 33.33333%;
+   gap: 0px;
+   height: 100%;
+   width: 100%;
+   margin-top: 1px;
+   background-color: #d5d5d5;
+   position: absolute;
+   right: 0;
+   left: 0;
+}
+
+.left-item {
+   display: flex;
+   height: 100%;
+   flex-direction: column;
+   background-color: #fff;
+   padding: 10px;
+   align-items: center;
+}
+
+#admin-layout .save-btn {
+   background-color: var(--primary-color);
+   height: 35px;
+   width: 100px;
+   font-size: 1.6rem;
+   font-weight: 600;
+   letter-spacing: 1px;
+   position: absolute;
+   bottom: 4%;
+   margin-left: auto;
+   margin-right: auto;
+}
+
+.createNew {
+   display: flex;
+   width: 80%;
+   justify-content: center;
+   height: 35px;
+   margin: 10px auto 0;
+}
+
+.createNew > input {
+   border-radius: 5px 0 0 5px;
+   flex: 1;
+   border-color: #bfbfbf;
+   border-width: 2px 0 2px 2px;
+   border-style: solid;
+   padding: 0 10px;
+   outline: none;
+   background-color: #f9f9f9;
+   font-size: 1.5rem;
+   color: #555;
+   letter-spacing: 0.5px;
+}
+
+.permissionList {
+   width: 100%;
+   color: #555;
+   font-size: 1.5rem;
+   line-height: 1.6rem;
+   margin-top: 10%;
+   padding: 0 10px;
+}
+
+.permissionList > ul {
+   font-size: 1.5rem;
+   height: fit-content;
+   max-height: 285px;
+   padding-left: 20px;
+   font-weight: 500;
+   margin-top: 7%;
+   overflow-y: scroll;
+}
+
+.permission-name {
+   display: flex;
+   justify-content: space-between;
+   margin: 10px 0;
+   padding: 5px 0;
+   cursor: pointer;
+}
+
+.permission-name i {
+   display: none;
+   font-size: 1.1rem;
+   margin-right: 20px;
+   color: #999;
+}
+
+.permission-name.selected > i {
+   display: block;
+}
+
+.permission-name:hover > span {
+   border-bottom: solid 1px #999;
+}
+
+.permission-name:hover i {
+   display: block;
+}
+
+.permissionList > ul::-webkit-scrollbar {
+   width: 5px;
+}
+
+.permissionList > ul::-webkit-scrollbar-thumb {
+   background-color: #bababa;
+   border-radius: 5px;
+}
+
+.permissionList > ul::-webkit-scrollbar-track {
+   background-color: #f3f3f3;
+   border-radius: 5px;
+}
+
+.right-item {
+   display: grid;
+   grid-column: 2 / span 2;
+   background-color: #d5d5d5;
+   overflow-y: scroll;
+   width: 100%;
+   height: 100%;
+   grid-template-columns: auto auto auto;
+   gap: 35px;
+   padding: 3%;
+}
+
+.permission-table {
+   background-color: var(--white-color);
+   border-radius: 10px;
+   overflow: hidden;
+   height: 180px;
+   box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+}
+
+.permission-table__heading {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   color: var(--white-color);
+   font-size: 1.7rem;
+   font-weight: 600;
+   height: 50px;
+   background-color: var(--primary-color);
+}
+
+.permission-list {
+   padding: 8px 10px 0;
+   flex: 1;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: flex-start;
+}
+
+.permission-item {
+   display: flex;
+   justify-content: flex-start;
+   align-items: center;
+   font-size: 1.5rem;
+   color: #333;
+   font-weight: 500;
+   padding: 5px 0;
+}
+
+.permission-item > span {
+   margin-left: 10px;
+}
+
+#detail-information {
+   display: none;
+   position: fixed;
+   height: 100vh;
+   top: 0;
+   left: 0;
+   right: 0;
+}
+
+.detail-content {
+   position: relative;
+   background-color: var(--white-color);
+   width: 500px;
+   height: 430px;
+   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+      rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+      rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+   border-radius: 10px;
+   z-index: 99;
+}
+.input-list {
+   padding: 20px;
+}
+
+.input-item {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   text-align: left;
+   padding: 10px 0;
+}
+
+.input-item > label {
+   color: #333;
+   width: 40%;
+   font-weight: 500;
+}
+
+.input-item > input {
+   width: 60%;
+}
+
+.button-list {
+   width: 100%;
+   position: absolute;
+   bottom: 20px;
+}
+
+#detail-information .button-list > button {
+   box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+      rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+   margin: 0 5px;
+   font-size: 1.6rem;
+   font-weight: 600;
+   letter-spacing: 1px;
+   text-transform: uppercase;
+   height: 35px;
+   width: 100px;
+}
+
+.save-btn__info {
+   background-color: var(--primary-color);
+}
+
+.delete-btn__info {
+   background-color: #ff0404;
+}
+
+.delete-btn__info > i {
+   margin-left: 10px;
+}

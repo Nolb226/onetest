@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import SideMenu from "../dashboard/SideMenu";
 import Student from "../dashboard/student/component-student/Student";
 import Teacher from "../dashboard/teacher/Teacher";
+import Admin from "../dashboard/admin/Admin.jsx";
 import "./dashboard.css";
 import { Outlet, useParams } from "react-router";
 import logo from "../../image/logo-no-background.png";
@@ -53,55 +54,41 @@ function Dashboard() {
                     <i className="nav__icon fa-regular fa-bell"></i>
                   </li>
 
-                  <li className="nav__item flex-center">
-                    <i className="nav__icon fa-regular fa-user"></i>
-                  </li>
-                </ul>
-              </div>
-            </header>
-            <div className="information flex-center">
-              <div
-                className="return"
-                style={{
-                  color: "#999",
-                  fontSize: "1.4rem",
-                  fontWeight: "500",
-                  whiteSpace: "nowrap"
-                }}
-              >
-               
-                <Link to="../../" relative="path">{"<<"} Quay lại</Link>.
-              </div>
-              <div className="code inf-children">
-                <p>Mã cá nhân: {info.id || ""}</p>
-              </div>
-              <div className="name inf-children">
-                <p>Họ và tên: {info.fullname || ""}</p>
-              </div>
+                           <li className="nav__item flex-center">
+                              <i className="nav__icon fa-regular fa-user"></i>
+                           </li>
+                        </ul>
+                     </div>
+                  </header>
+                  <div className="information flex-center">
+                     <div
+                        className="return"
+                        style={{
+                           color: "#999",
+                           fontSize: "1.4rem",
+                           fontWeight: "500",
+                        }}
+                     >
+                        {"<<"} Quay lại
+                     </div>
+                     <div className="code inf-children">
+                        Mã cá nhân: {info.id || ''}
+                     </div>
+                     <div className="name inf-children">
+                        Họ và tên: {info.fullname || ''}
+                     </div>
+                  </div>
+               </div>
 
-              {classId && (
-                <div className="name inf-children">
-                  <p>Mã lớp: {classId}</p>
-                </div>
-              )}
-
-              {examId && (
-                <div className="number-of-question name inf-children">
-                  <p>Mã đề: {examId}</p>
-                </div>
-              )}
+               <div className="content">
+                  <Outlet/>
+                  {/* <Teacher /> */}
+                  {/* <Student idStudent={info.id} nameStudent={info.fullname} /> */}
+               </div>
             </div>
-          </div>
-
-          <div className="content">
-            <Outlet />
-            {/* <Teacher /> */}
-            {/* <Student idStudent={info.id} nameStudent={info.fullname} /> */}
-          </div>
-        </div>
+         </div>
       </div>
-    </div>
-  );
+   );
 }
 
 export default Dashboard;

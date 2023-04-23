@@ -11,6 +11,7 @@ function Exam() {
    const [typeMethod, setTypeMethod] = useState("");
 
    const returnBtn = document.querySelector(".return");
+   const currentUser = localStorage.getItem("currentUser");
 
    function ExamList() {
       const [examData, setExamData] = useState([]);
@@ -19,9 +20,7 @@ function Exam() {
          const getExamData = async () => {
             const userreq = await fetch(`${api}/classes/exams`, {
                headers: {
-                  Authorization:
-                     "Bearer " +
-                     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxNDQ0MjI1LCJleHAiOjE2ODE3MDM0MjV9.nd02aUsdaCVSvrIOHXG7rmJaxAW4K5ugCLy8vnhsJ4U",
+                  Authorization: "Bearer " + currentUser,
                },
             });
             const data = await userreq.json();
@@ -37,9 +36,7 @@ function Exam() {
                isLock: !exam.isLock,
             }),
             headers: {
-               Authorization:
-                  "Bearer " +
-                  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxNDQ0MjI1LCJleHAiOjE2ODE3MDM0MjV9.nd02aUsdaCVSvrIOHXG7rmJaxAW4K5ugCLy8vnhsJ4U",
+               Authorization: "Bearer " + currentUser,
                "Content-type": "application/json",
             },
          }).then((response) => response.json());
@@ -133,6 +130,7 @@ function Exam() {
                               <li
                                  className="col l-1"
                                  onClick={() => {
+                                    console.log(exam.isLock);
                                     handleLock(exam.class_id, exam);
                                  }}
                               >
@@ -161,9 +159,7 @@ function Exam() {
       const getClassData = async () => {
          const request = await fetch(`${api}/classes`, {
             headers: {
-               Authorization:
-                  "Bearer " +
-                  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjgxNDQ0MjI1LCJleHAiOjE2ODE3MDM0MjV9.nd02aUsdaCVSvrIOHXG7rmJaxAW4K5ugCLy8vnhsJ4U",
+               Authorization: "Bearer " + currentUser,
             },
          });
          const response = await request.json();
@@ -172,7 +168,9 @@ function Exam() {
          }
       };
 
-      if (classes.length === 0) getClassData();
+      useEffect(() => {
+         getClassData();
+      }, []);
 
       returnBtn.addEventListener("click", () => {
          setClassList(false);
