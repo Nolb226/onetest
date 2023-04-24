@@ -62,8 +62,9 @@ exports.getClasses = async (req, res, _) => {
 				offset: pageSize * (page - 1),
 				limit: pageSize,
 			});
-			const total = await sequelize.query(
-				`
+			if (req.account.type === 'GV') {
+				const total = await sequelize.query(
+					`
 			
 				SELECT 	COUNT(classes.id) as id
 			
@@ -72,18 +73,41 @@ exports.getClasses = async (req, res, _) => {
 				ON		lectures.id = classes.lectureId
 				JOIN	teachers
 				ON		teachers.id = classes.teacherId
-				WHERE	classes.id LIKE "${search}%"
-				OR		classes.name LIKE "${search} %"
+				WHERE	(classes.id LIKE "${search}%"
+				OR		classes.name LIKE "${search} %")
 				AND		teachers.id = "${req.user.id}"
 			`,
-				{
-					type: sequelize.QueryTypes.SELECT,
-				}
-			);
-			return successResponse(res, 200, {
-				data: classrooms,
-				total: total[0].id,
-			});
+					{
+						type: sequelize.QueryTypes.SELECT,
+					}
+				);
+				return successResponse(res, 200, {
+					data: classrooms,
+					total: total[0].id,
+				});
+			}
+			if (req.account.type === 'SV') {
+				const total = await sequelize.query(
+					`
+			
+				SELECT 	COUNT(classes.id) as id
+			
+				FROM	classes
+				JOIN	classdetail
+				ON		classdetail.classId = classes.id
+				WHERE	(classes.id LIKE "${search}%"
+				OR		classes.name LIKE "${search} %")
+				AND		studentId = "${req.user.id}"
+			`,
+					{
+						type: sequelize.QueryTypes.SELECT,
+					}
+				);
+				return successResponse(res, 200, {
+					data: classrooms,
+					total: total[0].id,
+				});
+			}
 		}
 		const page = req.query.page || 1;
 		const pageSize = 10;

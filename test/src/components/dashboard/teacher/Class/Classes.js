@@ -9,7 +9,7 @@ function Classes(prop) {
 	const [page, setPage] = useState(1);
 	const [totalPage, setTotalPage] = useState(1);
 	const [search, setSearch] = useState('');
-	const [searchParams, setSearchParams] = useSearchParams({});
+	const [searchParams, setSearchParams] = useSearchParams({ search: '' });
 	const outlet = useOutlet();
 
 	const handleClasses = (value) => {

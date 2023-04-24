@@ -14,20 +14,29 @@ function ExamButton({ classId, exam, isDone, isLock }) {
 	*/
 
 	let status;
-	if (isLock) {
-		status = 'Lock';
+	if (isLock && !isDone) {
+		status = 'Normal';
+		return (
+			<>
+				<Link to={`../exam/${classId}/${exam}`}>
+					<button class="inf-btn take-test">Làm bài</button>
+				</Link>
+			</>
+		);
 	}
-	if (isDone) {
+	if (isDone && !isLock) {
 		status = 'Done';
+		return (
+			<>
+				<Link to={`../exam/${classId}/${exam}`}>
+					<button class="inf-btn exam-done">Xem điểm</button>
+				</Link>
+			</>
+		);
 	}
-
-	return (
-		<>
-			<Link to={`../test/${classId}/${exam}`}>
-				<button class="inf-btn take-test">Làm bài</button>
-			</Link>
-		</>
-	);
+	if (isDone && isLock) {
+		return <button class="inf-btn exam-lock">Đã khóa</button>;
+	}
 }
 
 function ExamItem({
