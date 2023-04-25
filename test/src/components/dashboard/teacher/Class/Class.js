@@ -5,7 +5,8 @@ import ClassList from './ClassList';
 import CreateClass from './CreateClass';
 import './gridClass.css';
 import './styleClass.css';
-import { Outlet } from 'react-router';
+import { Outlet } from 'react-router';import "./reponsive.css";
+
 
 function Class() {
 	const [classesPage, setClassesPage] = useState(true);

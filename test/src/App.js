@@ -22,6 +22,7 @@ import Repass from './components/dashboard/teacher/Class/Repass';
 import Exam from './components/dashboard/teacher/exam/Exam';
 import ClassList from './components/dashboard/teacher/exam/ClassList';
 import ExamList from './components/dashboard/teacher/exam/ExamList';
+import CreateClass from './components/dashboard/teacher/Class/CreateClass';
 
 function App() {
 	const currentUser = localStorage.getItem('currentUser');
@@ -54,6 +55,7 @@ function App() {
 								<Route path="" element={<Classes />} />
 								<Route path=":classId" element={<Classlist />} />
 								<Route path=":classId/edit" element={<Repass />} />
+								<Route path="create" element={<CreateClass />} />
 							</Route>
 							<Route path="exam" element={<Exam />}>
 								<Route path="" element={<ExamList />} />

@@ -54,15 +54,15 @@ function Student(prop) {
 				justifyContent: 'start',
 			}}
 		>
-			<li className="col l-1 m-1">
+			<li className="col l-1 m-1 c-1">
 				<h3>{prop.index + 1 + (prop.page - 1) * 10}</h3>
 			</li>
 
-			<li class="col l-2 m-2">
+			<li class="col l-2 m-2 c-2">
 				<h3>{prop.student.id}</h3>
 			</li>
 
-			<li class="col l-3 m-3">
+			<li class="col l-3 m-3 c-3">
 				<h3>{prop.student.fullname}</h3>
 			</li>
 
@@ -75,7 +75,7 @@ function Student(prop) {
 				}
 				if (index < prop.numberOfTest && index < 5) {
 					return (
-						<li className={`col l-${col} m-${col}`}>
+						<li className={`col l-${col} m-${col} c-${col}`}>
 							<h3>{grade.grade}</h3>
 							{/* <PDFButton /> */}
 						</li>
@@ -84,7 +84,7 @@ function Student(prop) {
 			})}
 
 			<li
-				className="col l-1 m-1"
+				className="col l-1 m-1 c-1"
 				onClick={(e) => prop.handleClickStudent(prop.student.id)}
 				style={{
 					marginLeft: 'auto',

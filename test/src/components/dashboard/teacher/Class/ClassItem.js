@@ -7,19 +7,19 @@ function ClassItem(Class) {
 
 	return (
 		<ul class="row no-gutters flex-center table__content--item">
-			<li class="col l-6-4">
+			<li class="col l-6-4 m-6-4">
 				<h3>{Class.Class.id}</h3>
 			</li>
 
-			<li class="col l-6-4">
+			<li class="col l-6-4 m-6-4">
 				<h3>{Class.Class.name}</h3>
 			</li>
 
-			<li class="col l-6-4">
+			<li class="col l-6-4 m-6-4">
 				<h3>{Class.Class.lecture.name}</h3>
 			</li>
 
-			<li class="col l-6-4">
+			<li class="col l-6-4 m-6-4">
 				<button
 					class="list_btn list_btn_class"
 					// onClick={() => Class.handleClassList(Class.Class)}
@@ -30,7 +30,7 @@ function ClassItem(Class) {
 				</button>
 			</li>
 
-			<li class="col l-6-2">
+			<li class="col l-6-2 m-6-2">
 				<button
 					className={`${
 						Class.Class.isLock
@@ -43,7 +43,7 @@ function ClassItem(Class) {
 				</button>
 			</li>
 
-			<li class="col l-6-2">
+			<li class="col l-6-2 m-6-2">
 				<Link to={`${Class.Class.id}/edit`} relative="path">
 					<button
 						class="list_btn list_btn_edit "

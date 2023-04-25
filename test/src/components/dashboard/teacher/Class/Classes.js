@@ -1,5 +1,6 @@
 import ClassItem from './ClassItem';
 import { useState, useEffect, Suspense } from 'react';
+import { Link } from 'react-router-dom';
 import Paginator from './Paginator';
 import api from '../../../../config/config';
 import { Outlet, useOutlet, useSearchParams } from 'react-router-dom';
@@ -95,43 +96,46 @@ function Classes(prop) {
 								<i class="fa-solid fa-magnifying-glass"></i>
 							</button>
 						</form>
-						<button
-							class="flex-center join-button"
-							onClick={prop.handleCreateClass}
-						>
-							<i class="menu-icon fa-solid fa-plus"></i>
-							<span>Tạo lớp mới</span>
-						</button>
+						<Link class="flex-center join-button" to={`create`} relative="path" style={{padding: '0'}}>
+							<button
+								class="flex-center join-button"
+								
+								// onClick={prop.handleCreateClass}
+							>
+									<i class="menu-icon fa-solid fa-plus"></i>
+									<span>Tạo lớp mới</span>
+							</button>
+						</Link>
 					</div>
 					<div class="table-zone grid position-relative">
 						<h1 class="table__heading">DANH SÁCH NHÓM LỚP</h1>
 
-						<div class="grid table__content ">
-							<ul class="row no-gutters flex-center table__content--heading">
-								<li class="col l-6-4">
-									<h3>Mã Lớp</h3>
-								</li>
+				<div class="grid table__content ">
+					<ul class="row no-gutters flex-center table__content--heading">
+						<li class="col l-6-4 m-6-4">
+							<h3>Mã Lớp</h3>
+						</li>
 
-								<li class="col l-6-4">
-									<h3>Tên Lớp</h3>
-								</li>
+						<li class="col l-6-4 m-6-4">
+							<h3>Tên Lớp</h3>
+						</li>
 
-								<li class="col l-6-4">
-									<h3>Môn</h3>
-								</li>
+						<li class="col l-6-4 m-6-4">
+							<h3>Môn</h3>
+						</li>
 
-								<li class="col l-6-4">
-									<h3>Danh sách sinh viên</h3>
-								</li>
+						<li class="col l-6-4 m-6-4">
+							<h3>Danh sách sinh viên</h3>
+						</li>
 
-								<li class="col l-6-2">
-									<h3>Khóa Lớp</h3>
-								</li>
+						<li class="col l-6-2 m-6-2">
+							<h3>Khóa Lớp</h3>
+						</li>
 
-								<li class="col l-6-2">
-									<h3>Chỉnh sửa</h3>
-								</li>
-							</ul>
+						<li class="col l-6-2 m-6-2">
+							<h3>Chỉnh sửa</h3>
+						</li>
+					</ul>
 
 							<div class="table__content--list classes ">
 								{classes.length === 0 ? (
