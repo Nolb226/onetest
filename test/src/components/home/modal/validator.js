@@ -206,14 +206,19 @@ function validator(formSelector) {
             const questionList = formElement.querySelector(".question-list");
             let questionBoxes = questionList.querySelectorAll(".question-box");
 
+            questionList
+               .querySelectorAll(`input[type="checkbox"]:checked`)
+               .forEach((checkbox) => {
+                  let question = {};
+
+                  question["id"] = checkbox.id;
+
+                  questionArray.push(question);
+               });
+
+            console.log(questionArray);
+
             const type = formElement.querySelector("select[name=type]");
-            // console.log(type.value);
-
-            // if (type.value === 1) {
-            //    document.getElementById("hard").style.disabled = "true";
-            // }
-
-            // --- Validate for question list
 
             inputs.forEach((input) => {
                if (!handelValidate({ target: input })) {

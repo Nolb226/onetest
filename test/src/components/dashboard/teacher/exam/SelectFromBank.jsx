@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import api from "../../../../config/config";
+import HandleType1 from "./HandleType1";
+import handleType1 from "./HandleType1";
 
 const selectFromBankLayout = {
    width: "100%",
@@ -74,13 +76,14 @@ function Question({ questionObject }) {
             padding: "5px 0",
             borderBottom: "solid 1px #d5d5d5",
          }}
+         data-level={questionObject.level}
       >
          <div style={{ width: "100%" }}>
             <div className="flex-center" style={{ width: "100%" }}>
                <input
                   type="checkbox"
                   name=""
-                  id=""
+                  id={questionObject.id}
                   style={{
                      width: "18px",
                      height: "18px",
@@ -174,6 +177,25 @@ function Question({ questionObject }) {
    );
 }
 
+const getParentElement = (childElement, parentSelector) => {
+   while (childElement.parentElement) {
+      if (childElement.parentElement.matches(parentSelector)) {
+         return childElement.parentElement;
+      }
+      childElement = childElement.parentElement;
+   }
+};
+
+function clearErrorMessage(selector) {
+   let parentElement = getParentElement(
+      document.querySelector(selector),
+      ".form-group"
+   );
+
+   document.querySelector(selector).innerText = "";
+   parentElement.classList.remove("invalid");
+}
+
 function SelectFromBank() {
    const currentUser = localStorage.getItem("currentUser");
 
@@ -181,6 +203,39 @@ function SelectFromBank() {
    const [examQuestions, setExamQuestions] = useState([]);
    const [chapters, setChapters] = useState([]);
    const [type, setType] = useState(1);
+   const [questionArray, setQuestionArray] = useState([]);
+   let easy = 0;
+   let hard = 0;
+
+   function getQuestionList(e) {
+      const checkbox = e.target.closest("input[type='checkbox']");
+      if (!checkbox) return;
+      if (checkbox.checked === true) {
+         if (checkbox.dataset.level == "0") {
+            easy += 1;
+         } else hard += 1;
+         setQuestionArray([...questionArray, checkbox.id]);
+      }
+   }
+
+   useEffect(() => {
+      document.getElementById("totalQuestions").value = questionArray.length;
+      questionArray.map((question) => {
+         let level = document.getElementById(question).dataset.level;
+
+         if (level == 0) {
+            document.getElementById("easy").value =
+               parseInt(document.getElementById("easy").value) + 1;
+         } else {
+            document.getElementById("hard").value =
+               parseInt(document.getElementById("hard").value) + 1;
+         }
+      });
+   }, [questionArray]);
+   console.log(questionArray.length);
+   console.log("easy ", easy);
+   console.log("hard ", hard);
+   // ----- Fetch API to get Chapters from Subject -----
 
    useEffect(() => {
       const getExamChapter = async () => {
@@ -194,6 +249,8 @@ function SelectFromBank() {
       };
       getExamChapter();
    }, []);
+
+   // ----- Fetch API to get Questions from Chapters -----
 
    useEffect(() => {
       const getExamQuestions = async () => {
@@ -213,12 +270,22 @@ function SelectFromBank() {
       getExamQuestions();
    }, [chapters]);
 
+   // ----- Handle when select type of created-method -----
+
    useEffect(() => {
-      console.log(type);
-      if (type === 1) {
-         document.getElementById("total").style.disabled = "true";
-         document.getElementById("easy").style.disabled = "true";
-         document.getElementById("hard").style.disabled = "true";
+      const totalQuestion = document.getElementById("totalQuestions");
+      const easyQuestion = document.getElementById("easy");
+      const hardQuestion = document.getElementById("hard");
+      if (type === 1 || type === "1") {
+         clearErrorMessage(".form-message.totalQuestions");
+         clearErrorMessage(".form-message.easy");
+         clearErrorMessage(".form-message.hard");
+
+         handleType1(totalQuestion, easyQuestion, hardQuestion);
+      } else {
+         document.getElementById("totalQuestions").disabled = false;
+         document.getElementById("easy").disabled = false;
+         document.getElementById("hard").disabled = false;
       }
    }, [type]);
 
@@ -238,6 +305,7 @@ function SelectFromBank() {
                height: "100%",
                position: "relative",
             }}
+            onClick={getQuestionList}
          >
             <div
                className="flex-center position-relative"
@@ -279,16 +347,11 @@ function SelectFromBank() {
                         border: "solid 2px #BFBFBF",
                         borderRadius: "4px",
                      }}
+                     onChange={(e) => setType(e.target.value)}
                   >
-                     <option value="1" onClick={() => setType(1)}>
-                        Tự chọn
-                     </option>
-                     <option value="2" onClick={() => setType(2)}>
-                        Ngẫu nhiên cho lớp
-                     </option>
-                     <option value="3" onClick={() => setType(3)}>
-                        Ngẫu nhiên
-                     </option>
+                     <option value="1">Tự chọn</option>
+                     <option value="2">Ngẫu nhiên cho lớp</option>
+                     <option value="3">Ngẫu nhiên</option>
                   </select>
                </div>
 
@@ -575,7 +638,7 @@ function SelectFromBank() {
                         />
                         <label
                            htmlFor="totalQuestions"
-                           className="form-message"
+                           className="form-message totalQuestions"
                         ></label>
                      </div>
                   </li>
@@ -608,6 +671,7 @@ function SelectFromBank() {
                            type="text"
                            name="easy"
                            id="easy"
+                           value="0"
                            style={{
                               width: "150px",
                               fontSize: "1.4rem",
@@ -620,7 +684,10 @@ function SelectFromBank() {
                               textAlign: "center",
                            }}
                         />
-                        <label htmlFor="easy" className="form-message"></label>
+                        <label
+                           htmlFor="easy"
+                           className="form-message easy"
+                        ></label>
                      </div>
                   </li>
 
@@ -652,6 +719,7 @@ function SelectFromBank() {
                            type="text"
                            name="hard"
                            id="hard"
+                           value="0"
                            style={{
                               width: "150px",
                               fontSize: "1.4rem",
@@ -664,7 +732,10 @@ function SelectFromBank() {
                               textAlign: "center",
                            }}
                         />
-                        <label htmlFor="hard" className="form-message"></label>
+                        <label
+                           htmlFor="hard"
+                           className="form-message hard"
+                        ></label>
                      </div>
                   </li>
                </ul>
