@@ -95,7 +95,9 @@ function QuestionsRender({
 					})}
 				</form>
 				<div className="time-test flex-center">
-					Thời gian làm bài còn {duration}
+					{!submitted.status
+						? `Thời gian làm bài còn ${duration?.minutes} : ${duration?.seconds}`
+						: ''}
 				</div>
 				<div className="test-submit flex-center">
 					{submitted.status ? (

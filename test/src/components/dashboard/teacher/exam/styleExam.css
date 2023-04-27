@@ -12,6 +12,13 @@
    border-radius: 5px;
 }
 
+.create-handicraft .tool-btn:hover {
+   cursor: pointer;
+   background-color: var(--primary-color) !important;
+   color: var(--white-color) !important;
+   transition: all 0.2 linear;
+}
+
 #select-chapter {
    cursor: pointer;
 }
@@ -23,7 +30,7 @@
    height: auto;
    position: absolute;
    flex-wrap: wrap;
-   top: 200%;
+   top: 100%;
    border-radius: 5px;
    background-color: var(--white-color);
    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
@@ -47,6 +54,12 @@
    color: var(--white-color);
    border: none;
    background-color: var(--primary-color);
+   transition: all 0.15s linear;
+}
+
+.list__selected-chapter > .chapter:hover {
+   color: var(--white-color) !important;
+   border: none;
    transition: all 0.15s linear;
 }
 

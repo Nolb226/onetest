@@ -34,7 +34,6 @@ require('dotenv').config();
 	const Notification = require('./models/notification');
 
 	const Student_Result = require('./models/student_result');
-	const Exam_Result = require('./models/exam_result');
 
 	const Permission_Group = require('./models/permission_group');
 	const Function = require('./models/function');
@@ -95,11 +94,11 @@ require('dotenv').config();
 		foreignKey: 'examId',
 	});
 
-	Student_Result.belongsToMany(Chapter, {
+	Exam.belongsToMany(Chapter, {
 		through: 'examchapter',
 		timestamps: false,
 	});
-	Chapter.belongsToMany(Student_Result, {
+	Chapter.belongsToMany(Exam, {
 		through: 'examchapter',
 		timestamps: false,
 	});

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import validator from "../../../home/modal/validator";
 
 const layout = {
    width: "900px",
@@ -25,7 +26,7 @@ const questionList = {
 };
 
 const questionBox = {
-   height: "260px",
+   height: "280px",
    backgroundColor: "#fff",
    width: "100%",
    borderRadius: "10px",
@@ -35,7 +36,7 @@ const questionBox = {
 };
 
 const questionInput = {
-   width: "690px",
+   width: "100%",
    height: "40px",
    border: "none",
    borderBottom: "2px solid #BFBFBF",
@@ -48,7 +49,8 @@ const questionInput = {
 
 const answer = {
    flex: "1",
-   height: "35px",
+   height: "40px",
+   width: "100%",
    border: "none",
    borderBottom: "1px solid #BFBFBF",
    background: "#fff",
@@ -63,14 +65,13 @@ const questionSideMenu = {
    width: "100%",
    height: "30px",
    margin: "2px",
-   background: "#FFFFFF",
+   backgroundColor: "#FFFFFF",
    boxShadow: "0px 1px 4px rgba(0, 0, 0, 0.25)",
    borderRadius: "2px",
    fontSize: "1.3rem",
 };
 
 function AnswerListInput({ answerArray, questionIndex }) {
-   // console.log(answerArray);
    return answerArray.map((item) => (
       <div
          className="flex-center form-group"
@@ -85,8 +86,17 @@ function AnswerListInput({ answerArray, questionIndex }) {
             name={"correctAns" + questionIndex}
             id="correct"
             value={item.value}
+            style={{ marginBottom: "16px" }}
          />
-         <div className="flex-center" style={{ flexDirection: "column" }}>
+         <div
+            className="flex-center"
+            style={{
+               flexDirection: "column",
+               alignItems: "flex-start",
+               width: "100%",
+               height: "100%",
+            }}
+         >
             <input
                rules="require"
                type="text"
@@ -96,13 +106,17 @@ function AnswerListInput({ answerArray, questionIndex }) {
                style={answer}
                placeholder={"Đáp án " + item.value}
             ></input>
-            <label htmlFor={item.id} className="form-message"></label>
+            <label
+               htmlFor={item.id}
+               className="form-message"
+               style={{ height: "16px" }}
+            ></label>
          </div>
       </div>
    ));
 }
 
-function QuestionBox({ answers, index }) {
+function QuestionBox({ question, questionListArray, setQuestionListArray }) {
    return (
       <div
          className="flex-center flex-direction-col position-relative question-box"
@@ -124,29 +138,53 @@ function QuestionBox({ answers, index }) {
                <select
                   name="level"
                   id="level"
+                  className="tool-btn"
                   style={{
                      width: "100%",
-                     height: "25px",
+                     height: "100%",
                      border: "none",
                      outline: "none",
                      textAlign: "center",
+                     borderRadius: "2px",
                   }}
                >
                   <option value="0">Mức độ: Dễ</option>
                   <option value="1">Mức độ: Khó</option>
                </select>
             </li>
-            <li className="flex-center" style={questionSideMenu}>
+            <li
+               className="flex-center tool-btn"
+               style={questionSideMenu}
+               onClick={() => {
+                  let answer = {
+                     questionId: question.questionId + 1,
+                     answers: [
+                        { value: "A", id: "answerA" },
+                        { value: "B", id: "answerB" },
+                        { value: "C", id: "answerC" },
+                        { value: "D", id: "answerD" },
+                     ],
+                  };
+                  setQuestionListArray((prev) => [...prev, answer]);
+               }}
+            >
                Thêm
             </li>
-            <li className="flex-center" style={questionSideMenu}>
+            <li
+               className="flex-center tool-btn"
+               style={questionSideMenu}
+               onClick={(e) => {
+                  setQuestionListArray(
+                     questionListArray.filter(
+                        (item) => item.questionId !== question.questionId
+                     )
+                  );
+               }}
+            >
                Xóa
             </li>
          </ul>
-         <div
-            className="form-group"
-            style={{ border: "none", height: "56px", margin: "0" }}
-         >
+         <div className="form-group" style={{ margin: "10px 0 0" }}>
             <input
                rules="require"
                className="form-control"
@@ -161,17 +199,21 @@ function QuestionBox({ answers, index }) {
 
          <div
             className="flex-center flex-direction-col"
-            style={{ marginTop: "15px" }}
+            style={{ marginTop: "5px" }}
          >
-            <AnswerListInput questionIndex={index} answerArray={answers} />
+            <AnswerListInput
+               questionId={question.questionId}
+               answerArray={question.answers}
+            />
          </div>
       </div>
    );
 }
 
 function Handicraft() {
-   const questionListArray = [
+   const [questionListArray, setQuestionListArray] = useState([
       {
+         questionId: 0,
          answers: [
             { value: "A", id: "answerA" },
             { value: "B", id: "answerB" },
@@ -179,16 +221,11 @@ function Handicraft() {
             { value: "D", id: "answerD" },
          ],
       },
+   ]);
 
-      {
-         answers: [
-            { value: "A", id: "answerA" },
-            { value: "B", id: "answerB" },
-            { value: "C", id: "answerC" },
-            { value: "D", id: "answerD" },
-         ],
-      },
-   ];
+   useEffect(() => {
+      validator("#form--create-exam");
+   }, [questionListArray]);
 
    return (
       <>
@@ -484,10 +521,11 @@ function Handicraft() {
                   </div>
                </div>
                <div className="question-list" style={questionList}>
-                  {questionListArray.map((questionItem, index) => (
+                  {questionListArray.map((questionItem) => (
                      <QuestionBox
-                        answers={questionItem.answers}
-                        index={index}
+                        question={questionItem}
+                        setQuestionListArray={setQuestionListArray}
+                        questionListArray={questionListArray}
                      />
                   ))}
                </div>
