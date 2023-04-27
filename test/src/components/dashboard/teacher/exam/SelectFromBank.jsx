@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import api from "../../../../config/config";
+import handleType1 from "./HandleType1";
+import handleType2_3 from "./HandleType2_3";
+import responsiveCreateExam from "./responsiveCreateExam";
 
 const selectFromBankLayout = {
    width: "100%",
@@ -32,29 +35,35 @@ const label = {
 
 const question = {
    width: "690px",
-   height: "35px",
+   height: "40px",
    border: "none",
    flex: "1",
    background: "#F0F0F0",
    padding: "0 10px",
-   fontSize: "1.7rem",
+   fontSize: "1.6rem",
    fontWeight: "600",
-   lineHeight: "3.5rem",
+   lineHeight: "1.6rem",
    outline: "none",
    color: "#444",
+   display: "flex",
+   alignItems: "center",
+   cursor: "default",
+   overflow: "hidden",
 };
 
 const answer = {
    flex: "1",
-   height: "20px",
-   lineHeight: "2rem",
+   height: "32px",
+   lineHeight: "1.5rem",
    border: "none",
    background: "#fff",
    padding: "0 10px",
-   fontSize: "1.6rem",
+   fontSize: "1.5rem",
    outline: "none",
-   color: "#555",
+   color: "#444",
    marginLeft: "15px",
+   display: "flex",
+   alignItems: "center",
 };
 
 function Question({ questionObject }) {
@@ -74,20 +83,29 @@ function Question({ questionObject }) {
             padding: "5px 0",
             borderBottom: "solid 1px #d5d5d5",
          }}
+         // data-level={questionObject.level}
+         // data-chapterId={questionObject.chapterId}
       >
          <div style={{ width: "100%" }}>
             <div className="flex-center" style={{ width: "100%" }}>
                <input
                   type="checkbox"
                   name=""
-                  id=""
+                  data-level={questionObject.level}
+                  data-chapterid={questionObject.chapterId}
+                  id={questionObject.id}
                   style={{
                      width: "18px",
                      height: "18px",
                      marginRight: "5px",
                   }}
                />
-               <h1 name="question" style={question} placeholder="Câu hỏi">
+               <h1
+                  name="question"
+                  style={question}
+                  placeholder="Câu hỏi"
+                  title={questionObject.description}
+               >
                   {questionObject.description}
                </h1>
             </div>
@@ -174,13 +192,69 @@ function Question({ questionObject }) {
    );
 }
 
+const getParentElement = (childElement, parentSelector) => {
+   while (childElement.parentElement) {
+      if (childElement.parentElement.matches(parentSelector)) {
+         return childElement.parentElement;
+      }
+      childElement = childElement.parentElement;
+   }
+};
+
+function clearErrorMessage(selector) {
+   let parentElement = getParentElement(
+      document.querySelector(selector),
+      ".form-group"
+   );
+
+   document.querySelector(selector).innerText = "";
+   parentElement.classList.remove("invalid");
+}
+
 function SelectFromBank() {
+   responsiveCreateExam();
    const currentUser = localStorage.getItem("currentUser");
 
    const [examChapter, setExamChapter] = useState([]);
    const [examQuestions, setExamQuestions] = useState([]);
    const [chapters, setChapters] = useState([]);
    const [type, setType] = useState(1);
+   const [questionArray, setQuestionArray] = useState([]);
+
+   const easyElement = document.getElementById("easy");
+   const hardElement = document.getElementById("hard");
+
+   // console.log(examQuestions);
+
+   const increase = (level) => {
+      console.log(level);
+      if (level == "0") easyElement.value = parseInt(easyElement.value) + 1;
+      else hardElement.value = parseInt(hardElement.value) + 1;
+   };
+
+   const decrease = (level) => {
+      if (level == "0") easyElement.value = parseInt(easyElement.value) - 1;
+      else hardElement.value = parseInt(hardElement.value) - 1;
+   };
+
+   function getQuestionList(e) {
+      const checkbox = e.target.closest("input[type='checkbox']");
+      if (!checkbox) return;
+      let question = {};
+      if (checkbox.checked === true) {
+         increase(checkbox.dataset.level);
+         question["chapterId"] = checkbox.dataset.chapterid;
+         question["id"] = checkbox.id;
+         setQuestionArray([...questionArray, question]);
+      } else if (checkbox.checked === false) {
+         decrease(checkbox.dataset.level);
+         setQuestionArray(questionArray.filter((item) => item !== checkbox.id));
+      }
+   }
+
+   // console.log(questionArray);
+
+   // ----- Fetch API to get Chapters from Subject -----
 
    useEffect(() => {
       const getExamChapter = async () => {
@@ -195,39 +269,84 @@ function SelectFromBank() {
       getExamChapter();
    }, []);
 
-   useEffect(() => {
-      const getExamQuestions = async () => {
-         const userreq = await fetch(
-            `${api}/classes/841109222-12/chapters/questions?chapters=${chapters.join(
-               ","
-            )}`,
-            {
-               headers: {
-                  Authorization: "Bearer " + currentUser,
-               },
-            }
-         );
-         const data = await userreq.json();
-         setExamQuestions(data.data);
-      };
-      getExamQuestions();
-   }, [chapters]);
+   // ----- Fetch API to get Questions from Chapters -----
+
+   const handleChapterGuide = (length) => {
+      if (length === 0)
+         document.querySelector(".chapter-guide").style.display = "flex";
+      else document.querySelector(".chapter-guide").style.display = "none";
+   };
+
+   const getExamQuestions = async () => {
+      const userreq = await fetch(
+         `${api}/classes/841109222-12/chapters/questions?chapters=${chapters.join(
+            ","
+         )}`,
+         {
+            headers: {
+               Authorization: "Bearer " + currentUser,
+            },
+         }
+      );
+      const data = await userreq.json();
+      setExamQuestions(data.data);
+   };
 
    useEffect(() => {
-      console.log(type);
-      if (type === 1) {
-         document.getElementById("total").style.disabled = "true";
-         document.getElementById("easy").style.disabled = "true";
-         document.getElementById("hard").style.disabled = "true";
+      getExamQuestions();
+      handleChapterGuide(chapters.length);
+   }, [chapters]);
+
+   const handleRemoveChapter = (chapter) => {
+      setChapters(chapters.filter((item) => item !== chapter));
+   };
+
+   // ----- Handle when select type of created-method -----
+
+   useEffect(() => {
+      document.getElementById("totalQuestions").value = questionArray.length;
+   }, [questionArray]);
+
+   useEffect(() => {
+      const totalQuestion = document.getElementById("totalQuestions");
+      const easyQuestion = document.getElementById("easy");
+      const hardQuestion = document.getElementById("hard");
+      if (type === 1 || type === "1") {
+         clearErrorMessage(".form-message.totalQuestions");
+         clearErrorMessage(".form-message.easy");
+         clearErrorMessage(".form-message.hard");
+
+         handleType1(totalQuestion, easyQuestion, hardQuestion);
+      } else {
+         handleType2_3(totalQuestion, easyQuestion, hardQuestion);
+
+         document
+            .querySelectorAll("input[type='checkbox']")
+            .forEach((checkbox) => {
+               checkbox.checked = false;
+               checkbox.disabled = true;
+            });
+
+         setQuestionArray([]);
       }
    }, [type]);
 
-   const handleChapterMenu = () => {
+   const handleChapterMenu = (e) => {
+      e.stopPropagation();
       document.querySelector(".chapter-menu").classList.toggle("display-flex");
+      handleChapterGuide(chapters.length);
    };
 
    return (
-      <div className="flex-center" style={selectFromBankLayout}>
+      <div
+         className="flex-center"
+         style={selectFromBankLayout}
+         onClick={() => {
+            document
+               .querySelector(".chapter-menu")
+               .classList.remove("display-flex");
+         }}
+      >
          <form
             action=""
             method="POST"
@@ -238,6 +357,7 @@ function SelectFromBank() {
                height: "100%",
                position: "relative",
             }}
+            onClick={getQuestionList}
          >
             <div
                className="flex-center position-relative"
@@ -279,16 +399,11 @@ function SelectFromBank() {
                         border: "solid 2px #BFBFBF",
                         borderRadius: "4px",
                      }}
+                     onChange={(e) => setType(e.target.value)}
                   >
-                     <option value="1" onClick={() => setType(1)}>
-                        Tự chọn
-                     </option>
-                     <option value="2" onClick={() => setType(2)}>
-                        Ngẫu nhiên cho lớp
-                     </option>
-                     <option value="3" onClick={() => setType(3)}>
-                        Ngẫu nhiên
-                     </option>
+                     <option value="1">Tự chọn</option>
+                     <option value="2">Ngẫu nhiên cho lớp</option>
+                     <option value="3">Ngẫu nhiên</option>
                   </select>
                </div>
 
@@ -575,7 +690,7 @@ function SelectFromBank() {
                         />
                         <label
                            htmlFor="totalQuestions"
-                           className="form-message"
+                           className="form-message totalQuestions"
                         ></label>
                      </div>
                   </li>
@@ -620,7 +735,10 @@ function SelectFromBank() {
                               textAlign: "center",
                            }}
                         />
-                        <label htmlFor="easy" className="form-message"></label>
+                        <label
+                           htmlFor="easy"
+                           className="form-message easy"
+                        ></label>
                      </div>
                   </li>
 
@@ -664,7 +782,10 @@ function SelectFromBank() {
                               textAlign: "center",
                            }}
                         />
-                        <label htmlFor="hard" className="form-message"></label>
+                        <label
+                           htmlFor="hard"
+                           className="form-message hard"
+                        ></label>
                      </div>
                   </li>
                </ul>
@@ -681,14 +802,16 @@ function SelectFromBank() {
                <div
                   className="position-absolute flex-center"
                   style={{
-                     top: "2%",
+                     top: "0%",
                      right: "0",
                      width: "calc(100% - 450px)",
                      padding: "0 3%",
-                     marginBottom: "10px",
+                     marginBottom: "0px",
+                     backgroundColor: "#fff",
                   }}
+                  onClick={(e) => handleChapterMenu(e)}
                >
-                  <div
+                  <ul
                      style={{
                         flex: 1,
                         display: "flex",
@@ -700,18 +823,35 @@ function SelectFromBank() {
                      }}
                      className="list__selected-chapter"
                   >
+                     <li
+                        className="flex-center chapter-guide"
+                        style={{
+                           fontSize: "1.6rem",
+                           color: "#777",
+                           paddingLeft: "20px",
+                        }}
+                     >
+                        Vui lòng chọn chương
+                     </li>
                      {chapters.map((chapter) => (
                         <li
                            className=" flex-center chapter"
-                           style={{ width: "90px" }}
-                           // onClick={() =>
-                           //    setChapters((prev) => [...prev, index])
-                           // }
+                           name="chapter"
+                           id={chapter}
+                           style={{
+                              width: "90px",
+                              color: "var(--primary-color)",
+                              borderColor: "var(--primary-color)",
+                           }}
+                           onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveChapter(chapter);
+                           }}
                         >
                            <span>Chương {chapter}</span>
                         </li>
                      ))}
-                  </div>
+                  </ul>
                   <div
                      id="select-chapter"
                      style={{
@@ -721,20 +861,27 @@ function SelectFromBank() {
                         width: "40px",
                         textAlign: "right",
                      }}
-                     onClick={() => handleChapterMenu()}
                   >
                      <i class="fa-solid fa-chevron-down"></i>
                   </div>
 
-                  <ul className="chapter-menu">
+                  <ul
+                     className="chapter-menu"
+                     onClick={(e) => e.stopPropagation()}
+                  >
                      {examChapter.map((chapter, index) => {
                         if (chapter.name !== "Chương chung") {
                            return (
                               <li
                                  className="chapter flex-center"
-                                 onClick={() =>
-                                    setChapters((prev) => [...prev, index])
-                                 }
+                                 onClick={() => {
+                                    if (
+                                       chapters.find(
+                                          (item) => item === index
+                                       ) === undefined
+                                    )
+                                       setChapters((prev) => [...prev, index]);
+                                 }}
                               >
                                  <span>Chương {index}</span>
                               </li>
@@ -748,9 +895,10 @@ function SelectFromBank() {
                   className="flex-center flex-direction-col question-list"
                   style={{
                      flex: "1",
-                     height: "450px",
+                     height: "96%",
                      paddingLeft: "10px",
                      overflowY: "scroll",
+                     width: "100%",
                      paddingTop: "0",
                      justifyContent: "flex-start",
                   }}

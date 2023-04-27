@@ -129,7 +129,6 @@ function validator(formSelector) {
             event.preventDefault();
             var isValid = true;
             let questionArray = [];
-            let arr = [];
             let formData = new FormData();
             const questionList = formElement.querySelector(".question-list");
             let questionBoxes = questionList.querySelectorAll(".question-box");
@@ -147,7 +146,6 @@ function validator(formSelector) {
                // Get data from exam information
                inputs.forEach((input) => {
                   if (input.closest(".exam-information")) {
-                     arr.push({ [input.name]: input.value });
                      formData.append(input.name, input.value);
                   }
                });
@@ -166,8 +164,6 @@ function validator(formSelector) {
                   question["level"] = level;
 
                   level === "0" ? (easy += 1) : (hard += 1);
-
-                  console.log(level);
 
                   // answers
                   box.querySelectorAll("input[type=text]").forEach((item) => {
@@ -200,20 +196,36 @@ function validator(formSelector) {
             event.preventDefault();
             var isValid = true;
             let questionArray = [];
-            let arr = [];
             let formData = new FormData();
-
-            const questionList = formElement.querySelector(".question-list");
-            let questionBoxes = questionList.querySelectorAll(".question-box");
-
             const type = formElement.querySelector("select[name=type]");
-            // console.log(type.value);
+            const questionList = formElement.querySelector(".question-list");
+            const chapterList =
+               formElement.querySelectorAll("li[name=chapter]");
+            const chapters = [];
+            chapterList.forEach((chapter) => {
+               console.log(chapter.id);
+               chapters.push(chapter.id);
+            });
+            console.log(chapters);
 
-            // if (type.value === 1) {
-            //    document.getElementById("hard").style.disabled = "true";
-            // }
-
-            // --- Validate for question list
+            if (type.value === "1" || type.value === 1) {
+               if (
+                  questionList.querySelectorAll(
+                     `input[type="checkbox"]:checked`
+                  ).length === 0
+               )
+                  isValid = false;
+               else {
+                  questionList
+                     .querySelectorAll(`input[type="checkbox"]:checked`)
+                     .forEach((checkbox) => {
+                        let question = {};
+                        question["id"] = checkbox.id;
+                        questionArray.push(question);
+                     });
+               }
+            }
+            // console.log(questionArray);
 
             inputs.forEach((input) => {
                if (!handelValidate({ target: input })) {
@@ -225,20 +237,12 @@ function validator(formSelector) {
             if (isValid) {
                // Get data from exam information
                inputs.forEach((input) => {
-                  if (input.closest(".exam-information")) {
-                     arr.push({ [input.name]: input.value });
-                     formData.append(input.name, input.value);
-                  }
+                  formData.append(input.name, input.value);
                });
 
                // Get data from every question box
-               questionBoxes.forEach((box) => {
-                  let question = {};
 
-                  question["id"] = box.id;
-
-                  questionArray.push(question);
-               });
+               console.log(formElement.querySelector("#easy").value);
 
                formData.append("type", type.value);
                formData.append("questions", JSON.stringify(questionArray));
@@ -251,6 +255,19 @@ function validator(formSelector) {
                   Authorization: "Bearer " + currentUser,
                },
             });
+
+            // fetch(
+            //    `${api}/classes/841109222-12/exams?chapters=${chapters.join(
+            //       ","
+            //    )}`,
+            //    {
+            //       body: formData,
+            //       method: "POST",
+            //       headers: {
+            //          Authorization: "Bearer " + currentUser,
+            //       },
+            //    }
+            // );
          };
       }
    }
