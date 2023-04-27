@@ -12,8 +12,10 @@ function QuestionsRender({
 	isOpen,
 	setIsOpen,
 	duration,
+	history,
+	answer,
+	setAnswer,
 }) {
-	const [answer, setAnswer] = useState(questions);
 	// console.log(answer);
 	const handleAnswerQuestion = (question, value) => {
 		const list = [
@@ -29,22 +31,22 @@ function QuestionsRender({
 		];
 		setAnswer(list);
 	};
+	console.log(classId);
 
-	const handleSubmitAnswer = async (e) => {
+	const handleSubmitAnswer = (e) => {
 		e.preventDefault();
-		try {
-			const accesToken = localStorage.getItem('currentUser');
-			await fetch(`${api}/classes/${classId}/exams/${examId}`, {
-				method: 'POST',
-				headers: {
-					Authorization: 'Bearer ' + accesToken,
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ questions: answer }),
-			});
-		} catch (error) {
-			console.log(error);
-		}
+
+		const accesToken = localStorage.getItem('currentUser');
+		fetch(`${api}/classes/${classId}/exams/${examId}`, {
+			method: 'POST',
+			headers: {
+				Authorization: 'Bearer ' + accesToken,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ questions: answer }),
+		}).catch((error) => console.log(error));
+
+		// history.push('/class');
 	};
 
 	return (
@@ -75,6 +77,7 @@ function QuestionsRender({
 					name="answerform"
 					className="answer-grid"
 					onSubmit={handleSubmitAnswer}
+					// action=''
 				>
 					{questions?.map((question, index) => {
 						const [value] = answer.filter((item) => item.id === question.id);

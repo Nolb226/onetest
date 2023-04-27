@@ -23,6 +23,8 @@ import Exam from './components/dashboard/teacher/exam/Exam';
 import ClassList from './components/dashboard/teacher/exam/ClassList';
 import ExamList from './components/dashboard/teacher/exam/ExamList';
 import CreateClass from './components/dashboard/teacher/Class/CreateClass';
+import Detail from './components/dashboard/teacher/Class/Detail';
+import ClassStudentView from './components/pages/Class';
 
 function App() {
 	const currentUser = localStorage.getItem('currentUser');
@@ -35,18 +37,28 @@ function App() {
 		<div id="app" className="position-relative">
 			<Routes>
 				{!currentUser ? (
-					<Route exact path="/" element={<Home />}></Route>
+					<>
+						<Route exact path="/" element={<Home />} />
+						<Route path="*" element={<Navigate to="/" />} />
+					</>
 				) : (
 					<Route exact path="/" element={<Dashboard />}>
 						(
 						<Route path="student" element={<Student />}>
 							<Route path="" element={<Navigate to="class" replace={true} />} />
-							<Route path="class" element={<ViewClass />} />
-							<Route path="class/:classId/exams" element={<StudentPage />} />
-							<Route path="class/join" element={<JoinClass />} />
-							<Route path="exam/:classId/:examId" element={<Test />} />
+							<Route path="class">
+								<Route path="" element={<ViewClass />} />
+								<Route path="join" element={<JoinClass />} />
+								<Route path=":classId" element={<ClassStudentView />}>
+									{/* <Route path="" element={<Navigate to="details" />} /> */}
+									<Route path="" element={<Detail />} />
+									<Route path="exams" element={<StudentPage />} />
+								</Route>
+							</Route>
+
+							<Route path="exam/:examId" element={<Test />} />
 							<Route path="result/:examId" element={<Result />} />
-							<Route path="*" element={<Student />} />
+							{/* <Route path="*" element={<Student />} /> */}
 						</Route>
 						): (
 						<Route path="teacher" element={<Teacher />}>

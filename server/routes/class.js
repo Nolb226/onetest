@@ -173,6 +173,7 @@ router.post(
 
 router.post('/:classId/exams/:examId', classController.postClassStudentExam);
 
+router.post('/:classId/excels', classController.postClassToGetExcel);
 //METHOD : PUT
 
 router.put(

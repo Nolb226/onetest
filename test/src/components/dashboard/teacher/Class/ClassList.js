@@ -94,7 +94,23 @@ function Classlist(prop) {
 			<div class="table-zone grid position-relative">
 				<h1 class="table__heading">{className} </h1>
 				<div className="excel-download-box">
-					<button className="excel-download" onClick={() => {}}>
+					<button
+						className="excel-download"
+						onClick={() => {
+							const currentUser = localStorage.getItem(`currentUser`);
+
+							fetch(`${api}/classes/${classId}/excels`, {
+								method: 'POST',
+								body: JSON.stringify({
+									students: studentList,
+								}),
+								headers: {
+									Authorization: 'Bearer ' + currentUser,
+									'Content-Type': 'application/json',
+								},
+							});
+						}}
+					>
 						<span className="fake-scroll-down">
 							<span className="scroll-item">
 								<i class="fa-solid fa-file-arrow-down"></i>

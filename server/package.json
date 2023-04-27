@@ -8,7 +8,7 @@
     "npm": "8.19.2"
   },
   "scripts": {
-    "test": "set NODE_ENV=test && nodemon app.js",
+    "test": "set NODE_ENV=test && nodemon --inspect app.js",
     "start": "set NODE_ENV=production&& nodemon app.js",
     "dev": "nodemon app.js"
   },

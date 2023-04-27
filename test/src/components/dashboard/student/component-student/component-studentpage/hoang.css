@@ -5,6 +5,17 @@
 	gap: 1rem;
 }
 
+.flex {
+	display: flex;
+}
+
+.gap-16 {
+	gap: 1.6rem;
+}
+.gap-8 {
+	gap: 0.8rem;
+}
+
 /* 
     black: {
         100: "#d0d2e6",
@@ -18,6 +29,11 @@
         900: "#04061a"
 },
 */
+
+.grid-2-columns {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+}
 
 .container__row {
 	font-size: 1.4rem;
@@ -415,7 +431,6 @@ header .navigation {
 	color: #209e62;
 	background: #fff;
 	box-shadow: inset 0 0 0 1px #209e62;
-	transition: all 0.2s ease-out;
 	position: relative;
 	overflow-y: hidden;
 }
@@ -443,7 +458,7 @@ header .navigation {
 	display: flex;
 	flex-direction: column;
 	/* gap: 1rem; */
-	transition: all 0.2s linear;
+	transition: all 0.3s cubic-bezier(0.18, 0.89, 0.45, 1.36);
 }
 
 .scroll-item {
@@ -476,7 +491,7 @@ header .navigation {
 	border-radius: 5px;
 	background: #fff;
 	box-shadow: inset 0 0 0 1px #e2574c;
-	transition: all 0.2s ease-out;
+	transition: all 0.3s cubic-bezier(0.18, 0.89, 0.45, 1.36);
 }
 
 #dashboard-container button.pdf-download:active {
@@ -508,6 +523,87 @@ header .navigation {
 	background-color: #fff;
 }
 
+.menu {
+	width: 100%;
+	position: absolute;
+	top: min(-3.2rem, -6%);
+}
+
+.menu-list-item {
+	font-size: 1.2rem;
+
+	text-align: center;
+	flex: 0 0 10rem;
+	color: #fff;
+	padding: 1rem 0;
+	background-color: #fff;
+	border-radius: 4px 4px 0 0;
+	color: #121966;
+	opacity: 0.4;
+	box-shadow: inset rgba(60, 64, 67, 0.15) 3px 20px 20px -1px;
+}
+
+.menu-list-item.active {
+	/* color: #121966;
+	border-radius: 4px 4px 0 0;
+	background-color: #fff; */
+	opacity: 1;
+	box-shadow: none;
+}
+
+.menu-list-item:hover {
+}
+
+.menu-list-item a:visited,
+.menu-list-item a:link {
+	color: #161f89;
+}
+
+.leave {
+	margin-left: auto;
+	color: #cc2424;
+	background-color: #fff;
+	box-shadow: inset 0 0 0 1px #cc2424;
+	padding: 1.2rem 1.4rem;
+}
+
+.detail__header {
+}
+
+.detail-layer {
+	height: 20rem;
+	background-color: #121966;
+	background-image: linear-gradient(to bottom, #00000023, #ffffff2e),
+		url('../../../../../image/Online\ learning-amico.svg');
+	background-repeat: no-repeat;
+	background-position: center;
+	border-radius: 0 8px 8px 8px;
+}
+
+.detail__text-box {
+	font-size: 1.2rem;
+	width: 10rem;
+	height: 5rem;
+	font-weight: 600;
+	background-color: #fff;
+	border-radius: 8px;
+	font-size: clamp(1rem, 0.95rem + 0.25vw, 1.25rem);
+}
+
+.detail__text-box--second {
+	width: 25rem;
+
+	background: none;
+}
+
+.text-box__body {
+	text-align: center;
+	font-size: 1.5rem;
+}
+
+.detail__body {
+}
+
 @keyframes bellrang {
 	0% {
 		transform: rotate(0deg);
@@ -526,14 +622,70 @@ header .navigation {
 	}
 }
 
-@media (min-width: 768px) and (max-width: 1250px) {
+/* Small devices */
+@media (min-width: 576px) {
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+	.detail-layer {
+		height: 50rem;
+	}
+
+	.class-detail-content {
+		overflow-y: hidden;
+	}
+
+	.detail__text-box {
+		position: absolute;
+		top: max(15%, 10vh);
+		left: 4%;
+		height: 10rem;
+		width: 24rem;
+		/* border: 2px double #04061a; */
+	}
+
+	.detail__text-box--second {
+		top: max(36%, 15vh);
+		padding: 1rem;
+		left: 9%;
+
+		color: #fff;
+	}
+
+	.detail-heading {
+		color: #04061a;
+	}
+
+	.text-box__body {
+		font-size: 1.5rem;
+	}
+
 	.answer-grid {
 		grid-template-columns: repeat(4, 1fr);
 	}
+
+	.table-zone.position-absolute {
+		overflow-y: scroll;
+	}
 }
 
-@media (max-width: 950px) {
+/* Laptop */
+@media (min-width: 992px) {
 	.answer-grid {
 		grid-template-columns: repeat(3, 1fr);
 	}
+
+	.class-detail-content {
+		padding: 1rem 5.6rem 0;
+	}
+
+	.detail__text-box {
+		box-shadow: -8px -10px 8px -4px #0d134d;
+		transform: skewX(344deg) rotate(344deg) skewY(344deg);
+		transition: all 0.3s cubic-bezier(0.18, 0.89, 0.45, 1.36);
+	}
+}
+
+@media (min-width: 1200px) {
 }

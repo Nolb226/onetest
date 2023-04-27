@@ -3,33 +3,31 @@ import excel from '../../../../image/excel.svg';
 import api from '../../../../config/config';
 
 function CreateClass({ handleCreateClass }) {
-	const [searchParams, setSearchParams] = useState({ search: '' });
-	const [page, setPage] = useState(1);
 	const [file, setFile] = useState({
 		img: '../../../image/upload.png',
 		name: 'Danh sách sinh viên',
 	});
 	const [lecture, setLecture] = useState([]);
 
-	useEffect(() => {
-		const currentUser = localStorage.getItem(`currentUser`);
-		fetch(
-			`${api}/classes?search=${searchParams.get('search') || ''}&page=${page}`,
-			{
-				method: 'GET',
-				headers: {
-					Authorization: 'Bearer ' + currentUser,
-				},
-			}
-		)
-			.then((res) => res.json())
-			.then((classes) => {
-				console.log(classes);
-				// setClasses(classes.data.data);
-				// setTotalPage(Math.ceil(classes.data.total / 10));
-				// console.log(classes.data.total);
-			});
-	}, []);
+	// useEffect(() => {
+	// 	const currentUser = localStorage.getItem(`currentUser`);
+	// 	fetch(
+	// 		`${api}/classes?search=${searchParams.get('search') || ''}&page=${page}`,
+	// 		{
+	// 			method: 'GET',
+	// 			headers: {
+	// 				Authorization: 'Bearer ' + currentUser,
+	// 			},
+	// 		}
+	// 	)
+	// 		.then((res) => res.json())
+	// 		.then((classes) => {
+	// 			console.log(classes);
+	// 			// setClasses(classes.data.data);
+	// 			// setTotalPage(Math.ceil(classes.data.total / 10));
+	// 			// console.log(classes.data.total);
+	// 		});
+	// }, []);
 
 	const handleFile = (value) => {
 		console.log(value.split('/\\/'));
