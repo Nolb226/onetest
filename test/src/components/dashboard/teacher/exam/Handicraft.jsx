@@ -101,7 +101,7 @@ function AnswerListInput({ answerArray, questionIndex }) {
                rules="require"
                type="text"
                name={item.id}
-               id={item.id}
+               // id={item.id}
                className="form-control"
                style={answer}
                placeholder={"Đáp án " + item.value}
@@ -156,8 +156,9 @@ function QuestionBox({ question, questionListArray, setQuestionListArray }) {
                className="flex-center tool-btn"
                style={questionSideMenu}
                onClick={() => {
+                  const lastIndex = questionListArray.length - 1;
                   let answer = {
-                     questionId: question.questionId + 1,
+                     questionId: questionListArray[lastIndex].questionId + 1,
                      answers: [
                         { value: "A", id: "answerA" },
                         { value: "B", id: "answerB" },
@@ -226,6 +227,8 @@ function Handicraft() {
    useEffect(() => {
       validator("#form--create-exam");
    }, [questionListArray]);
+
+   console.log(questionListArray);
 
    return (
       <>
@@ -523,6 +526,7 @@ function Handicraft() {
                <div className="question-list" style={questionList}>
                   {questionListArray.map((questionItem) => (
                      <QuestionBox
+                        key={questionItem.questionId}
                         question={questionItem}
                         setQuestionListArray={setQuestionListArray}
                         questionListArray={questionListArray}

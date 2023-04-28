@@ -3,6 +3,8 @@ import api from "../../../../config/config";
 import handleType1 from "./HandleType1";
 import handleType2_3 from "./HandleType2_3";
 import responsiveCreateExam from "./responsiveCreateExam";
+import Loading from "../../../loadingAnimation/Loading";
+import LoadingData from "../../../loadingAnimation/LoadingData";
 
 const selectFromBankLayout = {
    width: "100%",
@@ -220,19 +222,24 @@ function SelectFromBank() {
    const [chapters, setChapters] = useState([]);
    const [type, setType] = useState(1);
    const [questionArray, setQuestionArray] = useState([]);
+   const [isLoading, setIsLoading] = useState(false);
+   const [isLoadingData, setIsLoadingData] = useState(false);
 
    const easyElement = document.getElementById("easy");
    const hardElement = document.getElementById("hard");
+   const totalElement = document.getElementById("totalQuestions");
 
    // console.log(examQuestions);
 
    const increase = (level) => {
-      console.log(level);
+      totalElement.value = parseInt(totalElement.value) + 1;
+
       if (level == "0") easyElement.value = parseInt(easyElement.value) + 1;
       else hardElement.value = parseInt(hardElement.value) + 1;
    };
 
    const decrease = (level) => {
+      totalElement.value = parseInt(totalElement.value) - 1;
       if (level == "0") easyElement.value = parseInt(easyElement.value) - 1;
       else hardElement.value = parseInt(hardElement.value) - 1;
    };
@@ -243,29 +250,27 @@ function SelectFromBank() {
       let question = {};
       if (checkbox.checked === true) {
          increase(checkbox.dataset.level);
-         question["chapterId"] = checkbox.dataset.chapterid;
-         question["id"] = checkbox.id;
-         setQuestionArray([...questionArray, question]);
       } else if (checkbox.checked === false) {
          decrease(checkbox.dataset.level);
-         setQuestionArray(questionArray.filter((item) => item !== checkbox.id));
       }
    }
 
-   // console.log(questionArray);
-
    // ----- Fetch API to get Chapters from Subject -----
 
-   useEffect(() => {
-      const getExamChapter = async () => {
-         const userreq = await fetch(`${api}/classes/841109222-12/chapters`, {
-            headers: {
-               Authorization: "Bearer " + currentUser,
-            },
+   const getExamChapter = async () => {
+      // setIsLoadingData(true);
+      await fetch(`${api}/classes/841109222-12/chapters`, {
+         headers: {
+            Authorization: "Bearer " + currentUser,
+         },
+      })
+         .then((data) => data.json())
+         .then((data) => {
+            setExamChapter(data.data);
+            setIsLoadingData(false);
          });
-         const data = await userreq.json();
-         setExamChapter(data.data);
-      };
+   };
+   useEffect(() => {
       getExamChapter();
    }, []);
 
@@ -278,7 +283,8 @@ function SelectFromBank() {
    };
 
    const getExamQuestions = async () => {
-      const userreq = await fetch(
+      setIsLoadingData(true);
+      await fetch(
          `${api}/classes/841109222-12/chapters/questions?chapters=${chapters.join(
             ","
          )}`,
@@ -287,9 +293,12 @@ function SelectFromBank() {
                Authorization: "Bearer " + currentUser,
             },
          }
-      );
-      const data = await userreq.json();
-      setExamQuestions(data.data);
+      )
+         .then((data) => data.json())
+         .then((data) => {
+            setExamQuestions(data.data);
+            setIsLoadingData(false);
+         });
    };
 
    useEffect(() => {
@@ -302,10 +311,6 @@ function SelectFromBank() {
    };
 
    // ----- Handle when select type of created-method -----
-
-   useEffect(() => {
-      document.getElementById("totalQuestions").value = questionArray.length;
-   }, [questionArray]);
 
    useEffect(() => {
       const totalQuestion = document.getElementById("totalQuestions");
@@ -892,7 +897,7 @@ function SelectFromBank() {
                </div>
 
                <ul
-                  className="flex-center flex-direction-col question-list"
+                  className="flex-center flex-direction-col question-list position-relative"
                   style={{
                      flex: "1",
                      height: "96%",
@@ -906,6 +911,7 @@ function SelectFromBank() {
                   {examQuestions.map((item) => (
                      <Question questionObject={item} />
                   ))}
+                  {isLoadingData && <LoadingData />}
                </ul>
             </div>
             <button
