@@ -105,12 +105,13 @@ router.get(
 	classController.getStudentResultInClass
 );
 
+router.get('/:classId/join', classController.getClassJoin);
+
 //METHOD : POST
 
 router.post(
 	'/',
 	[
-		body('password').notEmpty().trim(),
 		body('semester')
 			.trim()
 			.notEmpty()

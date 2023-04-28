@@ -144,20 +144,41 @@ exports.getClasses = async (req, res, _) => {
 exports.getClass = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
-		const foundedClass = await Classes.findByPk(classId, {
+		const [foundedClass] = await req.user.getClasses({
+			where: { id: classId },
 			include: [
 				{ model: Teacher, attributes: ['id', 'fullname'] },
 				{ model: Lecture, attributes: ['id', 'name', 'credits'] },
 			],
 			attributes: ['year', 'id', 'name', 'semester'],
 		});
-		// console.log(foundedClass);
 		if (!foundedClass) {
 			return throwError('Class not found', 404);
 		}
+		console.log(foundedClass.toJSON());
 		return successResponse(res, 200, foundedClass);
 	} catch (error) {
 		errorResponse(res, error);
+	}
+};
+
+exports.getClassJoin = async (req, res, _) => {
+	try {
+		const { classId } = req.params;
+		const foundedClass = await Class.findByPk(classId, {
+			include: [
+				{ model: Teacher, attributes: ['id', 'fullname'] },
+				{ model: Lecture, attributes: ['id', 'name', 'credits'] },
+			],
+			attributes: ['year', 'id', 'name', 'semester'],
+		});
+		if (!foundedClass) {
+			return throwError('Class not found', 404);
+		}
+		console.log(foundedClass.toJSON());
+		return successResponse(res, 200, foundedClass);
+	} catch (error) {
+		errorResponse(error);
 	}
 };
 
@@ -991,6 +1012,22 @@ exports.postClassStudent = async (req, res, _) => {
 			throwError(`Could not find class`, 404);
 			0;
 		}
+
+		const isDuplicate = await sequelize.query(`
+		
+		SELECT	*
+		FROM	classdetail
+		WHERE	classId LIKE "${foundedClass.lectureId}${(foundedClass.year + '').slice(
+			-2
+		)}${foundedClass.semester}" 
+		AND		studentId = "${req.user.id}"
+		
+		`);
+
+		if (isDuplicate) {
+			throwError(`Could not join`, 409);
+		}
+
 		const isValid = password === foundedClass.password;
 		if (!isValid || foundedClass.isLock) {
 			throwError(`Could not join class`, 409);
@@ -1002,11 +1039,16 @@ exports.postClassStudent = async (req, res, _) => {
 		});
 		foundedClass.totalStudent = newTotal;
 		await foundedClass.save();
-		const exams = foundedClass.getExams();
+		const exams = await foundedClass.getExams();
 		await Promise.all(
 			exams.map(async (exam) => {
 				if (exams.type != 3) {
-					const studentDumb = await Student.findByPk(0);
+					const studentDumb = await Student_Result.findOne({
+						where: {
+							studentId: 0,
+						},
+					});
+
 					return await req.user.addExam(exam, {
 						through: {
 							content: studentDumb.content,

@@ -16,13 +16,13 @@ function SideMenu({ info }) {
 	const { pathname } = useLocation();
 
 	useEffect(() => {
-		console.log(pathname.includes('exam'));
+		console.log(pathname.split('/')[3]);
 	}, [pathname]);
 
 	const teacherAccount = [
 		{
 			idPemission: 1,
-			path: `../exam`,
+			path: `exam`,
 			icon: '../../image/exam-icon.png',
 		},
 
@@ -88,7 +88,9 @@ function SideMenu({ info }) {
 						<li
 							className="menu-item flex-center"
 							onClick={(e) => {
-								navigator(`./`);
+								navigator(`${item.path}`, {
+									relative: 'route',
+								});
 								activeButton(e);
 							}}
 							key={item.idPemission}

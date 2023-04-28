@@ -38,7 +38,7 @@ function Test() {
 			.then((response) => response.json())
 			.then((questionsAPI) => {
 				// console.log(questionsAPI.data.content);
-				setQuestions(questionsAPI.data.content);
+				setQuestions(JSON.parse(questionsAPI.data.content));
 				setSubmitted({
 					...submitted,
 					status: questionsAPI.data.isDone,
@@ -57,7 +57,7 @@ function Test() {
 	}, []);
 
 	if (!state?.classId || submitted.status) {
-		navigator(`../`);
+		navigator(`./result`);
 	}
 
 	const startTimer = (duration) => {

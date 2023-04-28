@@ -35,6 +35,7 @@ const Student_Result = sequelize.define('studentresult', {
 		type: DataTypes.JSON,
 		allowNull: false,
 		get: function () {
+			console.log(this.getDataValue('content'));
 			typeof this.getDataValue('content') === 'object' &&
 				this.setDataValue(
 					'content',

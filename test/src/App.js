@@ -47,11 +47,11 @@ function App() {
 						<Route path="student" element={<Student />}>
 							<Route path="" element={<Navigate to="class" replace={true} />} />
 							<Route path="class">
-								<Route path="" element={<ViewClass />} />
+								<Route index element={<ViewClass />} />
 								<Route path="join" element={<JoinClass />} />
 								<Route path=":classId" element={<ClassStudentView />}>
 									{/* <Route path="" element={<Navigate to="details" />} /> */}
-									<Route path="" element={<Detail />} />
+									<Route index element={<Detail />} />
 									<Route path="exams" element={<StudentPage />} />
 								</Route>
 							</Route>
