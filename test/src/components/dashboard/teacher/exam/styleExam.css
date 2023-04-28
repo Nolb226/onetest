@@ -29,6 +29,7 @@
    width: 90%;
    height: auto;
    position: absolute;
+   z-index: 100;
    flex-wrap: wrap;
    top: 100%;
    border-radius: 5px;
