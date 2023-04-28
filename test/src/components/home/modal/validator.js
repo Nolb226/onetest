@@ -2,6 +2,7 @@ import api from "../../../config/config.js";
 
 function validator(formSelector) {
    let formElement = document.querySelector(formSelector);
+
    let formRules = {};
 
    const getParentElement = (childElement, parentSelector) => {
@@ -16,7 +17,7 @@ function validator(formSelector) {
    var validatorRules = {
       require: (value) => {
          return value ? undefined : "Vui lòng nhập thông tin";
-      }, 
+      },
 
       dateOfBirth: (value) => {
          return value ? undefined : "Vui lòng chọn ngày tháng năm sinh";
@@ -48,7 +49,6 @@ function validator(formSelector) {
 
       // Lắng nghe sự kiện trên từng thẻ input
       const handelValidate = (event) => {
-         console.log(event);
          var rules = formRules[event.target.name];
          var errorMessage;
 
@@ -94,32 +94,166 @@ function validator(formSelector) {
          input.oninput = clearErrorMessage;
       });
 
-      formElement.onsubmit = (event) => {
-         event.preventDefault();
-         var isValid = true;
-         let formData = new FormData();
-
-         inputs.forEach((input) => {
-            if (!handelValidate({ target: input })) {
-               isValid = false;
-            }
-         });
-
-         if (isValid) {
-            let typeName = formElement.querySelector(".type");
-            formData.append("type", typeName.getAttribute("name"));
+      // Sign up new account
+      if (formSelector === "#form-register") {
+         formElement.onsubmit = (event) => {
+            event.preventDefault();
+            var isValid = true;
+            let formData = new FormData();
 
             inputs.forEach((input) => {
-               formData.append(input.name, input.value);
+               if (!handelValidate({ target: input })) {
+                  isValid = false;
+               }
             });
-         }
-         fetch(`${api}/auth/signup`, {
-            body: formData,
-            method: "post",
-         });
-      };
+
+            if (isValid) {
+               let typeName = formElement.querySelector(".type");
+               formData.append("type", typeName.getAttribute("name"));
+
+               inputs.forEach((input) => {
+                  formData.append(input.name, input.value);
+               });
+            }
+            fetch(`${api}/auth/signup`, {
+               body: formData,
+               method: "post",
+            });
+         };
+      }
+
+      // Create handicraft exam
+      if (formSelector === "#form--create-exam") {
+         console.log("validate for handily exam");
+         formElement.onsubmit = (event) => {
+            event.preventDefault();
+            var isValid = true;
+            let questionArray = [];
+            let arr = [];
+            let formData = new FormData();
+            const questionList = formElement.querySelector(".question-list");
+            let questionBoxes = questionList.querySelectorAll(".question-box");
+
+            inputs.forEach((input) => {
+               if (!handelValidate({ target: input })) {
+                  isValid = false;
+               }
+            });
+            const currentUser = localStorage.getItem("currentUser");
+
+            if (isValid) {
+               var easy = 0;
+               var hard = 0;
+               // Get data from exam information
+               inputs.forEach((input) => {
+                  if (input.closest(".exam-information")) {
+                     arr.push({ [input.name]: input.value });
+                     formData.append(input.name, input.value);
+                  }
+               });
+
+               // Get data from every question box
+               questionBoxes.forEach((box) => {
+                  let question = {};
+
+                  // correct answer
+                  question["correctAns"] = box.querySelector(
+                     `input[type="radio"]:checked`
+                  ).value;
+
+                  // level of question
+                  const level = box.querySelector("#level").value;
+                  question["level"] = level;
+
+                  level === "0" ? (easy += 1) : (hard += 1);
+
+                  console.log(level);
+
+                  // answers
+                  box.querySelectorAll("input[type=text]").forEach((item) => {
+                     question[`${item.name}`] = item.value;
+                  });
+
+                  questionArray.push(question);
+               });
+
+               formData.append("totalQuestions", questionBoxes.length);
+               formData.append("easy", easy);
+               formData.append("hard", hard);
+               formData.append("type", 0);
+               formData.append("questions", JSON.stringify(questionArray));
+            }
+
+            fetch(`${api}/classes/841109222-12/exams?type`, {
+               body: formData,
+               method: "POST",
+               headers: {
+                  Authorization: "Bearer " + currentUser,
+               },
+            });
+         };
+      }
+
+      // Create select from bank exam
+      if (formSelector === "#form--create-exam__selectFromBank") {
+         formElement.onsubmit = (event) => {
+            event.preventDefault();
+            var isValid = true;
+            let questionArray = [];
+            let arr = [];
+            let formData = new FormData();
+
+            const questionList = formElement.querySelector(".question-list");
+            let questionBoxes = questionList.querySelectorAll(".question-box");
+
+            const type = formElement.querySelector("select[name=type]");
+            // console.log(type.value);
+
+            // if (type.value === 1) {
+            //    document.getElementById("hard").style.disabled = "true";
+            // }
+
+            // --- Validate for question list
+
+            inputs.forEach((input) => {
+               if (!handelValidate({ target: input })) {
+                  isValid = false;
+               }
+            });
+            const currentUser = localStorage.getItem("currentUser");
+
+            if (isValid) {
+               // Get data from exam information
+               inputs.forEach((input) => {
+                  if (input.closest(".exam-information")) {
+                     arr.push({ [input.name]: input.value });
+                     formData.append(input.name, input.value);
+                  }
+               });
+
+               // Get data from every question box
+               questionBoxes.forEach((box) => {
+                  let question = {};
+
+                  question["id"] = box.id;
+
+                  questionArray.push(question);
+               });
+
+               formData.append("type", type.value);
+               formData.append("questions", JSON.stringify(questionArray));
+            }
+
+            fetch(`${api}/test`, {
+               body: formData,
+               method: "POST",
+               headers: {
+                  Authorization: "Bearer " + currentUser,
+               },
+            });
+         };
+      }
    }
 }
 
 export default validator;
-

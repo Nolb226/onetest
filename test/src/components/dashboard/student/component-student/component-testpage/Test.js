@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import {
+	Link,
+	redirect,
+	useLocation,
+	useNavigate,
+	useParams,
+} from 'react-router-dom';
 import ConfirmModel from './ConfirmModel';
 import AnswerSelectItem from './AnswerSelectItem';
 import QuestionItem from './QuestionItem';
@@ -10,20 +16,21 @@ import QuestionsRender from './QuestionsRender';
 function Test() {
 	const [questions, setQuestions] = useState([]); //Chứa mảng câu hỏi
 	const [isOpen, setIsOpen] = useState(false); //Bật tắt modal confirm
-	const [answers, setAnswers] = useState([]); //Chứa câu trả lời của thí sinh
+	const [answer, setAnswer] = useState([]);
+	const navigator = useNavigate();
 	const [submitted, setSubmitted] = useState({
 		text: 'Nộp bài',
 		status: false,
 	}); //Chứa trạng thái thí sinh đã nộp bài hay chưa
 	// const [isDone, setIsDone] = useState(false);
 	const [duration, setDuration] = useState();
-
 	const params = useParams();
-	const { classId, examId } = params;
+	const { examId } = params;
+	const { state } = useLocation();
 
 	useEffect(() => {
 		const currentUser = localStorage.getItem('currentUser');
-		fetch(`${api}/classes/${classId}/exams/${examId}/details`, {
+		fetch(`${api}/classes/${state?.classId}/exams/${examId}/details`, {
 			headers: {
 				Authorization: 'Bearer ' + currentUser,
 			},
@@ -36,6 +43,7 @@ function Test() {
 					...submitted,
 					status: questionsAPI.data.isDone,
 				});
+				console.log(submitted.status);
 				if (!submitted.status) {
 					startTimer(questionsAPI.data.duration);
 				}
@@ -48,19 +56,43 @@ function Test() {
 			});
 	}, []);
 
+	if (!state?.classId || submitted.status) {
+		navigator(`../`);
+	}
+
 	const startTimer = (duration) => {
 		const countDownDuration = () => {
+			let minutes = String(parseInt(time / 60, 10)).padStart(2, '0');
+			let seconds = String(parseInt(time % 60, 10)).padStart(2, '0');
 			// console.log(duration);
-			if (duration === 0) {
-				// alert('hét giờ');
+			if (time === 0) {
+				const accesToken = localStorage.getItem('currentUser');
+				fetch(`${api}/classes/${state?.classId}/exams/${examId}`, {
+					method: 'POST',
+					headers: {
+						Authorization: 'Bearer ' + accesToken,
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ questions: answer }),
+				})
+					.then(() => {
+						alert('Submit r nè');
+					})
+					.catch((error) => console.log(error));
+
+				// history.push('/class');
+
 				clearInterval(timer);
 				return;
 			}
-			// setDuration((duration) => duration - 1);
+			setDuration((duration) => duration - 1);
 			// duration--;
-			setDuration(--duration);
+			time--;
+			console.log(document.querySelector('.confirm-btn.form-btn'));
+			setDuration({ minutes, seconds });
 		};
-
+		// let time = 10;
+		let time = duration * 60;
 		countDownDuration();
 		const timer = setInterval(countDownDuration, 1000);
 		return timer;
@@ -78,7 +110,9 @@ function Test() {
 			<div className="empty-space"></div>
 			<div className="content-table">
 				<QuestionsRender
-					classId={classId}
+					answer={answer}
+					setAnswer={setAnswer}
+					classId={state?.classId}
 					questions={questions}
 					examId={examId}
 					isOpen={isOpen}
@@ -91,7 +125,7 @@ function Test() {
 				<ConfirmModel
 					isOpen
 					setIsOpen={setIsOpen}
-					result={answers}
+					result={answer}
 					handleSubmit={handleSubmit}
 				/>
 			)}

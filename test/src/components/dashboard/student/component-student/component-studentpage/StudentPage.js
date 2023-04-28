@@ -42,7 +42,13 @@ function StudentPage() {
         backHref={`/viewclass/${idStudent}/${nameStudent}`}
       /> */}
 
-			<div class="table-zone grid">
+			<div
+				class="table-zone grid"
+				style={{
+					borderRadius: '0 16px 16px 16px',
+				}}
+				onClick={() => setIsOpen(false)}
+			>
 				<header class="table__header">
 					<h1 class="table__heading">DANH SÁCH BÀI THI</h1>
 

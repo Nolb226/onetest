@@ -62,8 +62,9 @@ exports.getClasses = async (req, res, _) => {
 				offset: pageSize * (page - 1),
 				limit: pageSize,
 			});
-			const total = await sequelize.query(
-				`
+			if (req.account.type === 'GV') {
+				const total = await sequelize.query(
+					`
 			
 				SELECT 	COUNT(classes.id) as id
 			
@@ -72,18 +73,41 @@ exports.getClasses = async (req, res, _) => {
 				ON		lectures.id = classes.lectureId
 				JOIN	teachers
 				ON		teachers.id = classes.teacherId
-				WHERE	classes.id LIKE "${search}%"
-				OR		classes.name LIKE "${search} %"
+				WHERE	(classes.id LIKE "${search}%"
+				OR		classes.name LIKE "${search} %")
 				AND		teachers.id = "${req.user.id}"
 			`,
-				{
-					type: sequelize.QueryTypes.SELECT,
-				}
-			);
-			return successResponse(res, 200, {
-				data: classrooms,
-				total: total[0].id,
-			});
+					{
+						type: sequelize.QueryTypes.SELECT,
+					}
+				);
+				return successResponse(res, 200, {
+					data: classrooms,
+					total: total[0].id,
+				});
+			}
+			if (req.account.type === 'SV') {
+				const total = await sequelize.query(
+					`
+			
+				SELECT 	COUNT(classes.id) as id
+			
+				FROM	classes
+				JOIN	classdetail
+				ON		classdetail.classId = classes.id
+				WHERE	(classes.id LIKE "${search}%"
+				OR		classes.name LIKE "${search} %")
+				AND		studentId = "${req.user.id}"
+			`,
+					{
+						type: sequelize.QueryTypes.SELECT,
+					}
+				);
+				return successResponse(res, 200, {
+					data: classrooms,
+					total: total[0].id,
+				});
+			}
 		}
 		const page = req.query.page || 1;
 		const pageSize = 10;
@@ -283,24 +307,6 @@ exports.getClassExams = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
 		const { user } = req;
-		// const foundedClass = await Classes.findByPk(classId);
-
-		// if (!foundedClass) {
-		// 	throwError(`Could not find class`, 404);
-		// }
-		// // console.log(user.id);
-		// const exams = await foundedClass.getExams({
-		// 	include: [
-		// 		{
-		// 			model: Student_Result,
-		// 			where: { studentId: user.id },
-		// 			attributes: ['isDone'],
-		// 		},
-		// 	],
-		// 	attributes: ['name', 'id', 'duration', 'totalQuestions'],
-		// 	// raw: true,
-		// 	// nest: false,
-		// });
 		const { sort } = req.query;
 		const exams = await sequelize.query(
 			`
@@ -517,14 +523,15 @@ exports.getStudentResultInClass = async (req, res, _) => {
 			JOIN	students
 			ON		students.id 	= studentresults.studentId
 			WHERE	exams.id 		= "${examId}"
-			AND		classes.id		= "${classId}"
 			AND		students.id		= "${req.user.id}"
 		`,
 			{
 				type: sequelize.QueryTypes.SELECT,
 			}
 		);
+		console.log(result.content);
 		const { content: newContent } = result;
+		console.log(newContent);
 		result.content = JSON.parse(newContent);
 		successResponse(res, 200, result);
 	} catch (error) {
@@ -568,7 +575,8 @@ exports.getQuestionInClassByChapter = async (req, res, _) => {
 					answerB,
 					answerC,
 					answerD,
-					level
+					level,
+					questions.chapterId
 
 			FROM	classes
 
@@ -578,7 +586,7 @@ exports.getQuestionInClassByChapter = async (req, res, _) => {
 			ON		lectures.id 			= chapters.lectureId
 			JOIN	questions
 			ON		chapters.id 			= questions.chapterId
-			WHERE	chapters.id 			= "${classroom.lectureId}-${query}"
+			WHERE	(chapters.id 			= "${classroom.lectureId}-${query}")
 			AND		classes.id              = "${classId}"
 	
 			`,
@@ -689,6 +697,16 @@ exports.postClassExam = async (req, res) => {
 			hard,
 			totalQuestions,
 		});
+		const [student, created] = await Student.findOrCreate({
+			where: {
+				id: 0,
+			},
+			defaults: {
+				id: 0,
+				fullname: '',
+				dob: new Date(),
+			},
+		});
 		const students = await classroom.getStudents();
 		const questionList = JSON.parse(questions);
 		if (type === '0') {
@@ -744,7 +762,10 @@ exports.postClassExam = async (req, res) => {
 						});
 					})
 				);
-				console.log(1);
+				await student.addExam(exam, {
+					through: { content: newQuestions },
+				});
+
 				successResponse(res, 200, result);
 			} catch (error) {
 				console.log(error);
@@ -752,11 +773,17 @@ exports.postClassExam = async (req, res) => {
 			}
 		}
 
-		if (type === 1) {
+		if (type === '1') {
+			// const { chapters } = req.query;
+
+			// const query = chapters
+			// 	?.split(',')
+			// 	.join(`" OR chapters.id = "${classroom.lectureId}-`);
+			const newQuestions = JSON.parse(questions);
 			try {
 				const examContent = await Promise.all(
-					questions.map(async (question) => {
-						const chapter = await Chapter.findByPk(question.id);
+					newQuestions.map(async (question) => {
+						const chapter = await Question.findByPk(question.id);
 						return {
 							id: chapter.id,
 							description: chapter.description,
@@ -778,6 +805,9 @@ exports.postClassExam = async (req, res) => {
 						}
 					})
 				);
+				await student.addExam(exam, {
+					through: { content: examContent },
+				});
 				successResponse(res, 200, result);
 			} catch (error) {
 				console.log(error);
@@ -785,14 +815,18 @@ exports.postClassExam = async (req, res) => {
 			}
 		}
 
-		if (type === 2) {
+		if (type === '2') {
+			const { chapters } = req.query;
+			const query = chapters
+				?.split(',')
+				.join(`" OR chapters.id = "${classroom.lectureId}-`);
+
 			const content = await sequelize.query(
 				`
 			SELECT * FROM (
 				(
 					SELECT  questions.id,
 							description,
-							correctAns,
 							answerA,
 							answerB,
 							answerC,
@@ -808,15 +842,16 @@ exports.postClassExam = async (req, res) => {
 					ON		lectures.id 			= chapters.lectureId
 					JOIN	questions
 					ON		chapters.id 			= questions.chapterId
-					WHERE	chapters.id 			= "WEBC1"
+					WHERE	chapters.id 			= "${query}"
 					AND		questions.level 		= 0
-					LIMIT	10 
+					AND		questions.deletedAt	IS NULL
+					LIMIT	${easy} 
+
 				)
 					UNION ALL 
 				(
 					SELECT  questions.id,
 							description,
-							correctAns,
 							answerA,
 							answerB,
 							answerC,
@@ -832,9 +867,10 @@ exports.postClassExam = async (req, res) => {
 					ON		lectures.id 			= chapters.lectureId
 					JOIN	questions
 					ON		chapters.id 			= questions.chapterId
-					WHERE	chapters.id 			= "WEBC1"
+					WHERE	chapters.id 			= "${query}"
 					AND		questions.level	 		= 1
-					LIMIT	10 
+					AND		questions.deletedAt	IS NULL
+					LIMIT	${hard}
 				)
 			) as q 
 			ORDER BY RAND()
@@ -849,11 +885,18 @@ exports.postClassExam = async (req, res) => {
 					});
 				})
 			);
+			await student.addExam(exam, {
+				through: { content },
+			});
 
 			successResponse(res, 200, result);
 			return;
 		}
-		if (type === 3) {
+		if (type === '3') {
+			const { chapters } = req.query;
+			const query = chapters
+				?.split(',')
+				.join(`" OR chapters.id = "${classroom.lectureId}-`);
 			const result = await Promise.all(
 				students.map(async (student) => {
 					const content = await sequelize.query(
@@ -862,12 +905,11 @@ exports.postClassExam = async (req, res) => {
 						(
 							SELECT  questions.id,
 									description,
-									correctAns,
 									answerA,
 									answerB,
 									answerC,
 									answerD,
-									level
+									difficulty
 			
 							FROM	exams
 							JOIN	classes
@@ -878,20 +920,21 @@ exports.postClassExam = async (req, res) => {
 							ON		lectures.id 			= chapters.lectureId
 							JOIN	questions
 							ON		chapters.id 			= questions.chapterId
-							WHERE	chapters.id 			= "WEBC1"
+							WHERE	chapters.id 			= "${query}"
 							AND		questions.level 		= 0
-							LIMIT	10 
+							AND		questions.deletedAt	IS NULL
+							LIMIT	${easy} 
+		
 						)
 							UNION ALL 
 						(
 							SELECT  questions.id,
 									description,
-									correctAns,
 									answerA,
 									answerB,
 									answerC,
 									answerD,
-									level
+									difficulty
 			
 							FROM	exams
 							JOIN	classes
@@ -902,9 +945,10 @@ exports.postClassExam = async (req, res) => {
 							ON		lectures.id 			= chapters.lectureId
 							JOIN	questions
 							ON		chapters.id 			= questions.chapterId
-							WHERE	chapters.id 			= "WEBC1"
+							WHERE	chapters.id 			= "${query}"
 							AND		questions.level	 		= 1
-							LIMIT	10 
+							AND		questions.deletedAt	IS NULL
+							LIMIT	${hard}
 						)
 					) as q 
 					ORDER BY RAND()
@@ -912,7 +956,14 @@ exports.postClassExam = async (req, res) => {
 					`,
 						{ type: sequelize.QueryTypes.SELECT }
 					);
-					console.log(content);
+
+					await Promise.all(
+						chapters
+							.split(',')
+							.map(async (chapterNumber) =>
+								exam.addChapters(await chapters.findByPk(chapterNumber))
+							)
+					);
 					await student.addExam(exam, {
 						through: { content },
 					});
@@ -951,6 +1002,87 @@ exports.postClassStudent = async (req, res, _) => {
 		});
 		foundedClass.totalStudent = newTotal;
 		await foundedClass.save();
+		const exams = foundedClass.getExams();
+		await Promise.all(
+			exams.map(async (exam) => {
+				if (exams.type != 3) {
+					const studentDumb = await Student.findByPk(0);
+					return await req.user.addExam(exam, {
+						through: {
+							content: studentDumb.content,
+						},
+					});
+				} else {
+					const chapters = await exam.getChapters();
+					const query = chapters
+						.map((chapter) => chapter.id)
+						.join('" OR chapters.id = "');
+					const content = await sequelize.query(
+						`
+					SELECT * FROM (
+						(
+							SELECT  questions.id,
+									description,
+									answerA,
+									answerB,
+									answerC,
+									answerD,
+									difficulty
+			
+							FROM	exams
+							JOIN	classes
+							ON		exams.classId 			= classes.id
+							JOIN	lectures
+							ON		lectures.id 			= classes.lectureId
+							JOIN	chapters
+							ON		lectures.id 			= chapters.lectureId
+							JOIN	questions
+							ON		chapters.id 			= questions.chapterId
+							WHERE	chapters.id 			= "${query}"
+							AND		questions.level 		= 0
+							AND		questions.deletedAt	IS NULL
+							LIMIT	${exam.easy} 
+		
+						)
+							UNION ALL 
+						(
+							SELECT  questions.id,
+									description,
+									answerA,
+									answerB,
+									answerC,
+									answerD,
+									difficulty
+			
+							FROM	exams
+							JOIN	classes
+							ON		exams.classId 			= classes.id
+							JOIN	lectures
+							ON		lectures.id 			= classes.lectureId
+							JOIN	chapters
+							ON		lectures.id 			= chapters.lectureId
+							JOIN	questions
+							ON		chapters.id 			= questions.chapterId
+							WHERE	chapters.id 			= "${query}"
+							AND		questions.level	 		= 1
+							AND		questions.deletedAt	IS NULL
+							LIMIT	${exam.hard}
+						)
+					) as q 
+					ORDER BY RAND()
+					
+					`,
+						{ type: sequelize.QueryTypes.SELECT }
+					);
+					return await req.user.addExam(exam, {
+						through: {
+							content: content,
+						},
+					});
+				}
+			})
+		);
+
 		successResponse(res, 201, req.user, req.method);
 	} catch (error) {
 		errorResponse(res, error);
@@ -1013,6 +1145,125 @@ exports.postClassStudentExam = async (req, res, _) => {
 		errorResponse(res, error);
 	}
 };
+
+exports.postClassToGetExcel = async (req, res, _) => {
+	try {
+		// const { students } = req.body;
+		const { classId } = req.params;
+		const classroom = await Class.findByPk(classId);
+		if (!classroom) {
+			throwError(`Classroom not found`, 404);
+		}
+		// const students = await classroom.getStudents({
+		// 	attributes: ['id', 'fullname', 'dob', 'majorid'],
+		// 	include: [
+		// 		{
+		// 			model: Student_Result,
+		// 			attributes: ['grade'],
+		// 			nested: false,
+		// 			raw: false,
+		// 		},
+		// 	],
+		// 	joinTableAttributes: [],
+		// });
+
+		const exams = await classroom.getExams({
+			attributes: ['id', 'name'],
+		});
+		// console.log(exams);
+		const students = await Promise.all(
+			exams.map(async (exam) => {
+				console.log(exam.toJSON());
+				return await exam.getStudents();
+			})
+		);
+		students.forEach((student) => {
+			console.log(student);
+		});
+
+		// Workbook setup
+		const workbook = new Excel.Workbook();
+		workbook.creator = 'Best Of Test';
+		workbook.created = new Date();
+		workbook.views = [
+			{
+				x: 0,
+				y: 0,
+				width: 20000,
+				height: 2000,
+			},
+		];
+		const worksheet = workbook.addWorksheet(`${classroom.name}`, {});
+
+		// //Title
+		worksheet.mergeCells('A1', 'H3');
+		let titleRow = worksheet.getCell('C1');
+		titleRow.value = `Danh sách lớp ${classroom.name}`;
+		titleRow.font = {
+			name: 'Calibri',
+			size: 16,
+			color: { argb: '0085A3' },
+		};
+		titleRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+		worksheet.addRow([]);
+		worksheet.mergeCells('A6', 'D6');
+		const bheaderRow = worksheet.getCell('A6');
+		bheaderRow.value = 'Thông tin thí sinh';
+		bheaderRow.font = {
+			size: 14,
+		};
+		bheaderRow.alignment = { horizontal: 'center' };
+		// worksheet.addRow(['Thông tin thí sinh','']);
+		console.log(exams);
+		const examRow = exams.map((exam) => {
+			return Object.values(exam.toJSON());
+		});
+		worksheet.addRow([
+			'Mã số sinh viên',
+			'Họ và Tên',
+			'Ngày sinh',
+			'Mã ngành',
+			...examRow.flat(1),
+		]);
+
+		// worksheet.addRows(students);
+
+		students.forEach((student) => {
+			console.log(student.toJSON());
+			const student_arr = Object.values(student); //convert to array
+			// const result = student_arr.pop(); //pop studentresults
+			// const grade_arr = result.map((item) => {
+			// 	if (item.grade === null) {
+			// 		return 'Chưa làm';
+			// 	}
+			// 	return item.grade;
+			// });
+			// const studentRow = [...student_arr, ...grade_arr];
+			// const row = worksheet.addRow(studentRow);
+			const row = worksheet.addRow(student_arr);
+			row.eachCell((cell, number) => {
+				if (number > 3) {
+					if (cell.value === 0) {
+						//Check grade
+						cell.font = {
+							bold: true,
+							color: {
+								argb: 'cc2424',
+							},
+						};
+					}
+				}
+			});
+		});
+		await workbook.xlsx.writeFile(`${classroom.id}.xlsx`);
+		successResponse(res, 200, students);
+	} catch (error) {
+		console.log(error);
+		errorResponse(res, error);
+	}
+};
+
 exports.putClass = async (req, res, _) => {
 	try {
 		const { classId } = req.params;

@@ -1,4 +1,5 @@
 const Account = require('../models/account');
+const Exam = require('../models/exam');
 const Functions = require('../models/function');
 const Permission_Group = require('../models/permission_group');
 const Student = require('../models/student');
@@ -55,33 +56,19 @@ module.exports.test = async (req, res) => {
 			{ type: sequelize.QueryTypes.SELECT }
 		);
 
-		// const test = await sequelize.query(
-		// 	`
-		// SELECT * FROM(
-		// 	(
-		// 		SELECT 	fullname,student,
-		// 		FROM	classes
-		// 		JOIN	exams
-		// 		ON		classes.id = exams.classId
-		// 		JOIN	classdetail
-		// 		ON		classes.id = classdetail.classId
-		// 		JOIN  	students
-		// 		ON 		classdetail.studentId = students.id
-		// 	)
-		// 	UNION
-		// 	(
-		// 		SELECT	*
-		// 	)
-
-		// ) as q
-
-		// `,
-		// 	{
-		// 		type: sequelize.QueryTypes.SELECT,
-		// 	}
-		// );
-
 		successResponse(res, 200, result);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
+
+exports.get = async (req, res, _) => {
+	try {
+		const exam = await Exam.findByPk(4);
+		const chapters = await exam.getChapters();
+		a = chapters.map((chapter) => chapter.id).join('" OR Chapters.id ="');
+		console.log(a);
+		successResponse(res, 200, chapters);
 	} catch (error) {
 		errorResponse(res, error);
 	}

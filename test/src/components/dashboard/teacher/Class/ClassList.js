@@ -5,6 +5,7 @@ import api from '../../../../config/config';
 import StudentEdit from './StudentEdit';
 import { useParams } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
+import excel from '../../../../image/excel.svg';
 
 function Classlist(prop) {
 	const { classId } = useParams();
@@ -13,7 +14,7 @@ function Classlist(prop) {
 	const [totalPage, setTotalPage] = useState(1);
 	const [isOpenModal, setIsOpenModal] = useState(false);
 	const [studentId, setStudentId] = useState('');
-	const [student, setStudent] = useSearchParams(); 
+	const [student, setStudent] = useSearchParams();
 	const [className, setClassName] = useState('');
 	const [totalExam, setTotalExam] = useState(0);
 	const [examName, setExamName] = useState([]);
@@ -92,9 +93,43 @@ function Classlist(prop) {
 
 			<div class="table-zone grid position-relative">
 				<h1 class="table__heading">{className} </h1>
+				<div className="excel-download-box">
+					<button
+						className="excel-download"
+						onClick={() => {
+							const currentUser = localStorage.getItem(`currentUser`);
 
+							fetch(`${api}/classes/${classId}/excels`, {
+								method: 'POST',
+								body: JSON.stringify({
+									students: studentList,
+								}),
+								headers: {
+									Authorization: 'Bearer ' + currentUser,
+									'Content-Type': 'application/json',
+								},
+							});
+						}}
+					>
+						<span className="fake-scroll-down">
+							<span className="scroll-item">
+								<i class="fa-solid fa-file-arrow-down"></i>
+								<span className="excel-download__text"> Excel</span>
+							</span>
+							<span className="scroll-item">
+								<i class="fa-regular fa-file-excel"></i>
+								<span className="excel-download__text">Tải Danh Sách Lớp</span>
+							</span>
+						</span>
+					</button>
+				</div>
 				<div class="grid table__content position-relative">
-					<ul class="row no-gutters flex-center table__content--heading">
+					<ul
+						class="row no-gutters flex-center table__content--heading"
+						style={{
+							justifyContent: 'start',
+						}}
+					>
 						<li className="col l-1 m-1 c-1">
 							<h3>STT</h3>
 						</li>
@@ -122,9 +157,8 @@ function Classlist(prop) {
 								);
 							}
 						})}
-             
-						<li className="col l-1 m-1 c-1"></li>
 
+						<li className="col l-1 m-1 c-1"></li>
 					</ul>
 
 					<div class="table__content--list">
@@ -134,7 +168,6 @@ function Classlist(prop) {
 							</div>
 						) : (
 							studentList.map((student, index) => {
-								// console.log(student);
 								return (
 									<Student
 										key={student.id}

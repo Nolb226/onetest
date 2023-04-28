@@ -1,90 +1,111 @@
-import { Link } from "react-router-dom";
-import "../../image/class-icon.png";
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import '../../image/class-icon.png';
+import { useEffect } from 'react';
 
-const IconComponent = ({icon}) => {
-   const iconClass = icon;
-   return (
-     <>
-       <i className={iconClass}></i>
-     </>
-   );
- };
+const IconComponent = ({ icon }) => {
+	const iconClass = icon;
+	return (
+		<>
+			<i className={iconClass}></i>
+		</>
+	);
+};
 
-function SideMenu({info}) {
-   const teacherAccount = [
-      {
-         idPemission: 1,
-         path: "/dashboard/manage-exam",
-         icon: "../../image/exam-icon.png",
-      },
+function SideMenu({ info }) {
+	const navigator = useNavigate();
+	const { pathname } = useLocation();
 
-      {
-         idPemission: 2,
-         path: "/dashboard/manage-class",
-         icon: "../../image/class-icon.png",
-      },
+	useEffect(() => {
+		console.log(pathname.includes('exam'));
+	}, [pathname]);
 
-      {
-         idPemission: 3,
-         path: "/dashboard/statistics",
-         icon: "../../image/dashboard-icon.png",
-      },
+	const teacherAccount = [
+		{
+			idPemission: 1,
+			path: `../exam`,
+			icon: '../../image/exam-icon.png',
+		},
 
-      // {
-      //    idPemission: 6,
-      //    path: "/dashboard/statistics",
-      //    icon: "../../image/dashboard-icon.png",
-      // },
-   ];
+		{
+			idPemission: 2,
+			path: `../class`,
+			icon: '../../image/class-icon.png',
+		},
 
-   const studentAccount = [
-      {
-         idPemission: 4,
-         path: `student/viewclass`,
-         icon: "menu-icon fa-solid fa-file-pen",
-      },
+		{
+			idPemission: 3,
+			path: `/statistics`,
+			icon: '../../image/dashboard-icon.png',
+		},
+		// {
+		//    idPemission: 6,
+		//    path: "/dashboard/statistics",
+		//    icon: "../../image/dashboard-icon.png",
+		// },
+	];
 
-      {
-         idPemission: 5,
-         path: `student/joinclass`,
-         icon: "menu-icon fa-solid fa-plus",
-      },
-   ];
-   function activeButton(e) {
-      let buttons = document.querySelectorAll(".menu-item");
-      buttons.forEach((button) => {
-         if (button.classList.contains("active"))
-            button.classList.remove("active");
-      });
-      e.target.closest(".menu-item").classList.add("active");
-   }
+	const studentAccount = [
+		{
+			idPemission: 4,
+			path: `student/viewclass/`,
+			icon: 'menu-icon fa-solid fa-file-pen',
+		},
 
-   return (
-      <div id="left-menu" className="position-relative col l-1">
-         <ul className="menu-list flex-center flex-direction-col">
-            {studentAccount.map((item) => {
-               return (
-                  <Link to={item.path} key={item.idPemission}>
-                     <li
-                        className="menu-item flex-center"
-                        onClick={(e) => {
-                           activeButton(e);
-                        }}
-                        key={item.idPemission}
-                     >
-                        <IconComponent icon={item.icon} />
-                     </li>
-                  </Link>
-               );
-            })}
-         </ul>
+		{
+			idPemission: 5,
+			path: `student/joinclass`,
+			icon: 'menu-icon fa-solid fa-plus',
+		},
+	];
 
-         <div className="themes flex-center position-absolute">
-            <i className="menu-icon fa-solid fa-circle-half-stroke"></i>
-            <ul className="themes-list"></ul>
-         </div>
-      </div>
-   );
+	const adminAccount = [
+		{
+			idPemission: 7,
+			path: `admin/permission`,
+			icon: 'menu-icon fa-solid fa-plus',
+		},
+		{
+			idPemission: 6,
+			path: `admin/manage-account`,
+			icon: 'menu-icon fa-solid fa-file-pen',
+		},
+	];
+
+	function activeButton(e) {
+		let buttons = document.querySelectorAll('.menu-item');
+		buttons.forEach((button) => {
+			if (button.classList.contains('active'))
+				button.classList.remove('active');
+		});
+		e.target.closest('.menu-item').classList.add('active');
+	}
+
+	return (
+		<div id="left-menu" className="position-relative col l-1">
+			<ul className="menu-list flex-center flex-direction-col">
+				{teacherAccount.map((item) => {
+					return (
+						<li
+							className="menu-item flex-center"
+							onClick={(e) => {
+								navigator(`./`);
+								activeButton(e);
+							}}
+							key={item.idPemission}
+						>
+							<img src={item.icon} alt={item.idPemission} />
+							{/* <IconComponent icon={item.icon} /> */}
+						</li>
+					);
+				})}
+			</ul>
+
+			<div className="themes flex-center position-absolute">
+				<i className="menu-icon fa-solid fa-circle-half-stroke"></i>
+				<ul className="themes-list"></ul>
+			</div>
+		</div>
+	);
 }
 
 export default SideMenu;
