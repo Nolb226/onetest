@@ -63,13 +63,13 @@ function SideMenu({ info }) {
          idPemission: 6,
          path: `admin/manage-account`,
          icon: "menu-icon fa-solid fa-user-gear",
-         name: "Người dùng",
+         name: "Tài khoản",
       },
       {
          idPemission: 7,
          path: `admin/permission`,
          icon: "menu-icon fa-solid fa-gear",
-         name: "Phân quyền",
+         name: "Quyền",
       },
    ];
 
@@ -126,7 +126,16 @@ function SideMenu({ info }) {
    return (
       <div id="left-menu" className="position-relative flex-center">
          <div className="left-menu__logo flex-center">
-            <img src="../../image/logo-menu-header.svg" alt="" />
+            <img
+               className="logo-menu-pc"
+               src="../../image/logo-menu-header.svg"
+               alt=""
+            />
+            <img
+               className="logo-menu-tablet"
+               src="../../image/logo-menu-header-tablet.svg"
+               alt=""
+            />
          </div>
          <div className="menu-list flex-center flex-direction-col">
             <ul>
@@ -140,6 +149,7 @@ function SideMenu({ info }) {
                            activeButton(e);
                         }}
                         key={item.idPemission}
+                        title={item.name}
                      >
                         <IconComponent icon={item.icon} />
                         <span className="menu-item__name">{item.name}</span>
