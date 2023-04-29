@@ -195,7 +195,6 @@ function Dashboard() {
 	const [type, setType] = useState('');
 	const [isOpenProfile, setIsOpenProfile] = useState(false);
 	const [isOpenNotifications, setIsOpenNotifications] = useState(false);
-	const { classId, examId } = useParams();
 	useEffect(() => {
 		const currentUser = localStorage.getItem('currentUser');
 		fetch(`${api}/accounts`, {
@@ -218,10 +217,10 @@ function Dashboard() {
 			className="grid wide"
 			// onClick={() => setIsOpen(false)}
 		>
-			<div className="row no-gutters layout--body">
+			<div className="layout--body">
 				<SideMenu info={info} />
 
-				<div id="dashboard-container" className="col l-11">
+				<div id="dashboard-container">
 					{/* {isConfig && <UserModel />} */}
 					<div className="top-bar">
 						<header className="header flex-center position-relative">
@@ -296,10 +295,6 @@ function Dashboard() {
 							<div className="name inf-children">
 								Họ và tên: {info.fullname || ''}
 							</div>
-							{classId && <div className="inf-children">Lớp : {classId}</div>}
-							{examId && (
-								<div className="inf-children">mã đề 30 : {examId}</div>
-							)}
 						</div>
 					</div>
 

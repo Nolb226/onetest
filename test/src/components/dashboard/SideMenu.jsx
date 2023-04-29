@@ -22,7 +22,61 @@ function SideMenu({ info }) {
 	const teacherAccount = [
 		{
 			idPemission: 1,
-			path: `exam`,
+			path: `../exam`,
+			icon: 'menu-icon fa-solid fa-file-lines',
+			name: 'Quản lí thi',
+		},
+
+		{
+			idPemission: 2,
+			path: `../class`,
+			icon: 'menu-icon fa-solid fa-chalkboard-user',
+			name: 'Quản lí lớp',
+		},
+
+		{
+			idPemission: 3,
+			path: `/statistics`,
+			icon: 'menu-icon fa-solid fa-chart-simple',
+			name: 'Thống kê',
+		},
+	];
+
+	const studentAccount = [
+		{
+			idPemission: 4,
+			path: `student/viewclass/`,
+			icon: 'menu-icon fa-solid fa-file-pen',
+			name: 'Bài thi',
+		},
+
+		{
+			idPemission: 5,
+			path: `student/joinclass`,
+			icon: 'menu-icon fa-solid fa-plus',
+			name: 'Lớp học',
+		},
+	];
+
+	const adminAccount = [
+		{
+			idPemission: 6,
+			path: `admin/manage-account`,
+			icon: 'menu-icon fa-solid fa-user-gear',
+			name: 'Người dùng',
+		},
+		{
+			idPemission: 7,
+			path: `admin/permission`,
+			icon: 'menu-icon fa-solid fa-gear',
+			name: 'Phân quyền',
+		},
+	];
+
+	const testAccount = [
+		{
+			idPemission: 1,
+			path: `../exam`,
 			icon: '../../image/exam-icon.png',
 		},
 
@@ -37,14 +91,6 @@ function SideMenu({ info }) {
 			path: `/statistics`,
 			icon: '../../image/dashboard-icon.png',
 		},
-		// {
-		//    idPemission: 6,
-		//    path: "/dashboard/statistics",
-		//    icon: "../../image/dashboard-icon.png",
-		// },
-	];
-
-	const studentAccount = [
 		{
 			idPemission: 4,
 			path: `student/viewclass/`,
@@ -56,18 +102,15 @@ function SideMenu({ info }) {
 			path: `student/joinclass`,
 			icon: 'menu-icon fa-solid fa-plus',
 		},
-	];
-
-	const adminAccount = [
-		{
-			idPemission: 7,
-			path: `admin/permission`,
-			icon: 'menu-icon fa-solid fa-plus',
-		},
 		{
 			idPemission: 6,
 			path: `admin/manage-account`,
-			icon: 'menu-icon fa-solid fa-file-pen',
+			icon: 'menu-icon fa-solid fa-user-gear',
+		},
+		{
+			idPemission: 7,
+			path: `admin/permission`,
+			icon: 'menu-icon fa-solid fa-gear',
 		},
 	];
 
@@ -81,31 +124,73 @@ function SideMenu({ info }) {
 	}
 
 	return (
-		<div id="left-menu" className="position-relative col l-1">
-			<ul className="menu-list flex-center flex-direction-col">
-				{teacherAccount.map((item) => {
-					return (
-						<li
-							className="menu-item flex-center"
-							onClick={(e) => {
-								navigator(`${item.path}`, {
-									relative: 'route',
-								});
-								activeButton(e);
-							}}
-							key={item.idPemission}
-						>
-							<img src={item.icon} alt={item.idPemission} />
-							{/* <IconComponent icon={item.icon} /> */}
-						</li>
-					);
-				})}
-			</ul>
-
-			<div className="themes flex-center position-absolute">
-				<i className="menu-icon fa-solid fa-circle-half-stroke"></i>
-				<ul className="themes-list"></ul>
+		<div id="left-menu" className="position-relative flex-center">
+			<div className="left-menu__logo flex-center">
+				<img src="../../image/logo-menu-header.svg" alt="" />
 			</div>
+			<div className="menu-list flex-center flex-direction-col">
+				<ul>
+					<h1>Học sinh</h1>
+					{studentAccount.map((item) => {
+						return (
+							<li
+								className="menu-item flex-center"
+								onClick={(e) => {
+									navigator(`./`);
+									activeButton(e);
+								}}
+								key={item.idPemission}
+							>
+								<IconComponent icon={item.icon} />
+								<span className="menu-item__name">{item.name}</span>
+							</li>
+						);
+					})}
+				</ul>
+
+				<ul style={{ width: '100%' }}>
+					<h1>Quản lý</h1>
+					{teacherAccount.map((item) => {
+						return (
+							<li
+								className="menu-item flex-center"
+								onClick={(e) => {
+									navigator(`./`);
+									activeButton(e);
+								}}
+								key={item.idPemission}
+							>
+								<IconComponent icon={item.icon} />
+								<span className="menu-item__name">{item.name}</span>
+							</li>
+						);
+					})}
+				</ul>
+
+				<ul style={{ width: '100%' }}>
+					<h1>Quản trị</h1>
+					{adminAccount.map((item) => {
+						return (
+							<li
+								className="menu-item flex-center"
+								onClick={(e) => {
+									navigator(`./`);
+									activeButton(e);
+								}}
+								key={item.idPemission}
+							>
+								<IconComponent icon={item.icon} />
+								<span className="menu-item__name">{item.name}</span>
+							</li>
+						);
+					})}
+				</ul>
+			</div>
+
+			{/* <div className="themes flex-center position-absolute">
+            <i className="menu-icon fa-solid fa-circle-half-stroke"></i>
+            <ul className="themes-list"></ul>
+         </div> */}
 		</div>
 	);
 }
