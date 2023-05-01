@@ -25,13 +25,19 @@ import ExamList from './components/dashboard/teacher/exam/ExamList';
 import CreateClass from './components/dashboard/teacher/Class/CreateClass';
 import Detail from './components/dashboard/teacher/Class/Detail';
 import ClassStudentView from './components/pages/Class';
+import { useEffect } from 'react';
+import socket from './utils/socket';
 
 function App() {
 	const currentUser = localStorage.getItem('currentUser');
 	console.log(currentUser);
-	{
-		/* <Route path="*" element={<Home />}></Route> */
-	}
+
+	useEffect(() => {
+		socket.connect();
+		socket.on('create-exam', (response) => {
+			console.log(response);
+		});
+	}, []);
 
 	return (
 		<div id="app" className="position-relative">

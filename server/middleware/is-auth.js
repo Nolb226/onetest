@@ -35,12 +35,9 @@ module.exports.isAuth = async (req, res, next) => {
 		if (!user) {
 			throwError('Invalid account id in token', 401);
 		}
-		const a = {
-			b: '123',
-		};
-		a.c = '123';
 		// req.user = JSON.stringify(user);
 		req.account = user;
+
 		req.permissions = JSON.stringify(user.permissions);
 		next();
 	} catch (error) {

@@ -27,6 +27,8 @@ const sequelize = require('../util/database');
 const { Op, QueryTypes } = require('sequelize');
 const Student = require('../models/student');
 const Question = require('../models/question');
+const { getIO } = require('../util/socket');
+const socket = require('../util/socket');
 const deleteExcel = function (filePath) {
 	const file = path.join(__dirname, '..', filePath);
 	fs.unlink(file, (err) => console.log(err));
@@ -327,7 +329,11 @@ exports.getClassesExams = async (req, res, _) => {
 exports.getClassExams = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
-		const { user } = req;
+		const user = await Student.findOne({
+			where: {
+				accountId: req.account.id,
+			},
+		});
 		const { sort } = req.query;
 		const exams = await sequelize.query(
 			`
@@ -359,21 +365,6 @@ exports.getClassExams = async (req, res, _) => {
 exports.getClassExamsResult = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
-		// const studentresults = await sequelize.query(
-		// 	`
-		// 	SELECT * FROM classes JOIN classdetail ON classes.id = classdetail.classId JOIN students ON students.id = classdetail.studentId JOIN studentresults ON studentresults.studentId = students.id JOIN exams ON exams.id = studentresults.examId WHERE classes.id ="${classId}" GROUP BY students.id
-		// `,
-		// 	{ type: sequelize.QueryTypes.SELECT }
-		// );
-		// const results = await Promise.all(
-		// 	studentresults.map(async (result) => {
-		// 		const exams = await Student_Result.findAll({
-		// 			where: { studentId: result.studentId },
-		// 		});
-		// 		console.log(exams);
-		// 		return { ...result, exams };
-		// 	})
-		// );
 
 		const classroom = await Class.findByPk(classId);
 		if (!classroom) {
@@ -403,37 +394,13 @@ exports.getClassExamsResult = async (req, res, _) => {
 exports.getClassExam = async (req, res, _) => {
 	try {
 		const { classId, examId } = req.params;
-		// const foundedClass = await Classes.findByPk(classId);
-		// if (!foundedClass) {
-		// 	throwError(`Could not find class`, 404);
-		// }
-		// const exams = await foundedClass.getExams({
-		// 	where: { id: examId },
-		// 	attributes: [
-		// 		'id',
-		// 		'name',
-		// 		'timeStart',
-		// 		'timeEnd',
-		// 		'duration',
-		// 		'totalQuestions',
-		// 		// 'ratioQuestions',
-		// 		'easy',
-		// 		'hard',
-		// 		'type',
-		// 		'isLock',
-		// 	],
-		// 	include: [
-		// 		{
-		// 			model: Student,
-		// 			attributes: ['id', 'fullname'],
-		// 			through: { attributes: ['grade'] },
-		// 		},
-		// 	],
-		// });
-		// if (!exams[0]) {
-		// 	throwError('Could not find exam', 404);
-		// }
 		const { sort } = req.query;
+
+		const user = await Student.findOne({
+			where: {
+				accountId: req.account.id,
+			},
+		});
 
 		const [result] = await sequelize.query(
 			`
@@ -458,7 +425,7 @@ exports.getClassExam = async (req, res, _) => {
 				ON		studentresults.studentId 	= students.id
 				WHERE	classes.id 					= "${classId}"
 				AND		exams.id					= "${examId}"
-				AND		students.id 				= "${req.user.id}"
+				AND		students.id 				= "${user.id}"
 
 			`,
 			{
@@ -504,12 +471,6 @@ exports.getClassExamStudentResults = async (req, res, _) => {
 			through: { attributes: ['grade'] },
 		});
 
-		// const studentresults = await sequelize.query(
-		// 	`
-		// 	SELECT * FROM classes JOIN classdetail ON classes.id = classdetail.classId JOIN students ON students.id = classdetail.studentId JOIN studentresults ON studentresults.studentId = students.id JOIN exams ON exams.id = studentresults.examId WHERE exams.id ="${examId}" AND classes.id ="${classId}" GROUP BY exams.id
-		// `,
-		// 	{ type: sequelize.QueryTypes.SELECT }
-		// );
 		successResponse(res, 200, studentresults);
 	} catch (error) {
 		errorResponse(res, error);
@@ -519,19 +480,12 @@ exports.getClassExamStudentResults = async (req, res, _) => {
 exports.getStudentResultInClass = async (req, res, _) => {
 	try {
 		const { classId, examId } = req.params;
-		// const classroom = await Class.findByPk(classId);
-		// const exams = await classroom.getExams(examId);
-		// const result = await exams[0].getStudents({
-		// 	where: {
-		// 		id: req.user.id,
-		// 	},
-		// 	include: [
-		// 		{
-		// 			model: Student_Result,
-		// 		},
-		// 	],
-		// });
-		// const [content] = result[0].studentresults;
+
+		const user = await Student.findOne({
+			where: {
+				accountId: req.account.id,
+			},
+		});
 
 		const [result] = await sequelize.query(
 			`
@@ -544,15 +498,13 @@ exports.getStudentResultInClass = async (req, res, _) => {
 			JOIN	students
 			ON		students.id 	= studentresults.studentId
 			WHERE	exams.id 		= "${examId}"
-			AND		students.id		= "${req.user.id}"
+			AND		students.id		= "${user.id}"
 		`,
 			{
 				type: sequelize.QueryTypes.SELECT,
 			}
 		);
-		console.log(result.content);
 		const { content: newContent } = result;
-		console.log(newContent);
 		result.content = JSON.parse(newContent);
 		successResponse(res, 200, result);
 	} catch (error) {
@@ -786,7 +738,7 @@ exports.postClassExam = async (req, res) => {
 				await student.addExam(exam, {
 					through: { content: newQuestions },
 				});
-
+				getIO().emit('create-exam', exam.id);
 				successResponse(res, 200, result);
 			} catch (error) {
 				console.log(error);
@@ -1190,78 +1142,139 @@ exports.postClassStudentExam = async (req, res, _) => {
 
 exports.postClassToGetExcel = async (req, res, _) => {
 	try {
+		const vietNamFomatter = new Intl.DateTimeFormat('vi-VN', {
+			year: 'numeric',
+			month: 'numeric',
+			day: 'numeric',
+		});
 		// const { students } = req.body;
 		const { classId } = req.params;
 		const classroom = await Class.findByPk(classId);
 		if (!classroom) {
 			throwError(`Classroom not found`, 404);
 		}
-		// const students = await classroom.getStudents({
-		// 	attributes: ['id', 'fullname', 'dob', 'majorid'],
-		// 	include: [
-		// 		{
-		// 			model: Student_Result,
-		// 			attributes: ['grade'],
-		// 			nested: false,
-		// 			raw: false,
-		// 		},
-		// 	],
-		// 	joinTableAttributes: [],
-		// });
+		const students = await classroom.getStudents({
+			attributes: ['id', 'fullname', 'dob', 'majorid'],
+			include: [
+				{
+					model: Student_Result,
+					attributes: ['grade'],
+					nested: false,
+					raw: false,
+				},
+			],
+			joinTableAttributes: [],
+		});
 
 		const exams = await classroom.getExams({
-			attributes: ['id', 'name'],
+			attributes: ['name'],
 		});
 		// console.log(exams);
-		const students = await Promise.all(
-			exams.map(async (exam) => {
-				console.log(exam.toJSON());
-				return await exam.getStudents();
-			})
-		);
-		students.forEach((student) => {
-			console.log(student);
-		});
 
 		// Workbook setup
 		const workbook = new Excel.Workbook();
 		workbook.creator = 'Best Of Test';
 		workbook.created = new Date();
-		workbook.views = [
+		const alphabet = [
+			'A',
+			'B',
+			'C',
+			'D',
+			'E',
+			'F',
+			'G',
+			'H',
+			'I',
+			'J',
+			'K',
+			'L',
+			'M',
+			'N',
+			'O',
+			'P',
+			'Q',
+			'R',
+			'S',
+			'T',
+			'U',
+			'V',
+			'W',
+			'X',
+			'Y',
+			'Z',
+		];
+		const worksheet = workbook.addWorksheet(`Danh sách`, {});
+		worksheet.views = [
 			{
-				x: 0,
-				y: 0,
-				width: 20000,
-				height: 2000,
+				// zoomScale: 86,
+				showGridLines: false,
 			},
 		];
-		const worksheet = workbook.addWorksheet(`${classroom.name}`, {});
 
-		// //Title
-		worksheet.mergeCells('A1', 'H3');
-		let titleRow = worksheet.getCell('C1');
-		titleRow.value = `Danh sách lớp ${classroom.name}`;
+		worksheet.mergeCells('B2', 'C2');
+		worksheet.properties.defaultColWidth = 20;
+		let titleRow = worksheet.getCell('B2');
+		titleRow.value = `Lớp ${classroom.name}`;
 		titleRow.font = {
 			name: 'Calibri',
-			size: 16,
-			color: { argb: '0085A3' },
+			size: 18,
+			color: { argb: '263895' },
 		};
 		titleRow.alignment = { vertical: 'middle', horizontal: 'center' };
+		titleRow.height = 20;
 
-		worksheet.addRow([]);
-		worksheet.mergeCells('A6', 'D6');
-		const bheaderRow = worksheet.getCell('A6');
-		bheaderRow.value = 'Thông tin thí sinh';
-		bheaderRow.font = {
-			size: 14,
+		const classInfoRow = worksheet.addRow([
+			'',
+			`Giảng viên: ${'Nguyễn Thanh Sang'}`,
+		]);
+		classInfoRow.font = {
+			size: 9,
+			color: {
+				argb: '808080',
+			},
 		};
-		bheaderRow.alignment = { horizontal: 'center' };
-		// worksheet.addRow(['Thông tin thí sinh','']);
-		console.log(exams);
+		worksheet.mergeCells('B6', 'E6');
+		const bheaderRowLeft = worksheet.getCell('B6');
+		bheaderRowLeft.value = 'Thông tin thí sinh';
+		bheaderRowLeft.font = {
+			bold: true,
+			size: 10,
+			color: {
+				argb: 'FFFFFF',
+			},
+		};
+		bheaderRowLeft.fill = {
+			type: 'pattern',
+			pattern: 'solid',
+			fgColor: {
+				argb: '263895',
+			},
+		};
+		bheaderRowLeft.alignment = { horizontal: 'center' };
 		const examRow = exams.map((exam) => {
 			return Object.values(exam.toJSON());
 		});
-		worksheet.addRow([
+		worksheet.mergeCells('F6', `${alphabet[5 + exams.length - 1]}6`);
+		const bheaderRowRight = worksheet.getCell('F6');
+		bheaderRowRight.value = 'Thông tin thí sinh';
+		bheaderRowRight.font = {
+			bold: true,
+			size: 10,
+			color: {
+				argb: 'FFFFFF',
+			},
+		};
+		bheaderRowRight.fill = {
+			type: 'pattern',
+			pattern: 'solid',
+			fgColor: {
+				argb: '263895',
+			},
+		};
+		bheaderRowRight.alignment = { horizontal: 'center' };
+
+		const header = worksheet.addRow([
+			'',
 			'Mã số sinh viên',
 			'Họ và Tên',
 			'Ngày sinh',
@@ -1269,25 +1282,52 @@ exports.postClassToGetExcel = async (req, res, _) => {
 			...examRow.flat(1),
 		]);
 
+		header.alignment = {
+			vertical: 'middle',
+			horizontal: 'center',
+		};
+
+		header.font = {
+			bold: true,
+			size: 9,
+		};
+
+		worksheet.autoFilter = {
+			from: 'A7',
+			to: `${alphabet[header.values.length - 2]}${students.length - 1 + 8}`,
+		};
+
 		// worksheet.addRows(students);
 
 		students.forEach((student) => {
-			console.log(student.toJSON());
-			const student_arr = Object.values(student); //convert to array
-			// const result = student_arr.pop(); //pop studentresults
-			// const grade_arr = result.map((item) => {
-			// 	if (item.grade === null) {
-			// 		return 'Chưa làm';
-			// 	}
-			// 	return item.grade;
-			// });
-			// const studentRow = [...student_arr, ...grade_arr];
+			const studentJSON = student.toJSON();
+
+			const studentRefactor = {
+				...studentJSON,
+				dob: vietNamFomatter.format(new Date(studentJSON.dob)),
+			};
+
+			const student_arr = Object.values(studentRefactor);
+			//convert to array
+			const result = student_arr.pop(); //pop studentresults
+			const grade_arr = result.map((item) => {
+				if (item.grade === null) {
+					return 'Chưa làm';
+				}
+				return item.grade;
+			});
+			const studentRow = ['', ...student_arr, ...grade_arr];
 			// const row = worksheet.addRow(studentRow);
-			const row = worksheet.addRow(student_arr);
+			const row = worksheet.addRow(studentRow);
+			let count = 0;
+			row.font = {
+				size: 9,
+			};
 			row.eachCell((cell, number) => {
 				if (number > 3) {
 					if (cell.value === 0) {
 						//Check grade
+						count++;
 						cell.font = {
 							bold: true,
 							color: {
@@ -1298,10 +1338,20 @@ exports.postClassToGetExcel = async (req, res, _) => {
 				}
 			});
 		});
+
+		const total = worksheet.addRow(['', 'Tổng số học sinh']);
+		total.getCell(2).value = {
+			formula: `COUNTIF($A$8:$A$${students.length - 1 + 8},"*")`,
+			result: students.length,
+		};
+
+		worksheet.getColumn('A').width = 2;
+
+		const worksheetStatistics = workbook.addWorksheet(`Số con điểm`);
+
 		await workbook.xlsx.writeFile(`${classroom.id}.xlsx`);
 		successResponse(res, 200, students);
 	} catch (error) {
-		console.log(error);
 		errorResponse(res, error);
 	}
 };

@@ -1,4 +1,5 @@
 const sequelize = require('../util/database');
+const Permission_Group = require('./permission_group');
 const DataTypes = require('sequelize').DataTypes;
 
 const Account = sequelize.define('account', {
@@ -8,10 +9,6 @@ const Account = sequelize.define('account', {
 		autoIncrement: true,
 	},
 	password: { type: DataTypes.STRING, allowNull: false },
-	type: {
-		type: DataTypes.STRING(10),
-		allowNull: false,
-	},
 	isActive: {
 		type: DataTypes.BOOLEAN,
 		defaultValue: true,

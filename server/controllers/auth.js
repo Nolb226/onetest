@@ -13,6 +13,8 @@ const {
 } = require('../util/helper');
 const { where } = require('sequelize');
 const Permission_Group = require('../models/permission_group');
+const { getIO } = require('../util/socket');
+const socket = require('../util/socket');
 
 exports.signup = async (req, res, next) => {
 	try {
@@ -76,11 +78,15 @@ exports.login = async (req, res, next) => {
 		// if (!account.isActive) {
 		// 	throwError('Account is not active', 401);
 		// }
-		console.log(account.id);
 
 		const token = jwt.sign({ id: account.id }, 'group5', {
 			expiresIn: '3d',
 		});
+		// getIO().on('connection', (socket) => {
+		// 	socket.on('login', () => {
+		// 		const classrooms = await
+		// 	});
+		// });
 		res.status(200).json({ token, type: account.type });
 		// res.status(200).json(token);
 	} catch (error) {

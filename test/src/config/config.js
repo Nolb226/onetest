@@ -1,4 +1,4 @@
-const api = 'http://192.168.100.31:8080'; //moda
+// const api = 'http://192.168.100.31:8080'; //moda
 // const api = "http://192.168.100.31:8080"; //moda
 // const api = "http://192.168.1.164:8080"; //blue lagoon
 // const api = "http://192.168.31.80:8080";

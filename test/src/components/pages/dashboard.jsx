@@ -10,14 +10,14 @@ import logo from '../../image/logo-no-background.png';
 import { Link } from 'react-router-dom';
 
 const UserMenu = ({ info, setIsOpenProfile, setType }) => {
-	const type = info.account.type;
-	let viewtype;
-	if (type === 'GV') {
-		viewtype = 'Giảng viên';
-	}
-	if (type === 'SV') {
-		viewtype = 'Sinh viên';
-	}
+	// const type = info.account.type;
+	// let viewtype;
+	// if (type === 'GV') {
+	// 	viewtype = 'Giảng viên';
+	// }
+	// if (type === 'SV') {
+	// 	viewtype = 'Sinh viên';
+	// }
 	return (
 		<>
 			<div className="user-menu" onClick={(e) => e.stopPropagation()}>
@@ -25,7 +25,7 @@ const UserMenu = ({ info, setIsOpenProfile, setType }) => {
 					<p className="info-box__text info-box__text--main  ">
 						{info.fullname}
 					</p>
-					<p className="info-box__text info-box__text--sub">{viewtype}</p>
+					{/* <p className="info-box__text info-box__text--sub">{viewtype}</p> */}
 				</div>
 				<ul className="user-menu__list">
 					<li
@@ -149,7 +149,24 @@ const UserModel = ({ setIsOpenProfile, info, type }) => {
 	);
 };
 
-const Notification = () => {
+const Notification = ({ notify }) => {
+	const vietNamFomatter = new Intl.DateTimeFormat('vi-VN', {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric',
+	});
+	const day = new Date('2023-04-30T00:10:11.000Z');
+	// const dateParts = notify.createdAt?.split('-');
+	// console.log(dateParts);
+	// const day = new Date(
+	// 	dateParts[0],
+	// 	dateParts[1] - 1,
+	// 	dateParts[2].substr(0, 2),
+	// 	dateParts[2].substr(3, 2),
+	// 	dateParts[2].substr(6, 2),
+	// 	dateParts[2].substr(9, 2)
+	// );
+	console.log(vietNamFomatter.format(day));
 	return (
 		<>
 			<div className="notification-panel">
@@ -158,7 +175,14 @@ const Notification = () => {
 				</header>
 				<body className="panel__body">
 					<ul className="notification-list">
-						<li className="notification-item">
+						{notify?.map((notify) => (
+							<li className="notification-item">
+								<p>
+									{notify.description} - {vietNamFomatter.format(day)}
+								</p>
+							</li>
+						))}
+						{/* <li className="notification-item">
 							<p>Bạn có 1 bài tập mới từ lớp ABC123</p>
 						</li>
 						<li className="notification-item">
@@ -181,7 +205,7 @@ const Notification = () => {
 						</li>
 						<li className="notification-item">
 							<p>Bạn có 1 bài tập mới từ lớp ABC123</p>
-						</li>
+						</li> */}
 					</ul>
 				</body>
 			</div>
@@ -195,20 +219,60 @@ function Dashboard() {
 	const [type, setType] = useState('');
 	const [isOpenProfile, setIsOpenProfile] = useState(false);
 	const [isOpenNotifications, setIsOpenNotifications] = useState(false);
+	const [permissions, setPermissions] = useState([]);
+	const [notify, setNotify] = useState([]);
+
+	const fetchNotify = async () => {
+		const currentUser = localStorage.getItem('currentUser');
+
+		try {
+			const response = await fetch(`${api}/students/classes/notify`, {
+				headers: {
+					Authorization: 'Bearer ' + currentUser,
+				},
+			});
+			const data = await response.json();
+			setNotify(data.data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 	useEffect(() => {
 		const currentUser = localStorage.getItem('currentUser');
-		fetch(`${api}/accounts`, {
-			headers: {
-				Authorization: 'Bearer ' + currentUser,
-			},
-		})
-			.then((response) => response.json())
-			.then((infoAPI) => {
-				setInfo(infoAPI.data);
-			})
-			.catch((error) => {
+		const fetchData = async () => {
+			try {
+				const [infore, permissions] = await Promise.all([
+					fetch(`${api}/accounts`, {
+						headers: {
+							Authorization: 'Bearer ' + currentUser,
+						},
+					}),
+					fetch(`${api}/accounts/permissions`, {
+						headers: {
+							Authorization: 'Bearer ' + currentUser,
+						},
+					}),
+				]);
+				const infoData = await infore.json();
+				const permissionsData = await permissions.json();
+				setInfo(infoData.data);
+				setPermissions(permissionsData.data);
+				console.log(infoData, permissionsData);
+			} catch (error) {
 				console.log(error);
-			});
+			}
+		};
+		fetchData();
+		fetchNotify();
+		// .then((response) => response.json())
+		// .then((infoAPI) => {
+		// 	console.log(infoAPI);
+		// 	setInfo(infoAPI.data);
+		// })
+		// .catch((error) => {
+		// 	console.log(error);
+		// });
 	}, []);
 
 	return (
@@ -218,7 +282,7 @@ function Dashboard() {
 			// onClick={() => setIsOpen(false)}
 		>
 			<div className="layout--body">
-				<SideMenu info={info} />
+				<SideMenu info={info} permissions={permissions} />
 
 				<div id="dashboard-container">
 					{/* {isConfig && <UserModel />} */}
@@ -247,6 +311,7 @@ function Dashboard() {
 										<i className="nav__icon fa-regular fa-bell"></i>
 										{isOpenNotifications && (
 											<Notification
+												notify={notify}
 												setIsOpenProfile={setIsOpenProfile}
 												setIsOpenNotifications={setIsOpenNotifications}
 											/>
@@ -290,10 +355,10 @@ function Dashboard() {
 								</Link>
 							</div>
 							<div className="code inf-children">
-								Mã cá nhân: {info.id || ''}
+								Mã cá nhân: {info?.id || ''}
 							</div>
 							<div className="name inf-children">
-								Họ và tên: {info.fullname || ''}
+								Họ và tên: {info?.fullname || ''}
 							</div>
 						</div>
 					</div>

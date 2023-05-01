@@ -12,6 +12,8 @@ const { v4: uuidv4 } = require('uuid');
 //Utils
 const sequelize = require('./util/database');
 const app = express();
+const http = require('http').createServer(app);
+
 require('dotenv').config();
 
 //Models
@@ -112,8 +114,8 @@ require('dotenv').config();
 	Teacher.belongsTo(Department);
 	Department.hasMany(Teacher);
 
-	Department.belongsTo(Teacher, { foreignKey: 'headOfDepartment' });
-	Teacher.hasOne(Department, { foreignKey: 'headOfDepartment' });
+	// Department.belongsTo(Teacher, { foreignKey: 'headOfDepartment' });
+	// Teacher.hasOne(Department, { foreignKey: 'headOfDepartment' });
 
 	// Teacher.hasOne(Lecture, { foreignKey: 'headOfLecture' });
 	// Lecture.belongsTo(Teacher, { foreignKey: 'headOfLecture' });
@@ -136,9 +138,11 @@ require('dotenv').config();
 	Account.belongsTo(Permission_Group, {
 		timestamps: false,
 		// as: 'permissions',
+		foreignKey: 'type',
 	});
 	Permission_Group.hasMany(Account, {
 		timestamps: false,
+		foreignKey: 'type',
 	});
 
 	Permission_Group.belongsToMany(Function, {
@@ -173,6 +177,8 @@ const fileFilter = (req, file, cb) => {
 
 //Routes define
 const authRoutes = require('./routes/auth');
+const teacherRoutes = require('./routes/teacher');
+const studentRoutes = require('./routes/student');
 const questionsRoutes = require('./routes/question');
 const classesRoutes = require('./routes/class');
 const chaptersRoutes = require('./routes/chapter');
@@ -180,9 +186,9 @@ const testRoutes = require('./routes/test');
 const accountRoutes = require('./routes/account');
 const departmentRoutes = require('./routes/department');
 const majorRoutes = require('./routes/major');
-const studentRoutes = require('./routes/student');
 const lectureRoutes = require('./routes/lecture');
 const adminRoutes = require('./routes/admin');
+const permissionsRoutes = require('./routes/permission');
 const { checkPermission } = require('./middleware/check-permission');
 const { errorResponse, throwError } = require('./util/helper');
 //Middleware
@@ -205,6 +211,7 @@ app.use(cors());
 app.use('/auth', authRoutes);
 app.use('/accounts', accountRoutes);
 app.use('/students', studentRoutes);
+app.use('/teachers', teacherRoutes);
 app.use('/departments', departmentRoutes);
 app.use('/majors', majorRoutes);
 app.use('/lectures', lectureRoutes);
@@ -213,6 +220,7 @@ app.use('/classes', classesRoutes);
 app.use('/chapters', chaptersRoutes);
 app.use('/admin', adminRoutes);
 app.use('/test', testRoutes);
+app.use('/permissions', permissionsRoutes);
 //App start when connected to database
 app.get('/', (req, res) => {
 	res.send(Hiii);
@@ -231,7 +239,9 @@ sequelize
 	.sync()
 
 	.then(() => {
-		app.listen(port, '0.0.0.0', function () {
+		const io = require('./util/socket').init(http);
+
+		http.listen(port, '0.0.0.0', function () {
 			console.log(
 				'Express server listening on port %d in %s mode',
 				this.address().port,

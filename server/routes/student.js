@@ -9,9 +9,18 @@ const { checkPermission } = require('../middleware/check-permission');
 const { body } = require('express-validator');
 const Student = require('../models/student');
 const router = require('express').Router();
+
+const { isAuth } = require('../middleware/is-auth');
+
+router.use(isAuth);
+
 router.get('/', studentController.getStudents);
 
 router.get('/:studentId/edit', studentController.getStudent);
+
+router.get('/classes', studentController.getClasses);
+
+router.get('/classes/notify', studentController.getClassNotify);
 
 router.put(
 	'/:studentId',

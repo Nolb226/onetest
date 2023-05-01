@@ -11,12 +11,13 @@ const IconComponent = ({ icon }) => {
 	);
 };
 
-function SideMenu({ info }) {
+function SideMenu({ permissions }) {
 	const navigator = useNavigate();
 	const { pathname } = useLocation();
 
 	useEffect(() => {
 		console.log(pathname.split('/')[3]);
+		console.log(JSON.stringify(permissions));
 	}, [pathname]);
 
 	const teacherAccount = [
@@ -186,7 +187,11 @@ function SideMenu({ info }) {
 					})}
 				</ul>
 			</div>
-
+			<ul>
+				{testAccount?.map((permission) => (
+					<li>{permission.path}</li>
+				))}
+			</ul>
 			{/* <div className="themes flex-center position-absolute">
             <i className="menu-icon fa-solid fa-circle-half-stroke"></i>
             <ul className="themes-list"></ul>
