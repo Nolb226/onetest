@@ -29,10 +29,8 @@ require('dotenv').config();
 
 	const classDetails = require('./models/classdetail');
 
-	const Student = require('./models/student');
 	const Account = require('./models/account');
 
-	const Teacher = require('./models/teacher');
 	const Notification = require('./models/notification');
 
 	const Student_Result = require('./models/student_result');
@@ -57,40 +55,34 @@ require('dotenv').config();
 	Chapter.hasMany(Question);
 	Question.belongsTo(Chapter);
 
-	Student.belongsTo(Account, { foreignKey: 'accountId' });
-	Account.hasOne(Student, { foreignKey: 'accountId' });
-
-	Teacher.belongsTo(Account, { foreignKey: 'accountId' });
-	Account.hasOne(Teacher, { foreignKey: 'accountId' });
-
-	Student.belongsTo(Major);
-	Major.hasMany(Student);
+	Account.belongsTo(Major);
+	Major.hasMany(Account);
 
 	// Major.belongsTo(Teacher, { foreignKey: 'headOfMajor' });
 	// Teacher.hasOne(Major, { foreignKey: 'headOfMajor' });
 
-	Student.belongsToMany(Class, {
+	Account.belongsToMany(Class, {
 		through: classDetails,
-		foreignKey: 'studentId',
+		foreignKey: 'accountId',
 	});
 
-	Student.hasMany(classDetails);
-	classDetails.belongsTo(Student);
+	Account.hasMany(classDetails);
+	classDetails.belongsTo(Account);
 
 	Class.hasMany(classDetails);
 	classDetails.belongsTo(Class);
 
-	Class.belongsToMany(Student, {
+	Class.belongsToMany(Account, {
 		through: classDetails,
 		foreignKey: 'classId',
 	});
 
-	Student.belongsToMany(Exam, {
+	Account.belongsToMany(Exam, {
 		through: Student_Result,
 		timestamps: false,
-		foreignKey: 'studentId',
+		foreignKey: 'accountId',
 	});
-	Exam.belongsToMany(Student, {
+	Exam.belongsToMany(Account, {
 		through: Student_Result,
 		timestamps: false,
 		foreignKey: 'examId',
@@ -108,23 +100,17 @@ require('dotenv').config();
 	Exam.hasMany(Student_Result);
 	Student_Result.belongsTo(Exam);
 
-	Student.hasMany(Student_Result);
+	Account.hasMany(Student_Result);
 	Student_Result.belongsTo(Exam);
 
-	Teacher.belongsTo(Department);
-	Department.hasMany(Teacher);
+	Account.belongsTo(Department);
+	Department.hasMany(Account);
 
-	// Department.belongsTo(Teacher, { foreignKey: 'headOfDepartment' });
-	// Teacher.hasOne(Department, { foreignKey: 'headOfDepartment' });
+	Account.belongsToMany(Lecture, { through: 'teach', timestamps: false });
+	Lecture.belongsToMany(Account, { through: 'teach', timestamps: false });
 
-	// Teacher.hasOne(Lecture, { foreignKey: 'headOfLecture' });
-	// Lecture.belongsTo(Teacher, { foreignKey: 'headOfLecture' });
-
-	Teacher.belongsToMany(Lecture, { through: 'teach', timestamps: false });
-	Lecture.belongsToMany(Teacher, { through: 'teach', timestamps: false });
-
-	Teacher.hasMany(Class);
-	Class.belongsTo(Teacher);
+	Account.hasMany(Class);
+	Class.belongsTo(Account);
 
 	Lecture.hasMany(Class);
 	Class.belongsTo(Lecture);
@@ -177,8 +163,6 @@ const fileFilter = (req, file, cb) => {
 
 //Routes define
 const authRoutes = require('./routes/auth');
-const teacherRoutes = require('./routes/teacher');
-const studentRoutes = require('./routes/student');
 const questionsRoutes = require('./routes/question');
 const classesRoutes = require('./routes/class');
 const chaptersRoutes = require('./routes/chapter');
@@ -210,17 +194,17 @@ app.use((req, res, next) => {
 app.use(cors());
 app.use('/auth', authRoutes);
 app.use('/accounts', accountRoutes);
-app.use('/students', studentRoutes);
-app.use('/teachers', teacherRoutes);
-app.use('/departments', departmentRoutes);
-app.use('/majors', majorRoutes);
-app.use('/lectures', lectureRoutes);
-app.use('/questions', questionsRoutes);
+// app.use('/students', studentRoutes);
+// app.use('/teachers', teacherRoutes);
+// app.use('/departments', departmentRoutes);
+// app.use('/majors', majorRoutes);
+// app.use('/lectures', lectureRoutes);
+// app.use('/questions', questionsRoutes);
 app.use('/classes', classesRoutes);
-app.use('/chapters', chaptersRoutes);
-app.use('/admin', adminRoutes);
-app.use('/test', testRoutes);
-app.use('/permissions', permissionsRoutes);
+// app.use('/chapters', chaptersRoutes);
+// app.use('/admin', adminRoutes);
+// app.use('/test', testRoutes);
+// app.use('/permissions', permissionsRoutes);
 //App start when connected to database
 app.get('/', (req, res) => {
 	res.send(Hiii);

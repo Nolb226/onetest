@@ -16,7 +16,7 @@ function ClassItem(Class) {
 			</li>
 
 			<li class="col l-6-4 m-6-4">
-				<h3>{Class.Class.lecture.name}</h3>
+				<h3>{Class.Class.lecture_name}</h3>
 			</li>
 
 			<li class="col l-6-4 m-6-4">
@@ -39,7 +39,7 @@ function ClassItem(Class) {
 					}`}
 					onClick={() => Class.handleLock(Class.Class)}
 				>
-					<i class={`fa-solid fa-${Class.Class.isLock?"":"un"}lock`}></i>
+					<i class={`fa-solid fa-${Class.Class.isLock ? '' : 'un'}lock`}></i>
 				</button>
 			</li>
 

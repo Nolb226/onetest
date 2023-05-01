@@ -16,7 +16,7 @@ function Classes(prop) {
 	const handleClasses = (value) => {
 		const currentUser = localStorage.getItem(`currentUser`);
 		fetch(
-			`${api}/teachers/classes?search=${
+			`${api}/classes/manage?search=${
 				searchParams.get('search') || ''
 			}&page=${page}`,
 			{

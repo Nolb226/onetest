@@ -22,9 +22,7 @@ function ViewClass() {
 	const handleClass = () => {
 		const currentUser = localStorage.getItem('currentUser');
 		fetch(
-			`${api}/students/classes?search=${
-				searchParams.get('search') || ''
-			}&page=${page}`,
+			`${api}/classes?search=${searchParams.get('search') || ''}&page=${page}`,
 			{
 				headers: {
 					Authorization: 'Bearer ' + currentUser,

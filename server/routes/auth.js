@@ -1,9 +1,7 @@
 const router = require('express').Router();
 const authController = require('../controllers/auth');
 const { body } = require('express-validator');
-const Account = require('../models/account');
-const Student = require('../models/student');
-const Teacher = require('../models/teacher');
+
 router.post(
 	'/login',
 	[
@@ -29,14 +27,7 @@ router.post(
 			.trim()
 			.notEmpty()
 			.isInt()
-			.withMessage('Username must be your personalID')
-			.custom(async (value, { req }) => {
-				const isExist =
-					(await Teacher.findByPk(value)) || (await Student.findByPk(value));
-				if (isExist) {
-					throw new Error('Account already exists');
-				}
-			}),
+			.withMessage('Username must be your personalID'),
 
 		body('dob')
 			.trim()
@@ -51,10 +42,10 @@ router.post(
 			.notEmpty()
 			.isIn(['SV', 'GV'])
 			.withMessage('Invalid type'),
-	],
+	]
 
 	//min : 8
-	authController.signup
+	// authController.signup
 );
 
 module.exports = router;

@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const Account = require('../models/account');
 const Functions = require('../models/function');
 const Permission_Group = require('../models/permission_group');
-const Student = require('../models/student');
 const { throwError, errorResponse } = require('../util/helper');
 module.exports.isAuth = async (req, res, next) => {
 	try {

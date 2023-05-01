@@ -1,17 +1,13 @@
 const { QueryTypes } = require('sequelize');
 const Functions = require('../models/function');
-const Teacher = require('../models/teacher');
 const sequelize = require('../util/database');
 const { successResponse, errorResponse } = require('../util/helper');
+const Account = require('../models/account');
 
 exports.getUserAccount = async (req, res, _) => {
 	try {
-		const teacher = await Teacher.findOne({
-			where: {
-				accountId: req.account.id,
-			},
-		});
-		successResponse(res, 200, teacher);
+		const user = await Account.findByPk(req.account.id);
+		successResponse(res, 200, user);
 	} catch (error) {
 		errorResponse(res, error);
 	}
@@ -53,5 +49,7 @@ exports.getNotify = async (req, res, _) => {
 			JOIN	
 			`
 		);
-	} catch (error) {}
+	} catch (error) {
+		errorResponse(res, 200);
+	}
 };
