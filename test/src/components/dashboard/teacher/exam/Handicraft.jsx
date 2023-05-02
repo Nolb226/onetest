@@ -71,7 +71,7 @@ const questionSideMenu = {
    fontSize: "1.3rem",
 };
 
-function AnswerListInput({ answerArray, questionIndex }) {
+function AnswerListInput({ answerArray, questionId }) {
    return answerArray.map((item) => (
       <div
          className="flex-center form-group"
@@ -83,8 +83,8 @@ function AnswerListInput({ answerArray, questionIndex }) {
       >
          <input
             type="radio"
-            name={"correctAns" + questionIndex}
-            id="correct"
+            name={"correctAns" + questionId}
+            id={"correct" + questionId}
             value={item.value}
             style={{ marginBottom: "16px" }}
          />
