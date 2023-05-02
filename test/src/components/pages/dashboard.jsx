@@ -226,12 +226,9 @@ function Dashboard() {
             <div id="dashboard-container">
                {/* {isConfig && <UserModel />} */}
                <div className="top-bar">
-                  <header className="header flex-center position-relative">
-                     <div className="header__logo">
-                        <img
-                           src="/image/BestOfTest.png"
-                           alt="Logo Best of Test"
-                        />
+                  <header className="header position-relative">
+                     <div className="header__title">
+                        <h1></h1>
                      </div>
                      <div className="navigation flex-center">
                         <ul className="nav__list flex-center">
@@ -240,20 +237,25 @@ function Dashboard() {
                               alt="Viet Nam flag"
                               title="Viet Nam"
                            >
-                              <img
-                                 src=".././image/Flag_of_Vietnam.png"
-                                 alt=""
-                              />
+                              <div className="nav__icon flex-center ">
+                                 <img
+                                    src=".././image/Flag_of_Vietnam.png"
+                                    alt=""
+                                 />
+                              </div>
                            </li>
 
                            <li
                               className="nav__item flex-center position-relative notify"
+                              title="Thông báo"
                               onClick={() => {
                                  setIsOpenNotifications(!isOpenNotifications);
                                  setIsOpen(false);
                               }}
                            >
-                              <i className="nav__icon fa-regular fa-bell"></i>
+                              <div className="nav__icon flex-center ">
+                                 <i className="fa-regular fa-bell"></i>
+                              </div>
                               {isOpenNotifications && (
                                  <Notification
                                     setIsOpenProfile={setIsOpenProfile}
@@ -271,8 +273,22 @@ function Dashboard() {
                                  setIsOpen(!isOpen);
                                  setIsOpenNotifications(false);
                               }}
+                              title={
+                                 info.fullname || "Nguyen Truong Khanh Hoang"
+                              }
                            >
-                              <i className="nav__icon fa-regular fa-user"></i>
+                              {/* <div className="information">
+                                 <div className="flex-center name inf-children">
+                                    {info.fullname ||
+                                       "Nguyen Truong Khanh Hoang"}
+                                 </div>
+                                 <div className="flex-center code inf-children">
+                                    {info.id || "3121410146"}
+                                 </div>
+                              </div> */}
+                              <div className="nav__icon flex-center ">
+                                 <i className="fa-regular fa-user"></i>
+                              </div>
                               {isOpen && (
                                  <UserMenu
                                     setType={setType}
@@ -288,27 +304,6 @@ function Dashboard() {
                         </ul>
                      </div>
                   </header>
-                  <div className="information flex-center">
-                     <div
-                        className="return"
-                        style={{
-                           color: "#999",
-                           fontSize: "1.4rem",
-                           fontWeight: "500",
-                        }}
-                        // onClick={() => navigator('../')}
-                     >
-                        <Link to={"../"} relative="path">
-                           {"<<"} Quay lại
-                        </Link>
-                     </div>
-                     <div className="code inf-children">
-                        Mã cá nhân: {info.id || ""}
-                     </div>
-                     <div className="name inf-children">
-                        Họ và tên: {info.fullname || ""}
-                     </div>
-                  </div>
                </div>
 
                <div className="content">

@@ -16,7 +16,7 @@ function SideMenu({ info }) {
    const { pathname } = useLocation();
 
    useEffect(() => {
-      console.log(pathname.includes("exam"));
+      console.log(pathname.split("/")[3]);
    }, [pathname]);
 
    const teacherAccount = [
@@ -25,6 +25,7 @@ function SideMenu({ info }) {
          path: `../exam`,
          icon: "menu-icon fa-solid fa-file-lines",
          name: "Quản lí thi",
+         nav: "/teacher/exam",
       },
 
       {
@@ -32,6 +33,7 @@ function SideMenu({ info }) {
          path: `../class`,
          icon: "menu-icon fa-solid fa-chalkboard-user",
          name: "Quản lí lớp",
+         nav: "/teacher/class",
       },
 
       {
@@ -39,6 +41,7 @@ function SideMenu({ info }) {
          path: `/statistics`,
          icon: "menu-icon fa-solid fa-chart-simple",
          name: "Thống kê",
+         nav: "/teacher/statistics",
       },
    ];
 
@@ -48,6 +51,7 @@ function SideMenu({ info }) {
          path: `student/viewclass/`,
          icon: "menu-icon fa-solid fa-file-pen",
          name: "Bài thi",
+         nav: "/student/exam",
       },
 
       {
@@ -55,6 +59,7 @@ function SideMenu({ info }) {
          path: `student/joinclass`,
          icon: "menu-icon fa-solid fa-plus",
          name: "Lớp học",
+         nav: "/student/class",
       },
    ];
 
@@ -145,8 +150,11 @@ function SideMenu({ info }) {
                      <li
                         className="menu-item flex-center"
                         onClick={(e) => {
-                           navigator(`./`);
+                           navigator(`${item.nav}`);
                            activeButton(e);
+                           document.querySelector(
+                              ".header__title > h1"
+                           ).textContent = item.name;
                         }}
                         key={item.idPemission}
                         title={item.name}
@@ -165,8 +173,11 @@ function SideMenu({ info }) {
                      <li
                         className="menu-item flex-center"
                         onClick={(e) => {
-                           navigator(`./`);
+                           navigator(`${item.nav}`);
                            activeButton(e);
+                           document.querySelector(
+                              ".header__title > h1"
+                           ).textContent = item.name;
                         }}
                         key={item.idPemission}
                      >
@@ -184,8 +195,11 @@ function SideMenu({ info }) {
                      <li
                         className="menu-item flex-center"
                         onClick={(e) => {
-                           navigator(`./`);
+                           navigator(`${item.nav}`);
                            activeButton(e);
+                           document.querySelector(
+                              ".header__title > h1"
+                           ).textContent = item.name;
                         }}
                         key={item.idPemission}
                      >

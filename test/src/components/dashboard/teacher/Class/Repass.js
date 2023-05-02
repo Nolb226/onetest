@@ -59,17 +59,17 @@ function Repass(prop) {
 		>
 			<div>
 				<div class="row class-editpass-model class-editpass-header">
-					<div class="l-5 m-5">Mã Lớp: {info.id}</div>
-					<div class="l-7 m-7">Tên Lớp: {info.name}</div>
+					<div class="l-5 m-5 c-5">Mã Lớp: {info.id}</div>
+					<div class="l-7 m-7 c-5">Tên Lớp: {info.name}</div>
 				</div>
 
 				<div class="wide class-editpass-body class-editpass-model">
 					<div class="row p-6-15 flex-center">
-						<label for="" class="l-6 m-6">
+						<label for="" class="l-6 m-6 c-6">
 							Mật khẩu hiện tại:
 						</label>
 						<input
-							class="l-6 m-6 class-editpass-input"
+							class="l-6 m-6 c-6 class-editpass-input"
 							type="text"
 							readOnly
 							value={info.password}
@@ -77,11 +77,11 @@ function Repass(prop) {
 					</div>
 
 					<div class="row p-6-15 flex-center">
-						<label for="newPass" class="l-6 m-6">
+						<label for="newPass" class="l-6 m-6 c-6">
 							Mật khẩu mới:
 						</label>
 						<input
-							class="l-6 m-6 class-editpass-input"
+							class="l-6 m-6 c-6 class-editpass-input"
 							type="text"
 							id="newPass"
 							onChange={(e) => setPassword(e.target.value)}

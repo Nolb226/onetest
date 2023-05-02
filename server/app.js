@@ -130,20 +130,6 @@ require('dotenv').config();
 	Class.hasMany(Exam);
 	Exam.belongsTo(Class);
 
-	// Exam.belongsToMany(Question, { through: Exam_Result });
-	// Question.belongsToMany(Exam, { through: Exam_Result });
-
-	// Student.belongsToMany(Exam, {
-	// 	through: Exam_Result,
-	// 	timestamps: false,
-	// 	foreignKey: 'studentId',
-	// });
-	// Exam.belongsToMany(Student, {
-	// 	through: Exam_Result,
-	// 	timestamps: false,
-	// 	foreignKey: 'examId',
-	// });
-
 	Class.hasMany(Notification);
 	Notification.belongsTo(Class);
 

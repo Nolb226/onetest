@@ -144,20 +144,41 @@ exports.getClasses = async (req, res, _) => {
 exports.getClass = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
-		const foundedClass = await Classes.findByPk(classId, {
+		const [foundedClass] = await req.user.getClasses({
+			where: { id: classId },
 			include: [
 				{ model: Teacher, attributes: ['id', 'fullname'] },
 				{ model: Lecture, attributes: ['id', 'name', 'credits'] },
 			],
 			attributes: ['year', 'id', 'name', 'semester'],
 		});
-		// console.log(foundedClass);
 		if (!foundedClass) {
 			return throwError('Class not found', 404);
 		}
+		console.log(foundedClass.toJSON());
 		return successResponse(res, 200, foundedClass);
 	} catch (error) {
 		errorResponse(res, error);
+	}
+};
+
+exports.getClassJoin = async (req, res, _) => {
+	try {
+		const { classId } = req.params;
+		const foundedClass = await Class.findByPk(classId, {
+			include: [
+				{ model: Teacher, attributes: ['id', 'fullname'] },
+				{ model: Lecture, attributes: ['id', 'name', 'credits'] },
+			],
+			attributes: ['year', 'id', 'name', 'semester'],
+		});
+		if (!foundedClass) {
+			return throwError('Class not found', 404);
+		}
+		console.log(foundedClass.toJSON());
+		return successResponse(res, 200, foundedClass);
+	} catch (error) {
+		errorResponse(error);
 	}
 };
 
@@ -523,14 +544,15 @@ exports.getStudentResultInClass = async (req, res, _) => {
 			JOIN	students
 			ON		students.id 	= studentresults.studentId
 			WHERE	exams.id 		= "${examId}"
-			AND		classes.id		= "${classId}"
 			AND		students.id		= "${req.user.id}"
 		`,
 			{
 				type: sequelize.QueryTypes.SELECT,
 			}
 		);
+		console.log(result.content);
 		const { content: newContent } = result;
+		console.log(newContent);
 		result.content = JSON.parse(newContent);
 		successResponse(res, 200, result);
 	} catch (error) {
@@ -574,7 +596,8 @@ exports.getQuestionInClassByChapter = async (req, res, _) => {
 					answerB,
 					answerC,
 					answerD,
-					level
+					level,
+					questions.chapterId
 
 			FROM	classes
 
@@ -584,7 +607,7 @@ exports.getQuestionInClassByChapter = async (req, res, _) => {
 			ON		lectures.id 			= chapters.lectureId
 			JOIN	questions
 			ON		chapters.id 			= questions.chapterId
-			WHERE	chapters.id 			= "${classroom.lectureId}-${query}"
+			WHERE	(chapters.id 			= "${classroom.lectureId}-${query}")
 			AND		classes.id              = "${classId}"
 	
 			`,
@@ -772,13 +795,16 @@ exports.postClassExam = async (req, res) => {
 		}
 
 		if (type === '1') {
-			const query = chapters
-				?.split(',')
-				.join(`" OR chapters.id = "${classroom.lectureId}-`);
+			// const { chapters } = req.query;
+
+			// const query = chapters
+			// 	?.split(',')
+			// 	.join(`" OR chapters.id = "${classroom.lectureId}-`);
+			const newQuestions = JSON.parse(questions);
 			try {
 				const examContent = await Promise.all(
-					questions.map(async (question) => {
-						const chapter = await Chapter.findByPk(question.id);
+					newQuestions.map(async (question) => {
+						const chapter = await Question.findByPk(question.id);
 						return {
 							id: chapter.id,
 							description: chapter.description,
@@ -986,6 +1012,22 @@ exports.postClassStudent = async (req, res, _) => {
 			throwError(`Could not find class`, 404);
 			0;
 		}
+
+		const isDuplicate = await sequelize.query(`
+		
+		SELECT	*
+		FROM	classdetail
+		WHERE	classId LIKE "${foundedClass.lectureId}${(foundedClass.year + '').slice(
+			-2
+		)}${foundedClass.semester}" 
+		AND		studentId = "${req.user.id}"
+		
+		`);
+
+		if (isDuplicate) {
+			throwError(`Could not join`, 409);
+		}
+
 		const isValid = password === foundedClass.password;
 		if (!isValid || foundedClass.isLock) {
 			throwError(`Could not join class`, 409);
@@ -997,11 +1039,16 @@ exports.postClassStudent = async (req, res, _) => {
 		});
 		foundedClass.totalStudent = newTotal;
 		await foundedClass.save();
-		const exams = foundedClass.getExams();
+		const exams = await foundedClass.getExams();
 		await Promise.all(
 			exams.map(async (exam) => {
 				if (exams.type != 3) {
-					const studentDumb = await Student.findByPk(0);
+					const studentDumb = await Student_Result.findOne({
+						where: {
+							studentId: 0,
+						},
+					});
+
 					return await req.user.addExam(exam, {
 						through: {
 							content: studentDumb.content,
@@ -1140,6 +1187,125 @@ exports.postClassStudentExam = async (req, res, _) => {
 		errorResponse(res, error);
 	}
 };
+
+exports.postClassToGetExcel = async (req, res, _) => {
+	try {
+		// const { students } = req.body;
+		const { classId } = req.params;
+		const classroom = await Class.findByPk(classId);
+		if (!classroom) {
+			throwError(`Classroom not found`, 404);
+		}
+		// const students = await classroom.getStudents({
+		// 	attributes: ['id', 'fullname', 'dob', 'majorid'],
+		// 	include: [
+		// 		{
+		// 			model: Student_Result,
+		// 			attributes: ['grade'],
+		// 			nested: false,
+		// 			raw: false,
+		// 		},
+		// 	],
+		// 	joinTableAttributes: [],
+		// });
+
+		const exams = await classroom.getExams({
+			attributes: ['id', 'name'],
+		});
+		// console.log(exams);
+		const students = await Promise.all(
+			exams.map(async (exam) => {
+				console.log(exam.toJSON());
+				return await exam.getStudents();
+			})
+		);
+		students.forEach((student) => {
+			console.log(student);
+		});
+
+		// Workbook setup
+		const workbook = new Excel.Workbook();
+		workbook.creator = 'Best Of Test';
+		workbook.created = new Date();
+		workbook.views = [
+			{
+				x: 0,
+				y: 0,
+				width: 20000,
+				height: 2000,
+			},
+		];
+		const worksheet = workbook.addWorksheet(`${classroom.name}`, {});
+
+		// //Title
+		worksheet.mergeCells('A1', 'H3');
+		let titleRow = worksheet.getCell('C1');
+		titleRow.value = `Danh sách lớp ${classroom.name}`;
+		titleRow.font = {
+			name: 'Calibri',
+			size: 16,
+			color: { argb: '0085A3' },
+		};
+		titleRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+		worksheet.addRow([]);
+		worksheet.mergeCells('A6', 'D6');
+		const bheaderRow = worksheet.getCell('A6');
+		bheaderRow.value = 'Thông tin thí sinh';
+		bheaderRow.font = {
+			size: 14,
+		};
+		bheaderRow.alignment = { horizontal: 'center' };
+		// worksheet.addRow(['Thông tin thí sinh','']);
+		console.log(exams);
+		const examRow = exams.map((exam) => {
+			return Object.values(exam.toJSON());
+		});
+		worksheet.addRow([
+			'Mã số sinh viên',
+			'Họ và Tên',
+			'Ngày sinh',
+			'Mã ngành',
+			...examRow.flat(1),
+		]);
+
+		// worksheet.addRows(students);
+
+		students.forEach((student) => {
+			console.log(student.toJSON());
+			const student_arr = Object.values(student); //convert to array
+			// const result = student_arr.pop(); //pop studentresults
+			// const grade_arr = result.map((item) => {
+			// 	if (item.grade === null) {
+			// 		return 'Chưa làm';
+			// 	}
+			// 	return item.grade;
+			// });
+			// const studentRow = [...student_arr, ...grade_arr];
+			// const row = worksheet.addRow(studentRow);
+			const row = worksheet.addRow(student_arr);
+			row.eachCell((cell, number) => {
+				if (number > 3) {
+					if (cell.value === 0) {
+						//Check grade
+						cell.font = {
+							bold: true,
+							color: {
+								argb: 'cc2424',
+							},
+						};
+					}
+				}
+			});
+		});
+		await workbook.xlsx.writeFile(`${classroom.id}.xlsx`);
+		successResponse(res, 200, students);
+	} catch (error) {
+		console.log(error);
+		errorResponse(res, error);
+	}
+};
+
 exports.putClass = async (req, res, _) => {
 	try {
 		const { classId } = req.params;

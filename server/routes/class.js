@@ -105,12 +105,13 @@ router.get(
 	classController.getStudentResultInClass
 );
 
+router.get('/:classId/join', classController.getClassJoin);
+
 //METHOD : POST
 
 router.post(
 	'/',
 	[
-		body('password').notEmpty().trim(),
 		body('semester')
 			.trim()
 			.notEmpty()
@@ -173,6 +174,7 @@ router.post(
 
 router.post('/:classId/exams/:examId', classController.postClassStudentExam);
 
+router.post('/:classId/excels', classController.postClassToGetExcel);
 //METHOD : PUT
 
 router.put(
