@@ -22,7 +22,7 @@ function ClassItem(Class) {
          </li>
 
          <li class="flex-center column-text">
-            <h3>{Class.Class.lecture.name}</h3>
+            <h3>{Class.Class.lecture_name}</h3>
          </li>
 
          <li className="flex-center column-text">

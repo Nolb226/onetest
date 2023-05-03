@@ -183,7 +183,7 @@ function Classes(prop) {
                                  <h3>
                                     {Class.name} - {Class.id}
                                  </h3>
-                                 <span>Môn:&nbsp; {Class.lecture.name}</span>
+                                 <span>Môn:&nbsp; {Class.lecture_name}</span>
                                  <span>Lớp:&nbsp;{Class.name}</span>
                                  <div
                                     className="flex-center lock-exam"
