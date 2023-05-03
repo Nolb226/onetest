@@ -48,7 +48,7 @@ function Student(prop) {
 
 	return (
 		<ul
-			data-id={prop.student.id}
+			data-id={prop.student.account_id}
 			class="row no-gutters flex-center table__content--item"
 			style={{
 				justifyContent: 'start',
@@ -59,11 +59,13 @@ function Student(prop) {
 			</li>
 
 			<li class="col l-2 m-2 c-2">
-				<h3>{prop.student.id}</h3>
+				<h3>{prop.student.account_id}</h3>
 			</li>
 
 			<li class="col l-3 m-3 c-3">
-				<h3>{prop.student.fullname}</h3>
+				<h3>
+					{prop.student.lastName} {prop.student.firstName}
+				</h3>
 			</li>
 
 			{prop.student.studentresults?.map((grade, index) => {

@@ -22,7 +22,9 @@ function SignInModal({ toggle1, toggle2 }) {
 
 			if (!resonse.ok) return alert('Loi roi ban oi!');
 			const data = await resonse.json();
-			socket.emit('login', { id: 123 });
+			socket.connect();
+
+			// socket.emit('login', { id: 123 });
 			localStorage.setItem('currentUser', data.token);
 			if (data.type === 'SV') {
 				window.location.href = './student';

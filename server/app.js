@@ -160,6 +160,8 @@ const fileFilter = (req, file, cb) => {
 		cb('Error: The file must be an XLS or XLSX file!');
 	}
 };
+app.use(express.static(path.join(__dirname, '', '/class-excel')));
+// app.use(express.static(path.join(__dirname, '', '/class-excel')));
 
 //Routes define
 const authRoutes = require('./routes/auth');

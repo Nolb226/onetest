@@ -12,6 +12,7 @@ import QuestionItem from './QuestionItem';
 import Info from '../Info';
 import api from '../../../../../config/config';
 import QuestionsRender from './QuestionsRender';
+import socket from '../../../../../utils/socket';
 
 function Test() {
 	const [questions, setQuestions] = useState([]); //Chứa mảng câu hỏi
@@ -23,13 +24,64 @@ function Test() {
 		status: false,
 	}); //Chứa trạng thái thí sinh đã nộp bài hay chưa
 	// const [isDone, setIsDone] = useState(false);
+
 	const [duration, setDuration] = useState();
 	const params = useParams();
 	const { examId } = params;
 	const { state } = useLocation();
+	// const []
+
+	const startTimer = (duration) => {
+		const countDownDuration = () => {
+			// const currentTime = new Date().getTime();
+			// const test = timeEnd - currentTime;
+
+			const hours = String(parseInt(time / 3600, 10)).padStart(2, '0');
+			const others = String(parseInt(time % 3600, 10)).padStart(2, '0');
+			const minutes = String(parseInt(others / 60, 10)).padStart(2, '0');
+			const seconds = String(parseInt(others % 60, 10)).padStart(2, '0');
+			// socket.emit('test', { hours, seconds, minutes });
+			if (time === 0) {
+				clearInterval(timer);
+				return;
+			}
+
+			time--;
+			setDuration({ ...duration, hours, minutes, seconds });
+		};
+		// let time = duration * 60;
+		let time = parseInt(duration, 10);
+
+		countDownDuration();
+		let timer = setInterval(countDownDuration, 1000);
+		console.log(timer);
+		return timer;
+	};
 
 	useEffect(() => {
+		const handlePopState = () => {
+			socket.emit('exam:end', {
+				duration,
+			});
+		};
+
+		const handleBlur = () => {
+			if (!document.hasFocus()) {
+				socket.emit('exam:click');
+			}
+		};
+
+		const handleBeforeUnload = () => {
+			socket.emit('exam:end', {
+				duration,
+			});
+		};
+
+		window.addEventListener('blur', handleBlur);
+
 		const currentUser = localStorage.getItem('currentUser');
+		let test;
+
 		fetch(`${api}/classes/${state?.classId}/exams/${examId}/details`, {
 			headers: {
 				Authorization: 'Bearer ' + currentUser,
@@ -37,66 +89,58 @@ function Test() {
 		})
 			.then((response) => response.json())
 			.then((questionsAPI) => {
-				// console.log(questionsAPI.data.content);
-				setQuestions(JSON.parse(questionsAPI.data.content));
+				setQuestions(questionsAPI.data.content);
 				setSubmitted({
 					...submitted,
 					status: questionsAPI.data.isDone,
 				});
-				console.log(submitted.status);
-				if (!submitted.status) {
-					startTimer(questionsAPI.data.duration);
-				}
+				socket.emit('exam:start', {
+					id: questionsAPI.data.id,
+					timeEnd: questionsAPI.data.timeEnd,
+				});
+				clearInterval(test);
+				test = startTimer(questionsAPI.data.duration);
 			})
+
 			.then(() => {
-				// console.log(duration);
+				window.addEventListener('popstate', handlePopState);
+				window.addEventListener('beforeunload', handleBeforeUnload);
 			})
 			.catch((error) => {
 				console.log(error);
 			});
+
+		// clearInterval(test);
+
+		socket.on('exam:clear', () => {
+			console.log('|||||||||||||');
+			clearInterval(test);
+			console.log(test);
+		});
+		console.log(test);
+
+		return () => {
+			console.log(`Before ${test}`);
+			clearInterval(test);
+			console.log(`After ${test}`);
+			window.removeEventListener('popstate', handlePopState);
+			window.removeEventListener('beforeunload', handleBeforeUnload);
+			window.removeEventListener('blur', handleBlur);
+		};
 	}, []);
+
+	useEffect(() => {}, []);
+
+	socket.on('test', (response) => {
+		setDuration(response);
+	});
+	socket.on('exam:expired', (response) => {
+		navigator('../');
+	});
 
 	if (!state?.classId || submitted.status) {
 		navigator(`./result`);
 	}
-
-	const startTimer = (duration) => {
-		const countDownDuration = () => {
-			let minutes = String(parseInt(time / 60, 10)).padStart(2, '0');
-			let seconds = String(parseInt(time % 60, 10)).padStart(2, '0');
-			// console.log(duration);
-			if (time === 0) {
-				const accesToken = localStorage.getItem('currentUser');
-				fetch(`${api}/classes/${state?.classId}/exams/${examId}`, {
-					method: 'POST',
-					headers: {
-						Authorization: 'Bearer ' + accesToken,
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({ questions: answer }),
-				})
-					.then(() => {
-						alert('Submit r nè');
-					})
-					.catch((error) => console.log(error));
-
-				// history.push('/class');
-
-				clearInterval(timer);
-				return;
-			}
-			setDuration((duration) => duration - 1);
-			// duration--;
-			time--;
-			console.log(document.querySelector('.confirm-btn.form-btn'));
-			setDuration({ minutes, seconds });
-		};
-		// let time = 10;
-		let time = duration * 60;
-		countDownDuration();
-		const timer = setInterval(countDownDuration, 1000);
-		return timer;
-	};
 
 	const handleSubmit = () => {
 		setSubmitted({
