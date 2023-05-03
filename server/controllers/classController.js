@@ -70,15 +70,29 @@ exports.getClasses = async (req, res, _) => {
 
 		const { account } = req;
 
-		const classes = await account.getClasses({
-			include: [
-				{ model: Account, attributes: ['id', 'firstName', 'lastName'] },
-				{ model: Lecture, attributes: ['id', 'name'] },
-			],
-			attributes: ['id', 'name', 'isLock', 'year', 'semester', 'totalStudent'],
-			offset: pageSize * (page - 1),
-			limit: pageSize,
-		});
+		const classes = await sequelize.query(
+			`
+			SELECT	classes.id,
+					classes.name,
+					totalStudent,
+					lectures.id 									AS lecture_id,
+					lectures.name 									AS lecture_name,
+					CONCAT(teacher.lastName," ",teacher.firstName) 	as teacher_fullname
+
+			FROM	classes
+			JOIN 	lectures ON lectures.id 						= classes.lectureId
+			JOIN 	classdetail ON classes.id 						= classdetail.classId
+			JOIN 	accounts 										AS student
+			ON		classdetail.accountId 							= student.id
+			JOIN 	accounts 										AS teacher
+			ON		classes.accountId 								= teacher.id
+			WHERE	student.id			 							= "${account.id}"
+			`,
+			{
+				type: QueryTypes.SELECT,
+			}
+		);
+		// const teacher = await Account.findByPk(class {});
 		const result = {
 			data: classes,
 			total: 0,
@@ -311,7 +325,9 @@ exports.getClassExams = async (req, res, _) => {
 						lectures.name 				as lecture_name,
 						isDone,
 						totalQuestions,
-						exams.isLock
+						exams.isLock,
+						timeStart,
+						timeEnd
 						
 				FROM	lectures
 				JOIN	classes

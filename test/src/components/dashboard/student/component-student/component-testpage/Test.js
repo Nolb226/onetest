@@ -18,6 +18,7 @@ function Test() {
 	const [questions, setQuestions] = useState([]); //Chứa mảng câu hỏi
 	const [isOpen, setIsOpen] = useState(false); //Bật tắt modal confirm
 	const [answer, setAnswer] = useState([]);
+	const [intervalId, setIntervalId] = useState(null);
 	const navigator = useNavigate();
 	const [submitted, setSubmitted] = useState({
 		text: 'Nộp bài',
@@ -31,38 +32,42 @@ function Test() {
 	const { state } = useLocation();
 	// const []
 
+	let timer = null;
+
 	const startTimer = (duration) => {
 		const countDownDuration = () => {
-			// const currentTime = new Date().getTime();
-			// const test = timeEnd - currentTime;
+			const time = parseInt(duration, 10);
+			// -
+			// Math.round((new Date().getTime() - startTime) / 1000);
+
+			if (time < 0) {
+				clearInterval(timer);
+				setDuration({ hours: '00', minutes: '00', seconds: '00' });
+				return;
+			}
 
 			const hours = String(parseInt(time / 3600, 10)).padStart(2, '0');
 			const others = String(parseInt(time % 3600, 10)).padStart(2, '0');
 			const minutes = String(parseInt(others / 60, 10)).padStart(2, '0');
 			const seconds = String(parseInt(others % 60, 10)).padStart(2, '0');
-			// socket.emit('test', { hours, seconds, minutes });
-			if (time === 0) {
-				clearInterval(timer);
-				return;
-			}
-
-			time--;
-			setDuration({ ...duration, hours, minutes, seconds });
+			setDuration((prev) => ({ ...prev, hours, minutes, seconds }));
 		};
-		// let time = duration * 60;
-		let time = parseInt(duration, 10);
 
-		countDownDuration();
-		let timer = setInterval(countDownDuration, 1000);
-		console.log(timer);
+		if (!timer) {
+			countDownDuration();
+			timer = setInterval(countDownDuration, 1000);
+		}
+
 		return timer;
 	};
 
 	useEffect(() => {
 		const handlePopState = () => {
-			socket.emit('exam:end', {
-				duration,
-			});
+			console.log(duration);
+			const test = {
+				...duration,
+			};
+			socket.emit('exam:end', test);
 		};
 
 		const handleBlur = () => {
@@ -72,15 +77,17 @@ function Test() {
 		};
 
 		const handleBeforeUnload = () => {
-			socket.emit('exam:end', {
-				duration,
-			});
+			console.log(duration);
+
+			const test = {
+				...duration,
+			};
+			socket.emit('exam:end', test);
 		};
 
 		window.addEventListener('blur', handleBlur);
 
 		const currentUser = localStorage.getItem('currentUser');
-		let test;
 
 		fetch(`${api}/classes/${state?.classId}/exams/${examId}/details`, {
 			headers: {
@@ -98,8 +105,8 @@ function Test() {
 					id: questionsAPI.data.id,
 					timeEnd: questionsAPI.data.timeEnd,
 				});
-				clearInterval(test);
-				test = startTimer(questionsAPI.data.duration);
+				clearInterval(timer);
+				startTimer(questionsAPI.data.duration);
 			})
 
 			.then(() => {
@@ -110,19 +117,16 @@ function Test() {
 				console.log(error);
 			});
 
-		// clearInterval(test);
-
 		socket.on('exam:clear', () => {
-			console.log('|||||||||||||');
-			clearInterval(test);
-			console.log(test);
+			clearInterval(timer);
 		});
-		console.log(test);
+		console.log(timer);
 
 		return () => {
-			console.log(`Before ${test}`);
-			clearInterval(test);
-			console.log(`After ${test}`);
+			// console.log(`Before ${test}`);
+			clearInterval(timer);
+			// console.log(clearInterval(test));
+			console.log(`After ${timer}`);
 			window.removeEventListener('popstate', handlePopState);
 			window.removeEventListener('beforeunload', handleBeforeUnload);
 			window.removeEventListener('blur', handleBlur);
