@@ -200,11 +200,11 @@ app.use('/accounts', accountRoutes);
 // app.use('/teachers', teacherRoutes);
 // app.use('/departments', departmentRoutes);
 // app.use('/majors', majorRoutes);
-// app.use('/lectures', lectureRoutes);
+app.use('/lectures', lectureRoutes);
 // app.use('/questions', questionsRoutes);
 app.use('/classes', classesRoutes);
 // app.use('/chapters', chaptersRoutes);
-// app.use('/admin', adminRoutes);
+app.use('/admin', adminRoutes);
 // app.use('/test', testRoutes);
 // app.use('/permissions', permissionsRoutes);
 //App start when connected to database

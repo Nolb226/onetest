@@ -14,40 +14,40 @@ const Permission_Group = require('../models/permission_group');
 const { getIO } = require('../util/socket');
 const socket = require('../util/socket');
 
-// exports.signup = async (req, res, next) => {
-// 	try {
-// 		const errors = validationResult(req);
+exports.signup = async (req, res, next) => {
+	try {
+		const errors = validationResult(req);
 
-// 		if (!errors.isEmpty()) {
-// 			throwError(errors.array(), 422);
-// 		}
+		if (!errors.isEmpty()) {
+			throwError(errors.array(), 422);
+		}
 
-// 		const { username, password, type, fullname, dob, majors, department } =
-// 			req.body;
+		const { username, password, type, fullname, dob, majors, department } =
+			req.body;
 
-// 		const upperCaseType = type.toUpperCase();
+		const upperCaseType = type.toUpperCase();
 
-// 		const isExist = model.findByPk(username);
-// 		if (isExist.accountId) {
-// 			throwError('Account is already exist', 409);
-// 		}
-// 		const foreignKey = majors || department;
-// 		upperCaseType === 'GV' ? req.body.departmentId : req.body.majorId;
-// 		const account = await model.createAccount({
-// 			id: username,
-// 			fullname,
-// 			dob,
-// 			password: await bycrypt.hash(password, 10),
-// 			upperCaseType,
-// 			foreignKey,
-// 		});
+		const isExist = model.findByPk(username);
+		if (isExist.accountId) {
+			throwError('Account is already exist', 409);
+		}
+		const foreignKey = majors || department;
+		upperCaseType === 'GV' ? req.body.departmentId : req.body.majorId;
+		const account = await model.createAccount({
+			id: username,
+			fullname,
+			dob,
+			password: await bycrypt.hash(password, 10),
+			upperCaseType,
+			foreignKey,
+		});
 
-// 		return successResponse(res, 201, '', req.method);
-// 	} catch (error) {
-// 		errorResponse(res, error);
-// 		console.log(error);
-// 	}
-// };
+		return successResponse(res, 201, '', req.method);
+	} catch (error) {
+		errorResponse(res, error);
+		console.log(error);
+	}
+};
 
 exports.login = async (req, res, next) => {
 	try {
