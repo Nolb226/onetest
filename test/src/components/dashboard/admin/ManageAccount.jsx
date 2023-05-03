@@ -124,10 +124,12 @@ function ManageAccount() {
                         <h3>SV</h3>
                      </li>
 
+                     {/* Hiển thị thẻ checkbox */}
                      <li className="flex-center column-text">
                         <input type="checkbox" name="" id="" />
                      </li>
 
+                     {/* Click để gọi đến modal detail ifnormation của tài khoản */}
                      <li
                         className="flex-center column-text"
                         onClick={() => {
