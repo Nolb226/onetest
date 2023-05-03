@@ -202,6 +202,7 @@
 }
 
 .view-btn {
+   cursor: pointer;
    background-color: var(--highlight-color);
    color: var(--white-color);
    height: 30px;
@@ -212,6 +213,16 @@
 
 .view-result {
    height: 25px;
+}
+
+.download-pdf {
+   width: 90px;
+   background-color: #b30b00;
+}
+
+.download-pdf > i {
+   font-size: 1.5rem;
+   margin-left: 5px;
 }
 
 /* --- Customize checkbox --- */
@@ -363,6 +374,10 @@
       width: 60px;
    }
 
+   .download-pdf {
+      width: 90px;
+   }
+
    .checkmark {
       height: 20px;
       width: 20px;
@@ -473,6 +488,7 @@
 
    .mobile-table-item > span {
       font-size: 1.2rem;
+      line-height: 1.3rem;
       margin-bottom: 8px;
    }
 

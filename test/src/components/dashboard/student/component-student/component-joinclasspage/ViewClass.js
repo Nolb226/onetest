@@ -4,6 +4,7 @@ import ClassItem from "./ClassItem";
 import { useEffect, useRef, useState } from "react";
 import Empty from "../Empty";
 import {
+   Link,
    Outlet,
    useNavigate,
    useParams,
@@ -96,7 +97,7 @@ function ViewClass() {
                   className="flex-center table__content--heading"
                   style={{
                      display: "grid",
-                     gridTemplateColumns: "30% 30% 10% 10% 20%",
+                     gridTemplateColumns: "17% 32% 28% 8% 5% 10%",
                   }}
                >
                   <li className="flex-center column-text">
@@ -106,10 +107,13 @@ function ViewClass() {
                      <h3>Tên lớp</h3>
                   </li>
                   <li className="flex-center column-text">
+                     <h3>Giảng viên</h3>
+                  </li>
+                  <li className="flex-center column-text">
                      <h3>Học kỳ</h3>
                   </li>
                   <li className="flex-center column-text">
-                     <h3>Sĩ số</h3>
+                     <h3>SL</h3>
                   </li>
                   <li className="flex-center column-text">
                      <h3>Chi tiết</h3>
@@ -128,6 +132,7 @@ function ViewClass() {
                >
                   {classes.map((item) => (
                      <ClassItem
+                        teacherName={item.teacher_fullname}
                         id={item.id}
                         nameClass={item.name}
                         semester={item.semester}
@@ -139,70 +144,21 @@ function ViewClass() {
                </div>
             </div>
 
-            {/* <div className="grid table__content">
-               <div className="table__content--list position-relative">
-                  {errorLoadingData && (
-                     <div
-                        className="flex-center"
-                        style={{
-                           width: "100%",
-                           height: "100%",
-                           fontSize: "1.6rem",
-                           color: "#777",
-                        }}
-                     >
-                        {errorLoadingData}
+            <div className="mobile-table-content">
+               {classes.map((item) => {
+                  return (
+                     <div className="flex-center mobile-table-item">
+                        <h3>{item.id}</h3>
+                        <h3>{item.name}</h3>
+                        <span>{item.teacher_fullname}</span>
+                        <span>Sĩ số:&nbsp;{item.totalStudent}</span>
+                        <Link to={`${item.id}/exams`} relative="path">
+                           <button className="view-btn">Xem</button>
+                        </Link>
                      </div>
-                  )}
-                  {isLoadingData && <LoadingData />}
-
-                  {examData.map((exam) => {
-                     return (
-                        <ul
-                           className="table__content-teacher--row table__content--item"
-                           key={exam.id}
-                        >
-                           <li className="flex-center column-text exam-name">
-                              <h3>
-                                 {exam.name} - {exam.id}
-                              </h3>
-                           </li>
-
-                           <li className="flex-center column-text">
-                              <h3>{exam.lecture_name}</h3>
-                           </li>
-
-                           <li className="flex-center column-text">
-                              <h3>{exam.class_id}</h3>
-                           </li>
-
-                           <li className="flex-center column-text test-done">
-                              <h3>{exam.totals}</h3>
-                           </li>
-
-                           <li
-                              className="flex-center column-text view-result"
-                              onClick={() => {
-                                 console.log(exam.isLock);
-                                 handleLock(exam.class_id, exam);
-                              }}
-                           >
-                              <input
-                                 type="checkbox"
-                                 name=""
-                                 id=""
-                                 checked={!exam.isLock}
-                              />
-                              <span class="checkmark"></span>
-                           </li>
-                           <li className="flex-center column-text">
-                              <button className="view-btn">Xem</button>
-                           </li>
-                        </ul>
-                     );
-                  })}
-               </div>
-            </div> */}
+                  );
+               })}
+            </div>
 
             <Paginator
                handlePageChange={handlePageChange}

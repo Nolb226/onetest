@@ -13,7 +13,7 @@ function ClassItem(Class) {
             gridTemplateColumns: "16% 23% 37% 10% 7% 7%",
          }}
       >
-         <li class="flex-center column-text">
+         <li class="flex-center column-text class-id">
             <h3>{Class.Class.id}</h3>
          </li>
 

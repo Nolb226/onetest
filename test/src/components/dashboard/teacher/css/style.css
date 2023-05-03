@@ -3,6 +3,7 @@ button:hover {
 }
 
 .view-class {
+   cursor: pointer;
    width: 100px;
    height: 20px;
    background-color: #2b99ff;
@@ -13,16 +14,74 @@ button:hover {
    font-size: 13px;
 }
 
-/* empty */
-.empty {
-   color: #999;
-   font-size: 32px;
-   height: 430px;
-   font-weight: 500;
+.pdf-download-box {
+   height: 100%;
+   width: 17rem;
 }
 
-.empty-space {
-   height: 43px;
+#dashboard-container button.pdf-download {
+   width: 100%;
+   height: 35px;
+   display: flex;
+   gap: 0.4rem;
+   align-items: center;
+   padding: 0.2rem 0.2rem;
+   border: none;
+   border-radius: 5px;
+   color: #b30b00;
+   background: #fff;
+   box-shadow: inset 0 0 0 1px #b30b00;
+   position: relative;
+   overflow-y: hidden;
+}
+
+#dashboard-container button.pdf-download:hover {
+   background-color: #b30b00;
+   color: #fff;
+}
+
+#dashboard-container button.pdf-download:hover .pdf-download__text {
+   color: #fff !important;
+}
+
+#dashboard-container button.pdf-download i {
+   font-size: 1.8rem;
+}
+
+#dashboard-container button.pdf-download:hover .fake-scroll-down {
+   top: 0;
+}
+
+.fake-scroll-down {
+   position: absolute;
+   top: -3.5rem;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   overflow: hidden;
+   display: flex;
+   flex-direction: column;
+   transition: all 0.3s cubic-bezier(0.18, 0.89, 0.45, 1.36);
+}
+
+.scroll-item {
+   height: 3.5rem;
+   font-weight: 500;
+   display: flex;
+   gap: 1rem;
+   align-items: center;
+   padding: 1rem;
+}
+
+.pdf-download__img {
+   height: 2rem;
+}
+
+.pdf-download__text {
+   display: inline-block;
+   margin-top: 1px;
+   font-size: 1.4rem;
+   color: #b30b00;
 }
 
 /* student page */
@@ -46,9 +105,6 @@ button:hover {
 }
 
 .filter-box {
-   position: absolute;
-   top: 25%;
-   right: 3%;
    border: none;
    color: #888;
    font-weight: 500;

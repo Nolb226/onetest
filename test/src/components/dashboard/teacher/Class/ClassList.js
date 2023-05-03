@@ -4,7 +4,7 @@ import Paginator from "./Paginator";
 import api from "../../../../config/config";
 import StudentEdit from "./StudentEdit";
 import { useParams } from "react-router";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import excel from "../../../../image/excel.svg";
 
 function Classlist(prop) {
@@ -93,36 +93,38 @@ function Classlist(prop) {
          <div className="class-information">
             <h1 class="table__heading">Lớp:&nbsp; {className} </h1>
             <div className="excel-download-box">
-               <button
-                  className="excel-download"
-                  onClick={() => {
-                     const currentUser = localStorage.getItem(`currentUser`);
+               <Link to={`${api}/${classId}.xlsx`}>
+                  <button
+                     className="excel-download"
+                     onClick={() => {
+                        const currentUser = localStorage.getItem(`currentUser`);
 
-                     fetch(`${api}/classes/${classId}/excels`, {
-                        method: "POST",
-                        body: JSON.stringify({
-                           students: studentList,
-                        }),
-                        headers: {
-                           Authorization: "Bearer " + currentUser,
-                           "Content-Type": "application/json",
-                        },
-                     });
-                  }}
-               >
-                  <span className="fake-scroll-down">
-                     <span className="scroll-item">
-                        <i class="fa-solid fa-file-arrow-down"></i>
-                        <span className="excel-download__text"> Excel</span>
-                     </span>
-                     <span className="scroll-item">
-                        <i class="fa-regular fa-file-excel"></i>
-                        <span className="excel-download__text">
-                           Tải Danh Sách Lớp
+                        fetch(`${api}/classes/${classId}/excels`, {
+                           method: "POST",
+                           body: JSON.stringify({
+                              students: studentList,
+                           }),
+                           headers: {
+                              Authorization: "Bearer " + currentUser,
+                              "Content-Type": "application/json",
+                           },
+                        });
+                     }}
+                  >
+                     <span className="fake-scroll-down">
+                        <span className="scroll-item">
+                           <i class="fa-solid fa-file-arrow-down"></i>
+                           <span className="excel-download__text"> Excel</span>
+                        </span>
+                        <span className="scroll-item">
+                           <i class="fa-regular fa-file-excel"></i>
+                           <span className="excel-download__text">
+                              Tải Danh Sách Lớp
+                           </span>
                         </span>
                      </span>
-                  </span>
-               </button>
+                  </button>
+               </Link>
             </div>
          </div>
          <div class="table-zone grid position-relative">

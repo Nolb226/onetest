@@ -58,13 +58,13 @@ function SideMenu({ info }) {
    const adminAccount = [
       {
          idPemission: 6,
-         path: `admin/manage-account`,
+         nav: `admin/manage-account`,
          icon: "menu-icon fa-solid fa-user-gear",
          name: "Tài khoản",
       },
       {
          idPemission: 7,
-         path: `admin/permission`,
+         nav: `admin/permission`,
          icon: "menu-icon fa-solid fa-gear",
          name: "Quyền",
       },

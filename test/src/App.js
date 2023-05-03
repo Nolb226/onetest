@@ -26,6 +26,10 @@ import CreateClass from "./components/dashboard/teacher/Class/CreateClass";
 import Detail from "./components/dashboard/teacher/Class/Detail";
 import ClassStudentView from "./components/pages/Class";
 import Statistics from "./components/dashboard/teacher/statistic/Statistics";
+import Admin from "./components/dashboard/admin/Admin";
+import ManageAccount from "./components/dashboard/admin/ManageAccount";
+import Permission from "./components/dashboard/admin/Permission";
+import ExamDetail from "./components/dashboard/teacher/exam/ExamDetail";
 
 function App() {
    const currentUser = localStorage.getItem("currentUser");
@@ -98,19 +102,19 @@ function App() {
                      <Route path="class">
                         <Route index element={<ViewClass />} />
                         <Route path="join" element={<JoinClass />} />
-                        <Route path="classId" element={<ClassStudentView />}>
+                        <Route path=":classId" element={<ClassStudentView />}>
                            {
                               <Route
                                  path=""
                                  element={<Navigate to="details" />}
                               />
                            }
-                           <Route index element={<Detail />} />
                            <Route path="exams" element={<StudentPage />} />
+                           <Route index element={<Detail />} />
                         </Route>
                      </Route>
 
-                     <Route path="exam/" element={<Test />} />
+                     <Route path="exam/:examId" element={<Test />} />
                      <Route path="result/" element={<Result />} />
                      {<Route path="*" element={<Student />} />}
                   </Route>
@@ -128,6 +132,10 @@ function App() {
                      <Route path="exam" element={<Exam />}>
                         <Route path="" element={<ExamList />} />
                         <Route path="create" element={<ClassList />} />
+                        <Route
+                           path="classId/detailExam"
+                           element={<ExamDetail />}
+                        />
                      </Route>
                      {
                         <Route
@@ -137,7 +145,16 @@ function App() {
                      }
                      <Route path="statistics" element={<Statistics />}></Route>
                   </Route>
-                  s
+
+                  <Route path="admin" element={<Admin />}>
+                     <Route path="manage-account" element={<ManageAccount />}>
+                        {/* <Route path="" element={<Classes />} /> */}
+                     </Route>
+
+                     <Route path="permission" element={<Permission />}>
+                        {/* <Route path="" element={<Classes />} /> */}
+                     </Route>
+                  </Route>
                </Route>
             )}
          </Routes>

@@ -73,6 +73,10 @@
    margin: 0;
 }
 
+.class-id {
+   font-weight: 600;
+}
+
 /* .class-editpass-info {
   margin: 5px;
 } */

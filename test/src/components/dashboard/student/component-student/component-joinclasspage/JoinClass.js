@@ -131,21 +131,19 @@ function JoinClass() {
                   <div className="enter-class-child">
                      <div className="enter-class-child-title">Môn: </div>
                      <div className="enter-class-child-content">
-                        {resultClass.lecture.name}
+                        {resultClass.lecture_name}
                      </div>
                   </div>
                   <div className="enter-class-child">
                      <div className="enter-class-child-title">Mã môn học: </div>
                      <div className="enter-class-child-content">
-                        {resultClass.lecture.id}
+                        {resultClass.lecture_id}
                      </div>
                   </div>
                   <div className="enter-class-child">
                      <div className="enter-class-child-title">Giảng viên: </div>
                      <div className="enter-class-child-content">
-                        {resultClass.accounts?.firstName +
-                           " " +
-                           resultClass.accounts?.lastName}
+                        {resultClass.fullname}
                      </div>
                   </div>
                   <div className="enter-class-child">

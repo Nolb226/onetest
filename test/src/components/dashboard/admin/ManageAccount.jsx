@@ -59,119 +59,87 @@ function ManageAccount() {
          </div>
          <div className="table-zone grid">
             <header className="table__header">
-               <h1 className="table__heading">danh sách tài khoản</h1>
-               <div className="filter-box"></div>
-            </header>
-            <div className="grid table__content">
-               <ul className="row no-gutters flex-center table__content--heading">
-                  <li className="col l-1">
+               <ul
+                  className="table__content--heading"
+                  style={{
+                     display: "grid",
+                     gridTemplateColumns: "5% 15% 35% 10% 20% 10% 5%",
+                  }}
+               >
+                  <li className="flex-center column-text">
                      <h3>STT</h3>
                   </li>
 
-                  <li className="col l-2">
+                  <li className="flex-center column-text">
                      <h3>Mã cá nhân</h3>
                   </li>
 
-                  <li className="col l-3">
+                  <li className="flex-center column-text">
                      <h3>Họ và tên</h3>
                   </li>
 
-                  <li className="col l-2">
+                  <li className="flex-center column-text">
                      <h3>Ngày tạo</h3>
                   </li>
 
-                  <li className="col l-1">
-                     <h3>Loại</h3>
+                  <li className="flex-center column-text">
+                     <h3>Nhóm quyền</h3>
                   </li>
 
-                  <li className="col l-1">
+                  <li className="flex-center column-text">
                      <h3>Kích hoạt</h3>
                   </li>
 
-                  <li className="col l-2">
-                     <h3>Chỉnh sửa</h3>
+                  <li className="flex-center column-text">
+                     <h3>Sửa</h3>
                   </li>
                </ul>
+            </header>
+            <div className="grid table__content">
                <div className="table__content--list">
-                  {/* {examData.map((exam) => {
-                     return (
-                        <ul
-                           className="row no-gutters flex-center table__content--item"
-                           key={exam.id}
-                        >
-                           <li className="col l-3">
-                              <h3>
-                                 {exam.name} - {exam.id}
-                              </h3>
-                           </li>
-
-                           <li className="col l-3">
-                              <h3>{exam.lecture_name}</h3>
-                           </li>
-
-                           <li className="col l-2">
-                              <h3>{exam.class_id}</h3>
-                           </li>
-
-                           <li className="col l-1">
-                              <h3>{exam.totals}</h3>
-                           </li>
-
-                           <li
-                              className="col l-1"
-                              onClick={() => {
-                                 handleLock(exam.class_id, exam);
-                              }}
-                           >
-                              <input
-                                 type="checkbox"
-                                 name=""
-                                 id=""
-                                 checked={!exam.isLock}
-                              />
-                           </li>
-                           <li className="col l-2">
-                              <button className="export-btn">Xuất</button>
-                           </li>
-                        </ul>
-                     );
-                  })} */}
-
-                  <ul className="row no-gutters flex-center table__content--item">
-                     <li className="col l-1">
+                  <ul
+                     className="flex-center table__content--item"
+                     style={{
+                        display: "grid",
+                        gridTemplateColumns: "5% 15% 35% 10% 20% 10% 5%",
+                     }}
+                  >
+                     <li className="flex-center column-text">
                         <h3>01</h3>
                      </li>
 
-                     <li className="col l-2">
+                     <li className="flex-center column-text">
                         <h3>3121410146</h3>
                      </li>
 
-                     <li className="col l-3">
+                     <li className="flex-center column-text">
                         <h3>Nguyễn Thành Đạt</h3>
                      </li>
 
-                     <li className="col l-2">
+                     <li className="flex-center column-text">
                         <h3>11/11/2023</h3>
                      </li>
 
-                     <li className="col l-1">
+                     <li className="flex-center column-text">
                         <h3>SV</h3>
                      </li>
 
-                     <li className="col l-1">
+                     <li className="flex-center column-text">
                         <input type="checkbox" name="" id="" />
                      </li>
 
                      <li
-                        className="col l-2"
+                        className="flex-center column-text"
                         onClick={() => {
-                           document.getElementById(
-                              "detail-information"
-                           ).style.display = "flex";
+                           if (document.getElementById("detail-information"))
+                              document.getElementById(
+                                 "detail-information"
+                              ).style.display = "flex";
                         }}
                      >
-                        <h3>Xem chi tiết</h3>
-                        <DetailInformation />
+                        <button class="list_btn list_btn_edit ">
+                           <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
                      </li>
                   </ul>
                </div>

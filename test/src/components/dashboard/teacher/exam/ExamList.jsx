@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import api from "../../../../config/config";
 import { useNavigate } from "react-router";
 import LoadingData from "../../../loadingAnimation/LoadingData";
+import { Link } from "react-router-dom";
 
 function ExamList() {
    const currentUser = localStorage.getItem("currentUser");
    const navigator = useNavigate();
    const [examData, setExamData] = useState([]);
    const [isLoadingData, setIsLoadingData] = useState(false);
+
    const [errorLoadingData, setErrorLoadingData] = useState("");
 
    const getExamData = async () => {
@@ -159,7 +161,13 @@ function ExamList() {
                               <span class="checkmark"></span>
                            </li>
                            <li className="flex-center column-text">
-                              <button className="view-btn">Xem</button>
+                              <Link
+                                 // to={`${Class.Class.id}/detailExam`}
+                                 to={`classId/detailExam`}
+                                 relative="path"
+                              >
+                                 <button className="view-btn">Xem</button>
+                              </Link>
                            </li>
                         </ul>
                      );
