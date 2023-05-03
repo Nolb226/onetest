@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import excel from '../../../../image/excel.svg';
 import api from '../../../../config/config';
+import { useNavigate } from 'react-router';
 
 function CreateClass({ handleCreateClass }) {
 	const [file, setFile] = useState({
@@ -61,7 +62,8 @@ function CreateClass({ handleCreateClass }) {
 				Authorization: 'Bearer ' + currentUser,
 			},
 		});
-		handleCreateClass();
+		navigator(-1)
+		// handleCreateClass();
 	};
 
 	// quay lại
