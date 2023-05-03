@@ -289,4 +289,32 @@ exports.postPermission = async (req, res, _) => {
 	}
 }
 
-exports
+exports.putFuntionOfPermission = async (req, res, _) => {
+	try {
+		const { permissionId } = req.params;
+		const permissionFounded = await Permission_Group.findOne({
+			where: {
+				id: permissionId,
+			},
+		});
+		// console.log(permissionId);
+		// console.log(permissionFounded.toJSON());
+		if (!permissionFounded) {
+		  throwError("Permission not found", 404);
+		}
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+		  throwError(errors.array(), 409);
+		}
+	
+		const {
+		  functions
+		} = req.body;
+		const inFunc = await Promise.all(functions.map(async(x)=>await Functions.findByPk(x.id)))
+		await permissionFounded.setFunctions(inFunc);
+	
+		successResponse(res, 201, permissionFounded, "PUT");
+	  } catch (error) {
+		errorResponse(res, error);
+	  }
+}
