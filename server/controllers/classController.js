@@ -499,7 +499,7 @@ exports.getStudentResultInClass = async (req, res, _) => {
 		);
 		const { content: newContent } = result;
 		result.content = JSON.parse(newContent);
-		console.log(result.content);
+		console.log(JSON.parse(newContent));
 		successResponse(res, 200, result);
 	} catch (error) {
 		console.log(error);
@@ -1171,23 +1171,35 @@ exports.postClassToGetExcel = async (req, res, _) => {
 		const teacher = await Account.findByPk(classroom.accountId);
 
 		const students = await classroom.getAccounts({
-			attributes: ['account_id', 'lastName', 'firstName', 'dob', 'majorid'],
-			include: [
-				{
-					model: Student_Result,
-					attributes: ['grade'],
-					nested: false,
-					raw: false,
-				},
+			attributes: [
+				'id',
+				'account_id',
+				'lastName',
+				'firstName',
+				'dob',
+				'majorid',
 			],
 			order: ['firstName', 'id'],
 			joinTableAttributes: [],
 		});
 
 		const exams = await classroom.getExams({
-			attributes: ['name'],
+			attributes: ['id', 'name'],
 		});
-		// console.log(exams);
+
+		const examCols = exams.map((x) => ({
+			name: x.toJSON().name,
+		}));
+
+		const results = await Promise.all(
+			exams.map(async (exam) => {
+				const result = await exam.getStudentresults({});
+				// delete exam.toJSON().id;
+				console.log(result);
+				return result;
+			})
+		);
+		console.log(examCols);
 
 		// Workbook setup
 		const workbook = new Excel.Workbook();
@@ -1309,27 +1321,56 @@ exports.postClassToGetExcel = async (req, res, _) => {
 			},
 		};
 		bheaderRowLeft.alignment = { horizontal: 'center' };
-		const examRow = exams.map((exam) => {
+
+		const examRow = examCols.map((exam) => {
 			return Object.values(exam.toJSON());
 		});
 		if (exams.length) {
-			worksheet.mergeCells('G6', `${alphabet[5 + exams.length - 1]}6`);
-			const bheaderRowRight = worksheet.getCell('F6');
+			worksheet.mergeCells('G6', `${alphabet[5 + exams.length]}6`);
+			const bheaderRowRight = worksheet.getCell('G6');
 			bheaderRowRight.value = 'Bài thi';
 			bheaderRowRight.font = {
 				bold: true,
 				size: 10,
 				color: {
-					argb: 'FFFFFF',
-				},
-			};
-			bheaderRowRight.fill = {
-				type: 'pattern',
-				pattern: 'solid',
-				fgColor: {
 					argb: '263895',
 				},
 			};
+
+			bheaderRowRight.border = {
+				bottom: {
+					style: 'thin',
+					color: {
+						argb: '263895',
+					},
+				},
+				left: {
+					style: 'thin',
+					color: {
+						argb: '263895',
+					},
+				},
+				right: {
+					style: 'thin',
+					color: {
+						argb: '263895',
+					},
+				},
+				top: {
+					style: 'thin',
+					color: {
+						argb: '263895',
+					},
+				},
+			};
+
+			// bheaderRowRight.fill = {
+			// 	type: 'pattern',
+			// 	pattern: 'solid',
+			// 	fgColor: {
+			// 		argb: '263895',
+			// 	},
+			// };
 			bheaderRowRight.alignment = { horizontal: 'center' };
 		}
 
@@ -1345,7 +1386,7 @@ exports.postClassToGetExcel = async (req, res, _) => {
 
 		header.alignment = {
 			vertical: 'middle',
-			horizontal: 'center',
+			horizontal: 'left',
 		};
 
 		header.font = {
@@ -1362,23 +1403,26 @@ exports.postClassToGetExcel = async (req, res, _) => {
 			`${alphabet[header.values.length - 2]}${students.length - 1 + 8}`
 		);
 		// worksheet.addRows(students);
+		const tens = Array.from(Array(11).fill(0));
 
 		students.forEach((student) => {
 			const studentJSON = student.toJSON();
 			const studentRefactor = {
 				...studentJSON,
-				dob: vietNamFomatter.format(new Date(studentJSON.dob)),
+				dob: vietNamFomatter.format(new Date(student.dob)),
 			};
 
 			const student_arr = Object.values(studentRefactor);
 			//convert to array
-			const result = student_arr.pop(); //pop studentresults
-			const grade_arr = result.map((item) => {
+			const resultCols = results.filter((x) => x.accountId === student.id);
+			const grade_arr = resultCols.map((item) => {
 				if (item.grade === null) {
 					return 'Chưa làm';
 				}
 				return item.grade;
 			});
+			student_arr.shift();
+
 			const studentRow = ['', ...student_arr, ...grade_arr];
 			// const row = worksheet.addRow(studentRow);
 			const row = worksheet.addRow(studentRow);
@@ -1386,12 +1430,20 @@ exports.postClassToGetExcel = async (req, res, _) => {
 			row.font = {
 				size: 9,
 			};
+			row.alignment = {
+				horizontal: 'left',
+			};
 			row.eachCell((cell, number) => {
-				if (number > 3) {
+				if (number > 6) {
+					if (cell.value !== 'Chưa làm') {
+						tens[cell.value]++;
+					}
+
 					if (cell.value === 0) {
 						//Check grade
 						count++;
 						cell.font = {
+							size: 9,
 							bold: true,
 							color: {
 								argb: 'cc2424',
@@ -1405,6 +1457,10 @@ exports.postClassToGetExcel = async (req, res, _) => {
 		worksheet.getColumn('A').width = 2;
 
 		const worksheetStatistics = workbook.addWorksheet(`Số con điểm`);
+		console.log(tens);
+		tens.forEach((count, number) => {
+			worksheetStatistics.addRow([null, `<=${number}`, count]);
+		});
 
 		await workbook.xlsx.writeFile(`./class-excel/${classroom.id}.xlsx`);
 		successResponse(res, 200, students);
