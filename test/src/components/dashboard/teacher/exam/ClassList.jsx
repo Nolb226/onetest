@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import { useSearchParams } from "react-router-dom";
 import CreateExamModal from "./CreateExamModal";
 import LoadingData from "../../../loadingAnimation/LoadingData";
+import Classes from "../Class/Classes";
 
 function CreateMethod() {
    const [typeMethod, setTypeMethod] = useState("");
@@ -52,6 +53,8 @@ function ClassList() {
 
    const [isLoadingData, setIsLoadingData] = useState(false);
    const [errorLoadingData, setErrorLoadingData] = useState("");
+   // const [selectedClass, setSelectedClass] = useState({});
+   // console.log(selectedClass);
 
    const getClassData = async () => {
       setIsLoadingData(true);
@@ -85,29 +88,37 @@ function ClassList() {
                         fontWeight: "600",
                         fontSize: "1.7rem",
                         lineHeight: "2.1rem",
-                        color: "#555",
+                        color: "#161f80",
                      }}
                   >
                      Chọn lớp cần tạo
                   </h2>
                </div>
-               <div className="table-zone grid">
+               <div className="table-zone">
                   <header className="table__header">
-                     <h1 className="table__heading">danh sách lớp</h1>
+                     <ul
+                        className="flex-center table__content--heading"
+                        style={{
+                           display: "grid",
+                           gridTemplateColumns: "18% 37% 35% 10%",
+                        }}
+                     >
+                        <li className="flex-center column-text">
+                           <h3>Mã lớp</h3>
+                        </li>
+                        <li className="flex-center column-text">
+                           <h3>Tên lớp</h3>
+                        </li>
+                        <li className="flex-center column-text">
+                           <h3>Tên môn học</h3>
+                        </li>
+                        <li className="flex-center column-text">
+                           <h3>Số lượng</h3>
+                        </li>
+                     </ul>
                      <div className="filter-box"></div>
                   </header>
                   <div className="grid table__content">
-                     <ul className="row no-gutters flex-center table__content--heading">
-                        <li className="col l-4">
-                           <h3>Mã lớp</h3>
-                        </li>
-                        <li className="col l-4">
-                           <h3>Tên</h3>
-                        </li>
-                        <li className="col l-4">
-                           <h3>Môn</h3>
-                        </li>
-                     </ul>
                      <div className="table__content--list position-relative">
                         {errorLoadingData && (
                            <div
@@ -126,25 +137,61 @@ function ClassList() {
                         {classes.map((item, index) => {
                            return (
                               <ul
-                                 className="row no-gutters flex-center table__content--item"
+                                 className="flex-center table__content--item"
+                                 style={{
+                                    display: "grid",
+                                    gridTemplateColumns: "18% 37% 35% 10%",
+                                 }}
                                  key={index}
                                  onClick={() =>
                                     setSearchParams({ id: item.id })
                                  }
                               >
-                                 <li className="col l-4">
+                                 <li className="flex-center column-text">
                                     <h3>{item.id}</h3>
                                  </li>
-                                 <li className="col l-4">
+                                 <li className="flex-center column-text">
                                     <h3>{item.name}</h3>
                                  </li>
-                                 <li className="col l-4">
+                                 <li className="flex-center column-text">
                                     <h3>{item.lecture.name}</h3>
+                                 </li>
+                                 <li className="flex-center column-text">
+                                    <h3>{item.totalStudent}</h3>
                                  </li>
                               </ul>
                            );
                         })}
                      </div>
+                  </div>
+
+                  <div className="mobile-table-content">
+                     {classes.map((item, index) => {
+                        return (
+                           <div
+                              className="flex-center mobile-table-item"
+                              key={index}
+                           >
+                              <h3>{item.id}</h3>
+                              <span style={{ color: "#555" }}>{item.name}</span>
+                              <span style={{ color: "var(--highlight-color)" }}>
+                                 Môn:&nbsp; {item.lecture.name}
+                              </span>
+                              <span style={{ color: "#555" }}>
+                                 Số lượng:&nbsp;{item.totalStudent}
+                              </span>
+                              <button
+                                 className="view-btn"
+                                 style={{ backgroundColor: "#111967" }}
+                                 onClick={() =>
+                                    setSearchParams({ id: item.id })
+                                 }
+                              >
+                                 Tạo
+                              </button>
+                           </div>
+                        );
+                     })}
                   </div>
                </div>
             </>
@@ -152,6 +199,7 @@ function ClassList() {
             <CreateMethod
                type={"handicraft"}
                setSearchParams={setSearchParams}
+               classList={classes}
             />
          )}
       </>
