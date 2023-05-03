@@ -1,43 +1,43 @@
-// const Class = require('../models/class');
-// const Exam = require('../models/exam');
-// const Lecture = require('../models/lecture');
+const Class = require('../models/class');
+const Exam = require('../models/exam');
+const Lecture = require('../models/lecture');
 // const Student = require('../models/student');
-// const Student_Result = require('../models/student_result');
-// const sequelize = require('../util/database');
-// const {
-// 	successResponse,
-// 	errorResponse,
-// 	throwError,
-// } = require('../util/helper');
+const Student_Result = require('../models/student_result');
+const sequelize = require('../util/database');
+const {
+	successResponse,
+	errorResponse,
+	throwError,
+} = require('../util/helper');
 
-// exports.getLectures = async (req, res, _) => {
-// 	try {
-// 		const lectures = await Lecture.findAll();
-// 		successResponse(res, 200, lectures, req.method);
-// 	} catch (error) {
-// 		errorResponse(res, error);
-// 	}
-// };
+exports.getLectures = async (req, res, _) => {
+	try {
+		const lectures = await Lecture.findAll();
+		successResponse(res, 200, lectures, req.method);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
 
-// exports.getLecture = async (req, res, _) => {
-// 	try {
-// 		const { lectureId } = req.params;
-// 		const lecture = await Lecture.findByPk(lectureId, {
-// 			include: { all: true },
-// 		});
-// 		if (!lecture) {
-// 			throwError(`Couldn't find lecture`, 404);
-// 		}
-// 		successResponse(res, 200, lecture, req.method);
-// 	} catch (error) {
-// 		errorResponse(res, error);
-// 	}
-// };
+exports.getLecture = async (req, res, _) => {
+	try {
+		const { lectureId } = req.params;
+		const lecture = await Lecture.findByPk(lectureId, {
+			include: { all: true },
+		});
+		if (!lecture) {
+			throwError(`Couldn't find lecture`, 404);
+		}
+		successResponse(res, 200, lecture, req.method);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
 
 exports.getLecturesUser = async (req, res, _) => {
 	try {
 		const { account } = req;
-		const lectures = await account.getLectures();
+		const lectures = await account.getLectures({joinTableAttributes:[],attributes:{exclude:["createdAt", "updatedAt"]}});
 		successResponse(res, 200, lectures);
 	} catch (error) {
 		console.log(error);

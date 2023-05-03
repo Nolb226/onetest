@@ -198,7 +198,7 @@ app.use('/accounts', accountRoutes);
 // app.use('/teachers', teacherRoutes);
 // app.use('/departments', departmentRoutes);
 // app.use('/majors', majorRoutes);
-// app.use('/lectures', lectureRoutes);
+app.use('/lectures', lectureRoutes);
 // app.use('/questions', questionsRoutes);
 app.use('/classes', classesRoutes);
 // app.use('/chapters', chaptersRoutes);
