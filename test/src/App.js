@@ -6,33 +6,32 @@ import "./css/grid.css";
 import "./css/base.css";
 import "./fonts/fontawesome-free-6.1.2-web/css/all.min.css";
 
-import Home from "./components/pages/home";
-import Dashboard from "./components/pages/dashboard";
-import Student from "./components/dashboard/student/component-student/Student";
-import Teacher from "./components/dashboard/teacher/Teacher";
-import ViewClass from "./components/dashboard/student/component-student/component-joinclasspage/ViewClass";
-import JoinClass from "./components/dashboard/student/component-student/component-joinclasspage/JoinClass";
-import StudentPage from "./components/dashboard/student/component-student/component-studentpage/StudentPage";
-import Test from "./components/dashboard/student/component-student/component-testpage/Test";
-import Result from "./components/dashboard/student/component-student/component-testpage/Result";
-import Class from "./components/dashboard/teacher/Class/Class";
-import Classes from "./components/dashboard/teacher/Class/Classes";
-import Classlist from "./components/dashboard/teacher/Class/ClassList";
-import Repass from "./components/dashboard/teacher/Class/Repass";
-import Exam from "./components/dashboard/teacher/exam/Exam";
-import ClassList from "./components/dashboard/teacher/exam/ClassList";
-import ExamList from "./components/dashboard/teacher/exam/ExamList";
-import CreateClass from "./components/dashboard/teacher/Class/CreateClass";
-import Detail from "./components/dashboard/teacher/Class/Detail";
-import ClassStudentView from "./components/pages/Class";
-import Statistics from "./components/dashboard/teacher/statistic/Statistics";
+import Home from './components/pages/home';
+import Dashboard from './components/pages/dashboard';
+import Student from './components/dashboard/student/component-student/Student';
+import Teacher from './components/dashboard/teacher/Teacher';
+import ViewClass from './components/dashboard/student/component-student/component-joinclasspage/ViewClass';
+import JoinClass from './components/dashboard/student/component-student/component-joinclasspage/JoinClass';
+import StudentPage from './components/dashboard/student/component-student/component-studentpage/StudentPage';
+import Test from './components/dashboard/student/component-student/component-testpage/Test';
+import Result from './components/dashboard/student/component-student/component-testpage/Result';
+import Class from './components/dashboard/teacher/Class/Class';
+import Classes from './components/dashboard/teacher/Class/Classes';
+import Classlist from './components/dashboard/teacher/Class/ClassList';
+import Repass from './components/dashboard/teacher/Class/Repass';
+import Exam from './components/dashboard/teacher/exam/Exam';
+import ClassList from './components/dashboard/teacher/exam/ClassList';
+import ExamList from './components/dashboard/teacher/exam/ExamList';
+import CreateClass from './components/dashboard/teacher/Class/CreateClass';
+import Detail from './components/dashboard/teacher/Class/Detail';
+import ClassStudentView from './components/pages/Class';
 
 function App() {
-   const currentUser = localStorage.getItem("currentUser");
-   console.log(currentUser);
-   {
-      // <Route path="*" element={<Home />}></Route>;
-   }
+	const currentUser = localStorage.getItem('currentUser');
+	console.log(currentUser);
+	{
+		/* <Route path="*" element={<Home />}></Route> */
+	}
 
    return (
       <div id="app" className="position-relative">

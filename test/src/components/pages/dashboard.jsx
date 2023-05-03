@@ -214,14 +214,14 @@ function Dashboard() {
          });
    }, []);
 
-   return (
-      <div
-         id="main-layout"
-         className="grid wide"
-         // onClick={() => setIsOpen(false)}
-      >
-         <div className="layout--body">
-            <SideMenu info={info} />
+	return (
+		<div
+			id="main-layout"
+			className="grid wide"
+			// onClick={() => setIsOpen(false)}
+		>
+			<div className="layout--body">
+				<SideMenu info={info} />
 
             <div id="dashboard-container">
                {/* {isConfig && <UserModel />} */}

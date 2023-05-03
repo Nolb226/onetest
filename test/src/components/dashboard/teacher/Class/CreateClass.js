@@ -10,25 +10,22 @@ function CreateClass({ handleCreateClass }) {
    });
    const [lecture, setLecture] = useState([]);
 
-   // useEffect(() => {
-   // 	const currentUser = localStorage.getItem(`currentUser`);
-   // 	fetch(
-   // 		`${api}/classes?search=${searchParams.get('search') || ''}&page=${page}`,
-   // 		{
-   // 			method: 'GET',
-   // 			headers: {
-   // 				Authorization: 'Bearer ' + currentUser,
-   // 			},
-   // 		}
-   // 	)
-   // 		.then((res) => res.json())
-   // 		.then((classes) => {
-   // 			console.log(classes);
-   // 			// setClasses(classes.data.data);
-   // 			// setTotalPage(Math.ceil(classes.data.total / 10));
-   // 			// console.log(classes.data.total);
-   // 		});
-   // }, []);
+	useEffect(() => {
+		const currentUser = localStorage.getItem(`currentUser`);
+		fetch(
+			`${api}/lecture`,
+			{
+				method: 'GET',
+				headers: {
+					Authorization: 'Bearer ' + currentUser,
+				},
+			}
+		)
+			.then((res) => res.json())
+			.then((classes) => {
+				console.log(classes);
+			});
+	}, []);
 
    const handleFile = (value) => {
       console.log(value.split("/\\/"));

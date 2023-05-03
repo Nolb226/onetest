@@ -1,5 +1,6 @@
 import './modal.css';
 import api from '../../../config/config.js';
+import socket from '../../../utils/socket';
 
 function SignInModal({ toggle1, toggle2 }) {
 	async function checkSignIn(event) {
@@ -21,7 +22,7 @@ function SignInModal({ toggle1, toggle2 }) {
 
 			if (!resonse.ok) return alert('Loi roi ban oi!');
 			const data = await resonse.json();
-
+			socket.emit('login', { id: 123 });
 			localStorage.setItem('currentUser', data.token);
 			if (data.type === 'SV') {
 				window.location.href = './student';

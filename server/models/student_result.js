@@ -1,7 +1,7 @@
 const sequelize = require('../util/database');
 const { DataTypes } = require('sequelize');
-const Student = require('./student');
 const Exam = require('./exam');
+const Account = require('./account');
 
 const Student_Result = sequelize.define('studentresult', {
 	id: {
@@ -9,10 +9,10 @@ const Student_Result = sequelize.define('studentresult', {
 		autoIncrement: true,
 		primaryKey: true,
 	},
-	studentId: {
-		type: DataTypes.STRING(10),
+	accountId: {
+		type: DataTypes.INTEGER,
 		references: {
-			model: Student,
+			model: Account,
 			key: 'id',
 		},
 	},

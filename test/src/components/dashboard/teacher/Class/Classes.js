@@ -77,76 +77,67 @@ function Classes(prop) {
       update(Class);
    };
 
-   return (
-      <>
-         {outlet || (
-            <>
-               <div class="flex-center search-bar">
-                  <input
-                     type="text"
-                     class="search-input"
-                     placeholder="Nhập mã lớp"
-                     onInput={(e) => setSearch(e.target.value)}
-                  />
-                  {/* <button
-                     className="search-class-btn"
-                     onClick={(e) => {
-                        e.preventDefault();
-                     }}
-                  >
-                     <i class="fa-solid fa-magnifying-glass"></i>
-                  </button> */}
-                  <Link
-                     class="flex-center join-button"
-                     to={`create`}
-                     relative="path"
-                     style={{ padding: "0", filter: "none" }}
-                  >
-                     <button
-                        class="flex-center join-button"
+	return (
+		<>
+			{outlet || (
+				<>
+					<div class="flex-center search-bar">
+						<form onClick={(e) => setSearchParams({ search })}>
+							<input
+								type="text"
+								class="search-input"
+								placeholder="Nhập mã lớp"
+								onInput={(e) => setSearch(e.target.value)}
+							/>
+							<button
+								className="search-class-btn"
+								onClick={(e) => {
+									e.preventDefault();
+								}}
+							>
+								<i class="fa-solid fa-magnifying-glass"></i>
+							</button>
+						</form>
+						<Link class="flex-center join-button" to={`create`} relative="path" style={{padding: '0'}}>
+							<button
+								class="flex-center join-button"
+								
+								// onClick={prop.handleCreateClass}
+							>
+									<i class="menu-icon fa-solid fa-plus"></i>
+									<span>Tạo lớp mới</span>
+							</button>
+						</Link>
+					</div>
+					<div class="table-zone grid position-relative">
+						<h1 class="table__heading">DANH SÁCH NHÓM LỚP</h1>
 
-                        // onClick={prop.handleCreateClass}
-                     >
-                        <i class="fa-solid fa-plus"></i>
-                        <span>Tạo lớp</span>
-                     </button>
-                  </Link>
-               </div>
-               <div class="table-zone grid position-relative">
-                  <div class="grid table__content ">
-                     <header className="table__header">
-                        <ul
-                           class="flex-center table__content--heading"
-                           style={{
-                              display: "grid",
-                              gridTemplateColumns: "16% 23% 37% 10% 7% 7%",
-                           }}
-                        >
-                           <li class="flex-center column-text">
-                              <h3>Mã Lớp</h3>
-                           </li>
+				<div class="grid table__content ">
+					<ul class="row no-gutters flex-center table__content--heading">
+						<li class="col l-6-4 m-6-4">
+							<h3>Mã Lớp</h3>
+						</li>
 
-                           <li class="flex-center column-text">
-                              <h3>Tên Lớp</h3>
-                           </li>
+						<li class="col l-6-4 m-6-4">
+							<h3>Tên Lớp</h3>
+						</li>
 
-                           <li class="flex-center column-text">
-                              <h3>Tên môn học</h3>
-                           </li>
+						<li class="col l-6-4 m-6-4">
+							<h3>Môn</h3>
+						</li>
 
-                           <li class="flex-center column-text">
-                              <h3>Danh sách</h3>
-                           </li>
+						<li class="col l-6-4 m-6-4">
+							<h3>Danh sách sinh viên</h3>
+						</li>
 
-                           <li class="flex-center column-text">
-                              <h3>Khóa</h3>
-                           </li>
+						<li class="col l-6-2 m-6-2">
+							<h3>Khóa Lớp</h3>
+						</li>
 
-                           <li class="flex-center column-text">
-                              <h3>Sửa</h3>
-                           </li>
-                        </ul>
-                     </header>
+						<li class="col l-6-2 m-6-2">
+							<h3>Chỉnh sửa</h3>
+						</li>
+					</ul>
 
                      <div class="table__content--list classes ">
                         {classes.length === 0 ? (
