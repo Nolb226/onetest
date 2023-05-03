@@ -52,6 +52,7 @@ function DetailInformation() {
                   </li>
                </ul>
                <div className="button-list flex-center">
+                  {/* Thao tác thay đổi sẽ được POST lên API */}
                   <button className="save-btn__info">lưu</button>
                   <button className="delete-btn__info">
                      <span>xóa</span>

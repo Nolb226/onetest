@@ -67,6 +67,14 @@ function ManageAccount() {
                   }}
                >
                   <li className="flex-center column-text">
+               <ul
+                  className="table__content--heading"
+                  style={{
+                     display: "grid",
+                     gridTemplateColumns: "5% 15% 35% 10% 20% 10% 5%",
+                  }}
+               >
+                  <li className="flex-center column-text">
                      <h3>STT</h3>
                   </li>
 
@@ -124,10 +132,11 @@ function ManageAccount() {
                         <h3>SV</h3>
                      </li>
 
-                     <li className="flex-center column-text">
+                     <li className="col l-1">
                         <input type="checkbox" name="" id="" />
                      </li>
 
+                     {/* Click để gọi đến modal detail ifnormation của tài khoản */}
                      <li
                         className="flex-center column-text"
                         onClick={() => {
