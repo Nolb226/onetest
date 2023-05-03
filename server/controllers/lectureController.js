@@ -34,16 +34,16 @@
 // 	}
 // };
 
-// exports.getLecturesUser = async (req, res, _) => {
-// 	try {
-// 		const { user } = req;
-// 		const lectures = await user.getLectures();
-// 		successResponse(res, 200, lectures);
-// 	} catch (error) {
-// 		console.log(error);
-// 		errorResponse(res, error);
-// 	}
-// };
+exports.getLecturesUser = async (req, res, _) => {
+	try {
+		const { account } = req;
+		const lectures = await account.getLectures();
+		successResponse(res, 200, lectures);
+	} catch (error) {
+		console.log(error);
+		errorResponse(res, error);
+	}
+};
 
 // exports.getLectureChapters = async (req, res, _) => {
 // 	try {

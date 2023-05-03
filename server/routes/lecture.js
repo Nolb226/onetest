@@ -1,8 +1,8 @@
-// const router = require('express').Router();
-// const lectureController = require('../controllers/lectureController');
-// const { isAuth } = require('../middleware/is-auth');
-// const { isWho } = require('../middleware/is-who');
-// router.get('/', lectureController.getLectures);
+const router = require('express').Router();
+const lectureController = require('../controllers/lectureController');
+const { isAuth } = require('../middleware/is-auth');
+const { isWho } = require('../middleware/is-who');
+router.get('/', lectureController.getLectures);
 // router.get('/user', isAuth, isWho, lectureController.getLecturesUser);
 
 // router.get('/:lectureId', lectureController.getLecture);
