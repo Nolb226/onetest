@@ -15,9 +15,9 @@ function SideMenu({ info }) {
    const navigator = useNavigate();
    const { pathname } = useLocation();
 
-   useEffect(() => {
-      console.log(pathname.split("/")[3]);
-   }, [pathname]);
+	useEffect(() => {
+		console.log(pathname.split('/')[3]);
+	}, [pathname]);
 
    const teacherAccount = [
       {

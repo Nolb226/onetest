@@ -3,8 +3,7 @@ const { DataTypes } = require('sequelize');
 
 const Permission_Group = sequelize.define('permissiongroup', {
 	id: {
-		type: DataTypes.INTEGER,
-		autoIncrement: true,
+		type: DataTypes.STRING,
 		primaryKey: true,
 	},
 	name: {

@@ -35,7 +35,7 @@ function App() {
    const currentUser = localStorage.getItem("currentUser");
    console.log(currentUser);
    {
-      // <Route path="*" element={<Home />}></Route>;
+      /* <Route path="*" element={<Home />}></Route> */
    }
 
    return (
@@ -143,7 +143,7 @@ function App() {
                            element={<Student />}
                         />
                      }
-                     <Route path="statistics" element={<Statistics />}></Route>
+                     {/* <Route path="statistics" element={<Statistics />}></Route> */}
                   </Route>
 
                   <Route path="admin" element={<Admin />}>

@@ -4,8 +4,6 @@ const bycrypt = require('bcryptjs');
 const { validationResult } = require('express-validator');
 
 const Account = require('../models/account');
-const Student = require('../models/student');
-const Teacher = require('../models/teacher');
 const {
 	errorResponse,
 	throwError,
@@ -13,6 +11,8 @@ const {
 } = require('../util/helper');
 const { where } = require('sequelize');
 const Permission_Group = require('../models/permission_group');
+const { getIO } = require('../util/socket');
+const socket = require('../util/socket');
 
 exports.signup = async (req, res, next) => {
 	try {
@@ -26,8 +26,6 @@ exports.signup = async (req, res, next) => {
 			req.body;
 
 		const upperCaseType = type.toUpperCase();
-
-		const model = upperCaseType === 'GV' ? Teacher : Student;
 
 		const isExist = model.findByPk(username);
 		if (isExist.accountId) {
@@ -54,15 +52,11 @@ exports.signup = async (req, res, next) => {
 exports.login = async (req, res, next) => {
 	try {
 		const { username, password } = req.body;
-		const student = await Student.findOne({
-			where: { id: username },
-			include: Account,
+		const account = await Account.findOne({
+			where: {
+				account_id: username,
+			},
 		});
-		const teacher = await Teacher.findOne({
-			where: { id: username },
-			include: Account,
-		});
-		const { account } = student || teacher;
 
 		if (!account) {
 			throwError('Username or password is incorrect', 401);
@@ -76,11 +70,15 @@ exports.login = async (req, res, next) => {
 		// if (!account.isActive) {
 		// 	throwError('Account is not active', 401);
 		// }
-		console.log(account.id);
 
 		const token = jwt.sign({ id: account.id }, 'group5', {
 			expiresIn: '3d',
 		});
+		// getIO().on('connection', (socket) => {
+		// 	socket.on('login', () => {
+		// 		const classrooms = await
+		// 	});
+		// });
 		res.status(200).json({ token, type: account.type });
 		// res.status(200).json(token);
 	} catch (error) {

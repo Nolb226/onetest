@@ -205,7 +205,14 @@ function Classlist(prop) {
                         <div className="flex-center mobile-table-item">
                            <h3>{student.account_id}</h3>
                            <h3>{student.lastName + " " + student.firstName}</h3>
-
+                           {totalExam == 0
+                              ? ""
+                              : examName.map((exam, index) => (
+                                   <span>
+                                      {exam.name}:{" "}
+                                      {student?.studentresults[index]?.grade}
+                                   </span>
+                                ))}
                            <div
                               className="flex-center"
                               onClick={(e) => handleClickStudent(student.id)}
