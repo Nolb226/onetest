@@ -107,40 +107,46 @@ function Classes(prop) {
 
                         // onClick={prop.handleCreateClass}
                      >
-                        <i class="menu-icon fa-solid fa-plus"></i>
+                        <i class="fa-solid fa-plus"></i>
                         <span>Tạo lớp</span>
                      </button>
                   </Link>
                </div>
                <div class="table-zone grid position-relative">
-                  {/* <h1 class="table__heading">DANH SÁCH NHÓM LỚP</h1> */}
-
                   <div class="grid table__content ">
-                     <ul class="row no-gutters flex-center table__content--heading">
-                        <li class="col l-6-4 m-6-4">
-                           <h3>Mã Lớp</h3>
-                        </li>
+                     <header className="table__header">
+                        <ul
+                           class="flex-center table__content--heading"
+                           style={{
+                              display: "grid",
+                              gridTemplateColumns: "16% 23% 37% 10% 7% 7%",
+                           }}
+                        >
+                           <li class="flex-center column-text">
+                              <h3>Mã Lớp</h3>
+                           </li>
 
-                        <li class="col l-6-4 m-6-4">
-                           <h3>Tên Lớp</h3>
-                        </li>
+                           <li class="flex-center column-text">
+                              <h3>Tên Lớp</h3>
+                           </li>
 
-                        <li class="col l-6-4 m-6-4">
-                           <h3>Môn</h3>
-                        </li>
+                           <li class="flex-center column-text">
+                              <h3>Tên môn học</h3>
+                           </li>
 
-                        <li class="col l-6-4 m-6-4">
-                           <h3>Danh sách sinh viên</h3>
-                        </li>
+                           <li class="flex-center column-text">
+                              <h3>Danh sách</h3>
+                           </li>
 
-                        <li class="col l-6-2 m-6-2">
-                           <h3>Khóa Lớp</h3>
-                        </li>
+                           <li class="flex-center column-text">
+                              <h3>Khóa</h3>
+                           </li>
 
-                        <li class="col l-6-2 m-6-2">
-                           <h3>Chỉnh sửa</h3>
-                        </li>
-                     </ul>
+                           <li class="flex-center column-text">
+                              <h3>Sửa</h3>
+                           </li>
+                        </ul>
+                     </header>
 
                      <div class="table__content--list classes ">
                         {classes.length === 0 ? (
@@ -164,6 +170,68 @@ function Classes(prop) {
                            })
                         )}
                      </div>
+                  </div>
+                  <div className="mobile-table-content">
+                     {classes.length === 0 ? (
+                        <div className="flex-center" style={{ height: "100%" }}>
+                           <h1 class="noClass">Không có lớp</h1>
+                        </div>
+                     ) : (
+                        classes.map((Class) => {
+                           return (
+                              <div className="flex-center mobile-table-item">
+                                 <h3>
+                                    {Class.name} - {Class.id}
+                                 </h3>
+                                 <span>Môn:&nbsp; {Class.lecture.name}</span>
+                                 <span>Lớp:&nbsp;{Class.name}</span>
+                                 <div
+                                    className="flex-center lock-exam"
+                                    // onClick={() => {
+                                    //    console.log(Class.isLock);
+                                    //    handleLock(Class.class_id, Class);
+                                    // }}
+                                 >
+                                    <button
+                                       className={`${
+                                          Class.isLock
+                                             ? "list_btn list_btn_lock"
+                                             : "list_btn list_btn_unlock"
+                                       }`}
+                                       onClick={() => handleLock(Class)}
+                                    >
+                                       <i
+                                          class={`fa-solid fa-${
+                                             Class.isLock ? "" : "un"
+                                          }lock`}
+                                       ></i>
+                                    </button>
+
+                                    <Link
+                                       to={`${Class.id}/edit`}
+                                       relative="path"
+                                    >
+                                       <button
+                                          class="list_btn list_btn_edit "
+                                          // onClick={() => Class.handleRePass(Class.Class)}
+                                       >
+                                          <i class="fa-solid fa-pen-to-square"></i>
+                                       </button>
+                                    </Link>
+                                 </div>
+                                 <button className="view-btn">
+                                    <Link
+                                       to={`./${Class.id}`}
+                                       relative="path"
+                                       style={{ color: "#fff" }}
+                                    >
+                                       Danh sách
+                                    </Link>
+                                 </button>
+                              </div>
+                           );
+                        })
+                     )}
                   </div>
 
                   <Paginator

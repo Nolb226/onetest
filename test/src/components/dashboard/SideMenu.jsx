@@ -47,14 +47,6 @@ function SideMenu({ info }) {
 
    const studentAccount = [
       {
-         idPemission: 4,
-         path: `student/viewclass/`,
-         icon: "menu-icon fa-solid fa-file-pen",
-         name: "Bài thi",
-         nav: "/student/exam",
-      },
-
-      {
          idPemission: 5,
          path: `student/joinclass`,
          icon: "menu-icon fa-solid fa-plus",

@@ -2,25 +2,10 @@ import { useState, useEffect } from "react";
 import api from "../../../../config/config";
 import handleType1 from "./HandleType1";
 import handleType2_3 from "./HandleType2_3";
-import responsiveCreateExam from "./responsiveCreateExam";
 import Loading from "../../../loadingAnimation/Loading";
 import LoadingData from "../../../loadingAnimation/LoadingData";
 
-const selectFromBankLayout = {
-   width: "100%",
-   height: "100%",
-   marginTop: "1px",
-   padding: "2%",
-   backgroundColor: "#fff",
-   position: "absolute",
-   right: "0",
-   left: "0",
-   alignItems: "flex-start",
-   boxSizing: "border-box",
-};
-
 const inputList = {
-   padding: "10% 0px 0px 12px",
    width: "100%",
    height: "100%",
    minHeight: "450px",
@@ -214,7 +199,6 @@ function clearErrorMessage(selector) {
 }
 
 function SelectFromBank() {
-   responsiveCreateExam();
    const currentUser = localStorage.getItem("currentUser");
 
    const [examChapter, setExamChapter] = useState([]);
@@ -344,8 +328,7 @@ function SelectFromBank() {
 
    return (
       <div
-         className="flex-center"
-         style={selectFromBankLayout}
+         className="create-select-from-bank__layout"
          onClick={() => {
             document
                .querySelector(".chapter-menu")
@@ -364,55 +347,38 @@ function SelectFromBank() {
             }}
             onClick={getQuestionList}
          >
-            <div
-               className="flex-center position-relative"
-               style={{
-                  width: "450px",
-                  maxHeight: "100%",
-                  borderRight: "1px solid #d5d5d5",
-                  paddingRight: "25px",
-               }}
-            >
-               <div
-                  className="position-absolute flex-center"
-                  style={{
-                     top: "0px",
-                     left: "0px",
-                     justifyContent: "space-between",
-                     width: "100%",
-                     paddingRight: "25px",
-                  }}
-               >
-                  <h2
-                     style={{
-                        fontWeight: "600",
-                        fontSize: "1.6rem",
-                        lineHeight: "2.1rem",
-                        color: "#424242",
-                     }}
-                  >
-                     Chọn từ ngân hàng đề
-                  </h2>
-
-                  <select
-                     name="type"
-                     id="type"
-                     style={{
-                        width: "150px ",
-                        height: "25px",
-                        textAlign: "center",
-                        border: "solid 2px #BFBFBF",
-                        borderRadius: "4px",
-                     }}
-                     onChange={(e) => setType(e.target.value)}
-                  >
-                     <option value="1">Tự chọn</option>
-                     <option value="2">Ngẫu nhiên cho lớp</option>
-                     <option value="3">Ngẫu nhiên</option>
-                  </select>
-               </div>
-
+            <div className="flex-center flex-direction-col info-box__select-from-bank">
                <ul className="flex-center flex-direction-col" style={inputList}>
+                  <li
+                     className="flex-center"
+                     style={{
+                        width: "100%",
+                        margin: "5px 0",
+                        flexDirection: "row",
+                        alignItems: "flex-start",
+                        height: "40px",
+                     }}
+                  >
+                     <label htmlFor="type" style={label} className="form-label">
+                        Hình thức tạo:
+                     </label>
+                     <select
+                        name="type"
+                        id="type"
+                        style={{
+                           flex: "1",
+                           height: "25px",
+                           textAlign: "center",
+                           border: "solid 2px #BFBFBF",
+                           borderRadius: "4px",
+                        }}
+                        onChange={(e) => setType(e.target.value)}
+                     >
+                        <option value="1">Tự chọn</option>
+                        <option value="2">Ngẫu nhiên cho lớp</option>
+                        <option value="3">Ngẫu nhiên</option>
+                     </select>
+                  </li>
                   <li
                      className="flex-center form-group"
                      style={{
@@ -794,23 +760,27 @@ function SelectFromBank() {
                      </div>
                   </li>
                </ul>
+
+               <button>Tạo</button>
             </div>
 
             <div
                style={{
-                  flex: "1",
-                  height: "530px",
-                  marginTop: "35px",
-                  overflow: "hidden",
+                  width: "100%",
+                  maxHeight: "700px",
+                  height: "40%",
+                  backgroundColor: "var(--white-color)",
+                  borderRadius: "10px",
+                  position: "relative",
                }}
             >
                <div
-                  className="position-absolute flex-center"
+                  className="flex-center"
                   style={{
-                     top: "0%",
-                     right: "0",
-                     width: "calc(100% - 450px)",
-                     padding: "0 3%",
+                     position: "absolute",
+                     top: "0",
+                     width: "100%",
+                     padding: "0 10px",
                      marginBottom: "0px",
                      backgroundColor: "#fff",
                   }}
@@ -869,7 +839,6 @@ function SelectFromBank() {
                   >
                      <i class="fa-solid fa-chevron-down"></i>
                   </div>
-
                   <ul
                      className="chapter-menu"
                      onClick={(e) => e.stopPropagation()}
@@ -899,12 +868,11 @@ function SelectFromBank() {
                <ul
                   className="flex-center flex-direction-col question-list position-relative"
                   style={{
-                     flex: "1",
-                     height: "96%",
-                     paddingLeft: "10px",
+                     // flex: "1",
+                     height: "100%",
                      overflowY: "scroll",
                      width: "100%",
-                     paddingTop: "0",
+                     paddingTop: "45px",
                      justifyContent: "flex-start",
                   }}
                >
@@ -914,23 +882,6 @@ function SelectFromBank() {
                   {isLoadingData && <LoadingData />}
                </ul>
             </div>
-            <button
-               style={{
-                  width: "125px",
-                  height: "35px",
-                  backgroundColor: "#1F2EC9",
-                  borderRadius: "5px",
-                  position: "absolute",
-                  bottom: "0px",
-                  left: "calc((450px - 25px - 125px)/2)",
-                  textTransform: "uppercase",
-                  fontWeight: "600",
-                  fontSize: "1.5rem",
-                  letterSpacing: "1px",
-               }}
-            >
-               Tạo
-            </button>
          </form>
       </div>
    );

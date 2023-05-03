@@ -437,6 +437,67 @@ button:hover {
    color: #333;
 }
 
+.create-handicraft .question-side-menu {
+   margin: 0 10px;
+   border-radius: 5px;
+   background-color: #f0f0f0;
+   height: 100px;
+   padding: 5px 5px;
+}
+.create-handicraft .tool-btn {
+   width: 100%;
+   height: 30px;
+   margin: 2px;
+   background-color: #ffffff;
+   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
+   border-radius: 2px;
+   font-size: 1.3rem;
+}
+
+.create-select-from-bank__layout {
+   width: 100%;
+   height: 100%;
+   margin-top: 1px;
+   background-color: transparent;
+   box-sizing: border-box;
+}
+
+#form--create-exam__selectFromBank {
+   display: grid;
+   grid-template-columns: 30% 70%;
+}
+
+.info-box__select-from-bank {
+   width: 450px;
+   height: fit-content;
+   margin-right: 10px;
+   padding: 15px;
+   border-radius: 10px;
+   background-color: var(--white-color);
+}
+
+.info-box__select-from-bank button {
+   width: 125px;
+   height: 35px;
+   background-color: var(--white-color);
+   color: var(--primary-color);
+   border: solid 2px var(--primary-color);
+   border-radius: 20px;
+   left: calc((450px - 25px - 125px) / 2);
+   text-transform: uppercase;
+   font-weight: 600;
+   font-size: 1.5rem;
+   letter-spacing: 1px;
+   box-shadow: rgba(0, 0, 0, 0.25) 0px 1px 4px;
+   transition: all 0.2s linear;
+}
+
+.info-box__select-from-bank button:hover {
+   cursor: pointer;
+   color: var(--white-color) !important;
+   background-color: var(--primary-color) !important;
+}
+
 #select-chapter {
    cursor: pointer;
 }
@@ -450,6 +511,7 @@ button:hover {
    z-index: 100;
    flex-wrap: wrap;
    top: 100%;
+   left: 10px;
    border-radius: 5px;
    background-color: var(--white-color);
    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
@@ -511,6 +573,99 @@ button:hover {
 }
 
 @media (min-width: 740px) and (max-width: 1028px) {
+}
+
+@media (max-width: 1028px) {
+   #form--create-exam {
+      grid-template-columns: none !important;
+   }
+
+   .info-box__handicraft {
+      padding: 25px 20px;
+      margin: 0 0 10px 0;
+   }
+
+   .info-box__handicraft > .info-item {
+      height: 50px;
+   }
+
+   .create-handicraft .answer-item label {
+      font-size: 1.2rem !important;
+      height: 15px !important;
+   }
+
+   .info-box__handicraft > .info-item > input {
+      font-size: 1.3rem !important;
+      height: 25px;
+   }
+
+   .info-box__handicraft button {
+      height: 30px;
+      font-size: 1.4rem;
+      margin-top: 0;
+   }
+
+   .create-handicraft .question-list {
+      overflow-y: unset;
+      padding: 0;
+      margin-bottom: 20px;
+   }
+
+   .create-handicraft .question-box {
+      height: fit-content;
+      grid-template-columns: none;
+   }
+
+   .create-handicraft .question-box__content {
+      height: 200px;
+      padding: 10px;
+      border-left: solid 10px #1f2ec9;
+   }
+
+   .create-handicraft .question-box__content .form-group {
+      height: 35px !important;
+      margin: 0 !important;
+   }
+
+   .create-handicraft .question-box__content input {
+      height: 30px !important;
+      font-size: 1.3rem !important;
+   }
+
+   .create-handicraft .answer-item {
+      margin: 0 0 0 5px;
+   }
+
+   .create-handicraft .question-list .form-message {
+      display: none !important;
+   }
+
+   .create-handicraft .question-list input[type="radio"] {
+      margin: 0 !important;
+   }
+
+   .create-handicraft .question-box ul {
+      flex-direction: row;
+      height: 35px !important;
+      margin: 0 !important;
+      background-color: transparent !important;
+   }
+
+   .create-handicraft .question-box li,
+   .create-handicraft .question-box select {
+      font-size: 1.3rem !important  ;
+      border-radius: 10px !important;
+      width: 90px !important;
+   }
+
+   .form-message {
+      font-size: 1.1rem;
+      line-height: 1.1rem;
+      padding: 3px 0 0;
+   }
+}
+
+@media (min-width: 740px) and (max-width: 1028px) {
    .table__content-teacher--row {
       display: grid;
       grid-template-columns: 25% 25% 18% 8% 14% 10%;
@@ -546,7 +701,7 @@ button:hover {
       font-size: 1.2rem;
    }
 
-   #form--create-exam {
+   /* #form--create-exam {
       grid-template-columns: none !important;
    }
 
@@ -557,13 +712,13 @@ button:hover {
 
    .info-box__handicraft > .info-item {
       height: 45px;
-   }
-
+   } */
+   /* 
    .create-handicraft .answer-item label {
       font-size: 1.1rem !important;
       height: 15px !important;
-   }
-
+   } */
+   /* 
    .info-box__handicraft > .info-item > input {
       font-size: 1.2rem !important;
       height: 25px;
@@ -625,5 +780,5 @@ button:hover {
       font-size: 1rem !important  ;
       border-radius: 10px !important;
       width: 90px !important;
-   }
+   } */
 }

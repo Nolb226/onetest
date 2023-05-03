@@ -3,8 +3,9 @@
 }
 
 .list_btn {
-   border-radius: 2px;
-   border: 1px solid;
+   border-radius: 10px;
+   height: 30px;
+   border: 2px solid;
 }
 
 .list_btn:hover {
@@ -55,9 +56,9 @@
 }
 
 .list_btn_edit {
-   background: #d3ae56;
-   border-color: #c8a248;
-   color: var(--white-color);
+   background: #f1f1f1;
+   border-color: #d5d5d5;
+   color: #999999;
    padding: 3px 12px;
 }
 
@@ -155,31 +156,50 @@
    width: 50px;
 }
 
-#dashboard-container .page-num,
-#dashboard-container .page-btn {
+#dashboard-container .page-num {
+   width: 45px;
+   height: 45px;
    font-size: 1.7rem;
    font-weight: 600;
    background-color: transparent;
-   width: 30px;
+   border: solid 2px #d5d5d5;
    border-radius: 50%;
    display: flex;
    justify-content: center;
    align-items: center;
-   margin: 2px;
-   color: #a0a3c2;
+   margin: 3px;
+   color: #999;
    box-shadow: none;
+   cursor: pointer;
+   transition: all 0.2s linear;
+}
+
+#dashboard-container .page-btn {
+   color: #999;
+   border: none;
+   background-color: transparent;
+   margin: 3px;
+   cursor: pointer;
+}
+
+#dashboard-container .page-btn > i {
+   font-size: 3rem;
+   transition: all 0.2s linear;
 }
 
 #dashboard-container .page-btn:hover {
-   color: #030f3e;
+   color: var(--primary-color);
+   box-shadow: none;
 }
 
 #dashboard-container .page-num:hover {
-   text-decoration: underline;
+   background-color: var(--primary-color);
+   color: #fff;
 }
 
 #dashboard-container .current {
-   color: #1f2ec9;
+   background-color: var(--primary-color);
+   color: #fff;
 }
 
 #dashboard-container .paginator {
@@ -187,9 +207,13 @@
    display: flex;
    justify-content: center;
    align-items: center;
-   bottom: 0px;
+   background-color: #fff;
+   height: 60px;
+   top: 100%;
    right: 0;
    left: 0;
+   border-bottom-left-radius: 10px;
+   border-bottom-right-radius: 10px;
 }
 
 .search-class-btn {
@@ -257,4 +281,58 @@
    border: none;
    color: var(--white-color);
    font-weight: bold;
+}
+
+.class-information {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   height: 40px;
+   margin-bottom: 10px;
+}
+
+.class-information > .table__heading {
+   font-size: 1.6rem;
+   font-weight: 700;
+   color: var(--background-color);
+}
+
+@media (max-width: 1028px) {
+   .list_btn {
+      margin: 0 2px;
+   }
+
+   #dashboard-container .paginator {
+      background-color: transparent;
+   }
+
+   #dashboard-container .page-num,
+   #dashboard-container .page-btn {
+      background-color: var(--white-color);
+   }
+}
+
+@media (max-width: 739px) {
+   #dashboard-container .class-editpass-header {
+      width: 100%;
+      padding: 5px 10px;
+   }
+
+   .class-create-inp {
+      margin: 10px 0 !important;
+      font-size: 1.2rem;
+   }
+
+   .class-create-label {
+      padding-left: 0;
+      font-size: 1.2rem;
+   }
+
+   #dashboard-container .class-editpass-btn {
+      margin: 5px 0;
+      font-size: 1.4rem;
+      line-height: 30px;
+      width: 120px;
+      border-radius: 10px;
+   }
 }

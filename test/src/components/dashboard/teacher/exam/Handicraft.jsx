@@ -19,18 +19,6 @@ const questionInput = {
    color: "#333",
 };
 
-const answer = {};
-
-const questionSideMenu = {
-   width: "100%",
-   height: "30px",
-   margin: "2px",
-   backgroundColor: "#FFFFFF",
-   boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.25)",
-   borderRadius: "2px",
-   fontSize: "1.3rem",
-};
-
 function AnswerListInput({ answerArray, questionId }) {
    console.log(questionId);
    return answerArray.map((item) => (
@@ -105,17 +93,8 @@ function QuestionBox({ question, questionListArray, setQuestionListArray }) {
                />
             </div>
          </div>
-         <ul
-            className="flex-center flex-direction-col"
-            style={{
-               margin: "0 10px",
-               borderRadius: "5px",
-               backgroundColor: "#f0f0f0",
-               height: "100px",
-               padding: "5px 5pxpx",
-            }}
-         >
-            <li className="flex-center" style={questionSideMenu}>
+         <ul className="flex-center flex-direction-col question-side-menu ">
+            <li className="flex-center tool-btn">
                <select
                   name="level"
                   id="level"
@@ -129,13 +108,12 @@ function QuestionBox({ question, questionListArray, setQuestionListArray }) {
                      borderRadius: "2px",
                   }}
                >
-                  <option value="0">Mức độ: Dễ</option>
-                  <option value="1">Mức độ: Khó</option>
+                  <option value="0">Dễ</option>
+                  <option value="1">Khó</option>
                </select>
             </li>
             <li
                className="flex-center tool-btn"
-               style={questionSideMenu}
                onClick={() => {
                   const lastIndex = questionListArray.length - 1;
                   let answer = {
@@ -154,7 +132,6 @@ function QuestionBox({ question, questionListArray, setQuestionListArray }) {
             </li>
             <li
                className="flex-center tool-btn"
-               style={questionSideMenu}
                onClick={(e) => {
                   setQuestionListArray(
                      questionListArray.filter(
