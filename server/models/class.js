@@ -1,14 +1,12 @@
 const sequelize = require('../util/database');
 const { DataTypes, Op } = require('sequelize');
 const Exam = require('./exam');
-const Student = require('./student');
 const Account = require('./account');
 const classDetails = require('./classdetail');
 const Major = require('./major');
 const dayjs = require('dayjs');
 const bcrypt = require('bcryptjs');
 const { throwError } = require('../util/helper');
-const Lecture = require('./lecture');
 const Class = sequelize.define(
 	'class',
 	{
@@ -48,12 +46,6 @@ const Class = sequelize.define(
 	},
 	{ timestamps: false }
 );
-
-Class.prototype.createClassExam = async function (examData) {
-	const exam = await Exam.create(examData);
-	await this.addExam(exam);
-	return exam;
-};
 
 Class.prototype.createClassStudent = async function (studentData) {
 	const { id } = studentData;

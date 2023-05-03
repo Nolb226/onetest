@@ -12,6 +12,8 @@ const { v4: uuidv4 } = require('uuid');
 //Utils
 const sequelize = require('./util/database');
 const app = express();
+const http = require('http').createServer(app);
+
 require('dotenv').config();
 
 //Models
@@ -27,10 +29,8 @@ require('dotenv').config();
 
 	const classDetails = require('./models/classdetail');
 
-	const Student = require('./models/student');
 	const Account = require('./models/account');
 
-	const Teacher = require('./models/teacher');
 	const Notification = require('./models/notification');
 
 	const Student_Result = require('./models/student_result');
@@ -55,40 +55,34 @@ require('dotenv').config();
 	Chapter.hasMany(Question);
 	Question.belongsTo(Chapter);
 
-	Student.belongsTo(Account, { foreignKey: 'accountId' });
-	Account.hasOne(Student, { foreignKey: 'accountId' });
-
-	Teacher.belongsTo(Account, { foreignKey: 'accountId' });
-	Account.hasOne(Teacher, { foreignKey: 'accountId' });
-
-	Student.belongsTo(Major);
-	Major.hasMany(Student);
+	Account.belongsTo(Major);
+	Major.hasMany(Account);
 
 	// Major.belongsTo(Teacher, { foreignKey: 'headOfMajor' });
 	// Teacher.hasOne(Major, { foreignKey: 'headOfMajor' });
 
-	Student.belongsToMany(Class, {
+	Account.belongsToMany(Class, {
 		through: classDetails,
-		foreignKey: 'studentId',
+		foreignKey: 'accountId',
 	});
 
-	Student.hasMany(classDetails);
-	classDetails.belongsTo(Student);
+	Account.hasMany(classDetails);
+	classDetails.belongsTo(Account);
 
 	Class.hasMany(classDetails);
 	classDetails.belongsTo(Class);
 
-	Class.belongsToMany(Student, {
+	Class.belongsToMany(Account, {
 		through: classDetails,
 		foreignKey: 'classId',
 	});
 
-	Student.belongsToMany(Exam, {
+	Account.belongsToMany(Exam, {
 		through: Student_Result,
 		timestamps: false,
-		foreignKey: 'studentId',
+		foreignKey: 'accountId',
 	});
-	Exam.belongsToMany(Student, {
+	Exam.belongsToMany(Account, {
 		through: Student_Result,
 		timestamps: false,
 		foreignKey: 'examId',
@@ -106,23 +100,17 @@ require('dotenv').config();
 	Exam.hasMany(Student_Result);
 	Student_Result.belongsTo(Exam);
 
-	Student.hasMany(Student_Result);
+	Account.hasMany(Student_Result);
 	Student_Result.belongsTo(Exam);
 
-	Teacher.belongsTo(Department);
-	Department.hasMany(Teacher);
+	Account.belongsTo(Department);
+	Department.hasMany(Account);
 
-	Department.belongsTo(Teacher, { foreignKey: 'headOfDepartment' });
-	Teacher.hasOne(Department, { foreignKey: 'headOfDepartment' });
+	Account.belongsToMany(Lecture, { through: 'teach', timestamps: false });
+	Lecture.belongsToMany(Account, { through: 'teach', timestamps: false });
 
-	// Teacher.hasOne(Lecture, { foreignKey: 'headOfLecture' });
-	// Lecture.belongsTo(Teacher, { foreignKey: 'headOfLecture' });
-
-	Teacher.belongsToMany(Lecture, { through: 'teach', timestamps: false });
-	Lecture.belongsToMany(Teacher, { through: 'teach', timestamps: false });
-
-	Teacher.hasMany(Class);
-	Class.belongsTo(Teacher);
+	Account.hasMany(Class);
+	Class.belongsTo(Account);
 
 	Lecture.hasMany(Class);
 	Class.belongsTo(Lecture);
@@ -130,29 +118,17 @@ require('dotenv').config();
 	Class.hasMany(Exam);
 	Exam.belongsTo(Class);
 
-	// Exam.belongsToMany(Question, { through: Exam_Result });
-	// Question.belongsToMany(Exam, { through: Exam_Result });
-
-	// Student.belongsToMany(Exam, {
-	// 	through: Exam_Result,
-	// 	timestamps: false,
-	// 	foreignKey: 'studentId',
-	// });
-	// Exam.belongsToMany(Student, {
-	// 	through: Exam_Result,
-	// 	timestamps: false,
-	// 	foreignKey: 'examId',
-	// });
-
 	Class.hasMany(Notification);
 	Notification.belongsTo(Class);
 
 	Account.belongsTo(Permission_Group, {
 		timestamps: false,
 		// as: 'permissions',
+		foreignKey: 'type',
 	});
 	Permission_Group.hasMany(Account, {
 		timestamps: false,
+		foreignKey: 'type',
 	});
 
 	Permission_Group.belongsToMany(Function, {
@@ -184,6 +160,8 @@ const fileFilter = (req, file, cb) => {
 		cb('Error: The file must be an XLS or XLSX file!');
 	}
 };
+app.use(express.static(path.join(__dirname, '', '/class-excel')));
+// app.use(express.static(path.join(__dirname, '', '/class-excel')));
 
 //Routes define
 const authRoutes = require('./routes/auth');
@@ -194,9 +172,9 @@ const testRoutes = require('./routes/test');
 const accountRoutes = require('./routes/account');
 const departmentRoutes = require('./routes/department');
 const majorRoutes = require('./routes/major');
-const studentRoutes = require('./routes/student');
 const lectureRoutes = require('./routes/lecture');
 const adminRoutes = require('./routes/admin');
+const permissionsRoutes = require('./routes/permission');
 const { checkPermission } = require('./middleware/check-permission');
 const { errorResponse, throwError } = require('./util/helper');
 //Middleware
@@ -218,15 +196,17 @@ app.use((req, res, next) => {
 app.use(cors());
 app.use('/auth', authRoutes);
 app.use('/accounts', accountRoutes);
-app.use('/students', studentRoutes);
-app.use('/departments', departmentRoutes);
-app.use('/majors', majorRoutes);
+// app.use('/students', studentRoutes);
+// app.use('/teachers', teacherRoutes);
+// app.use('/departments', departmentRoutes);
+// app.use('/majors', majorRoutes);
 app.use('/lectures', lectureRoutes);
-app.use('/questions', questionsRoutes);
+// app.use('/questions', questionsRoutes);
 app.use('/classes', classesRoutes);
-app.use('/chapters', chaptersRoutes);
+// app.use('/chapters', chaptersRoutes);
 app.use('/admin', adminRoutes);
-app.use('/test', testRoutes);
+// app.use('/test', testRoutes);
+// app.use('/permissions', permissionsRoutes);
 //App start when connected to database
 app.get('/', (req, res) => {
 	res.send(Hiii);
@@ -245,7 +225,9 @@ sequelize
 	.sync()
 
 	.then(() => {
-		app.listen(port, '0.0.0.0', function () {
+		const io = require('./util/socket').init(http);
+
+		http.listen(port, '0.0.0.0', function () {
 			console.log(
 				'Express server listening on port %d in %s mode',
 				this.address().port,

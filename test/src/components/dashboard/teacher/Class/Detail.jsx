@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Outlet, useParams } from 'react-router';
+import { Outlet, useNavigate, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import api from '../../../../config/config';
 
 function Detail() {
+	const navigator = useNavigate();
 	const { classId } = useParams();
 	const [classes, setClasses] = useState([]);
 	useEffect(() => {
@@ -14,7 +15,13 @@ function Detail() {
 				Authorization: 'Bearer ' + currentUser,
 			},
 		})
-			.then((res) => res.json())
+			.then((res) => {
+				if (!res.ok) {
+					navigator('../');
+				}
+
+				return res.json();
+			})
 			.then((data) => setClasses(data.data));
 	}, []);
 

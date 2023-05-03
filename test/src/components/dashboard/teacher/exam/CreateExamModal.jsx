@@ -1,19 +1,22 @@
-import { useEffect } from 'react';
-import './styleExam.css';
-import validator from '../../../home/modal/validator.js';
-import Handicraft from './Handicraft.jsx';
-import SelectFromBank from './SelectFromBank.jsx';
+import { useEffect } from "react";
 
-export default function CreateExamModal({ type, setType }) {
-	useEffect(() => {
-		let formElement = document.querySelector('form');
-		validator('#' + formElement.id);
-	}, [type]);
+import validator from "../../../home/modal/validator.js";
+import Handicraft from "./Handicraft.jsx";
+import SelectFromBank from "./SelectFromBank.jsx";
 
-	return (
-		<>
-			{type === 'seclectFromBank' && <SelectFromBank />}
-			{type === 'handicraft' && <Handicraft />}
-		</>
-	);
+export default function CreateExamModal({ type, selectedClass }) {
+   console.log(selectedClass);
+   useEffect(() => {
+      let formElement = document.querySelector("form");
+      validator("#" + formElement.id);
+   }, [type]);
+
+   return (
+      <>
+         {type === "seclectFromBank" && (
+            <SelectFromBank selectedClass={selectedClass} />
+         )}
+         {type === "handicraft" && <Handicraft selectedClass={selectedClass} />}
+      </>
+   );
 }
