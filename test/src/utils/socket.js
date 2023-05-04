@@ -5,6 +5,8 @@ const socket = io(`${api}`, {
 	auth: {
 		token: localStorage.getItem('currentUser'),
 	},
+	transports: ['websocket'],
+	// autoConnect: false,
 });
 
 export default socket;

@@ -13,6 +13,7 @@ const { where } = require('sequelize');
 const Permission_Group = require('../models/permission_group');
 const { getIO } = require('../util/socket');
 const socket = require('../util/socket');
+const { route } = require('../routes/auth');
 
 exports.signup = async (req, res, next) => {
 	try {
@@ -76,11 +77,21 @@ exports.login = async (req, res, next) => {
 		});
 		getIO().on('connection', (socket) => {
 			socket.on('login', async () => {
-				const classrooms = await account.getClasses();
-				classrooms.forEach((classroom) => {
-					socket.join(`${classroom.id}`);
-					console.log(`join ${classroom.id}`);
-				});
+				try {
+					const classrooms = await account.getClasses();
+					classrooms.forEach((classroom) => {
+						socket.join(`${classroom.id}`);
+						console.log(
+							`|||||||||||||||||||||||||||||||||||||||| join ${classroom.id}`
+						);
+					});
+
+					const permissions = await account.getPermissiongroup();
+					console.log(permissions);
+					socket.emit('routes', permissions.toJSON());
+				} catch (error) {
+					console.log(error);
+				}
 			});
 		});
 		res.status(200).json({ token, type: account.type });

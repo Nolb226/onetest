@@ -190,6 +190,7 @@ function ExamDetail() {
 									>
 										<Link
 											to={`${api}/${examDetailData.examId}-${student.account_id}.pdf`}
+											target="_blank"
 										>
 											<button
 												className="view-btn download-pdf"

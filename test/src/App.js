@@ -30,6 +30,8 @@ import Admin from './components/dashboard/admin/Admin';
 import ManageAccount from './components/dashboard/admin/ManageAccount';
 import Permission from './components/dashboard/admin/Permission';
 import ExamDetail from './components/dashboard/teacher/exam/ExamDetail';
+import socket from './utils/socket';
+import { useEffect, useState } from 'react';
 
 function App() {
 	const currentUser = localStorage.getItem('currentUser');
@@ -38,8 +40,33 @@ function App() {
 		/* <Route path="*" element={<Home />}></Route> */
 	}
 
+	const [Components, setComponents] = useState([]);
+
+	// const Components = [
+	// 	{
+	// 		classes: ViewClass,
+	// 		path: 'classes',
+	// 		childrens: [
+	// 			{
+	// 				// index: true,
+	// 				join: JoinClass,
+	// 				path: 'join',
+	// 			},
+	// 		],
+	// 	},
+	// 	{
+	// 		exams: StudentPage,
+	// 		path: 'exams',
+	// 	},
+	// ];
+
+	useEffect(() => {}, []);
+
+	const test = 'classes';
+	console.log(Components);
 	return (
 		<div id="app" className="position-relative">
+			<Routes></Routes>
 			{/* <Routes>
 				{!currentUser ? (
 					<>
@@ -94,6 +121,27 @@ function App() {
 					</>
 				) : (
 					<Route exact path="/" element={<Dashboard />}>
+						{/* {Components.map((component) => {
+							const Test = component[test];
+							if (component.childrens) {
+								return (
+									<Route path={component.path} element={<Test />}>
+										{component.childrens.map((child) => {
+											console.log(child);
+											const ChildTest = child['join'];
+											return (
+												<Route
+													key={child.path}
+													path={child.path}
+													element={<ChildTest />}
+												/>
+											);
+										})}
+									</Route>
+								);
+							}
+							return <Route path={component.path} element={<Test />} />;
+						})} */}
 						<Route path="student" element={<Student />}>
 							<Route path="" element={<Navigate to="class" replace={true} />} />
 							<Route path="class">
@@ -121,7 +169,7 @@ function App() {
 							<Route path="exam" element={<Exam />}>
 								<Route path="" element={<ExamList />} />
 								<Route path="create" element={<ClassList />} />
-								<Route path="classId/detailExam" element={<ExamDetail />} />
+								<Route path=":examId/detailExam" element={<ExamDetail />} />
 							</Route>
 							{
 								<Route
