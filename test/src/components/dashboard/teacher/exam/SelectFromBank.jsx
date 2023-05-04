@@ -229,6 +229,7 @@ function SelectFromBank() {
    };
 
    function getQuestionList(e) {
+      console.log("form click");
       const checkbox = e.target.closest("input[type='checkbox']");
       if (!checkbox) return;
       let question = {};
@@ -321,6 +322,7 @@ function SelectFromBank() {
    }, [type]);
 
    const handleChapterMenu = (e) => {
+      console.log(e.target);
       e.stopPropagation();
       document.querySelector(".chapter-menu").classList.toggle("display-flex");
       handleChapterGuide(chapters.length);
@@ -335,24 +337,12 @@ function SelectFromBank() {
                .classList.remove("display-flex");
          }}
       >
-         <form
-            action=""
-            method="POST"
-            id="form--create-exam__selectFromBank"
-            style={{
-               display: "flex",
-               width: "100%",
-               height: "100%",
-               position: "relative",
-            }}
-            onClick={getQuestionList}
-         >
+         <form action="" method="POST" id="form--create-exam__selectFromBank">
             <div className="flex-center flex-direction-col info-box__select-from-bank">
                <ul className="flex-center flex-direction-col" style={inputList}>
                   <li
-                     className="flex-center"
+                     className="flex-center form-group"
                      style={{
-                        width: "100%",
                         margin: "5px 0",
                         flexDirection: "row",
                         alignItems: "flex-start",
@@ -432,7 +422,11 @@ function SelectFromBank() {
                         height: "40px",
                      }}
                   >
-                     <label htmlFor="examId" style={label}>
+                     <label
+                        htmlFor="examId"
+                        style={label}
+                        className="form-label"
+                     >
                         Mã đề
                      </label>
                      <div
@@ -761,24 +755,16 @@ function SelectFromBank() {
                   </li>
                </ul>
 
-               <button>Tạo</button>
+               <button className="create-exam-btn-pc">Tạo</button>
             </div>
 
-            <div
-               style={{
-                  width: "100%",
-                  maxHeight: "700px",
-                  height: "40%",
-                  backgroundColor: "var(--white-color)",
-                  borderRadius: "10px",
-                  position: "relative",
-               }}
-            >
+            <div className="question-list_container">
                <div
                   className="flex-center"
                   style={{
                      position: "absolute",
                      top: "0",
+                     zIndex: "100",
                      width: "100%",
                      padding: "0 10px",
                      marginBottom: "0px",
@@ -793,10 +779,11 @@ function SelectFromBank() {
                         flexWrap: "nowrap",
                         overflowX: "scroll",
                         width: "100%",
-                        height: "45px",
+                        height: "50px",
                         whiteSpace: "nowrap",
+                        justifyContent: "flex-start",
                      }}
-                     className="list__selected-chapter"
+                     className="flex-center list__selected-chapter"
                   >
                      <li
                         className="flex-center chapter-guide"
@@ -837,7 +824,7 @@ function SelectFromBank() {
                         textAlign: "right",
                      }}
                   >
-                     <i class="fa-solid fa-chevron-down"></i>
+                     <i className="fa-solid fa-chevron-down"></i>
                   </div>
                   <ul
                      className="chapter-menu"
@@ -875,6 +862,7 @@ function SelectFromBank() {
                      paddingTop: "45px",
                      justifyContent: "flex-start",
                   }}
+                  // onClick={getQuestionList}
                >
                   {examQuestions.map((item) => (
                      <Question questionObject={item} />
@@ -882,6 +870,13 @@ function SelectFromBank() {
                   {isLoadingData && <LoadingData />}
                </ul>
             </div>
+
+            <button
+               className="create-exam-btn-tablet"
+               style={{ marginTop: "10px" }}
+            >
+               Tạo
+            </button>
          </form>
       </div>
    );

@@ -161,6 +161,8 @@ const fileFilter = (req, file, cb) => {
 	}
 };
 app.use(express.static(path.join(__dirname, '', '/class-excel')));
+app.use(express.static(path.join(__dirname, '', '/pdf')));
+
 // app.use(express.static(path.join(__dirname, '', '/class-excel')));
 
 //Routes define

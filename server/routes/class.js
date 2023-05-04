@@ -81,7 +81,7 @@ router.get(
 // GET /classes/{classId}/student/{studentId}
 // get specific students from the current class
 // */
-// router.get('/:classId/students/:studentId', classController.getStudentInClass);
+router.get('/:classId/students/:studentId', classController.getStudentInClass);
 router.get(
 	'/:classId/students/:studentId/edit',
 	classController.getStudentInClass
@@ -98,10 +98,10 @@ router.get('/:classId/exams/results', classController.getClassExamsResult);
 
 router.get('/:classId/exams', classController.getClassExams);
 
-// router.get('/:classId/exams/:examId', classController.getClassExam);
+router.get('/:classId/exams/:examId', classController.getClassExam);
 
 router.get(
-	'/:classId/exams/:examId/results',
+	'/exams/:examId/students',
 	classController.getClassExamStudentResults
 );
 
@@ -180,6 +180,7 @@ router.post(
 router.post('/:classId/exams/:examId', classController.postClassStudentExam);
 
 router.post('/:classId/excels', classController.postClassToGetExcel);
+router.post('/exams/:examId/pdf', classController.postExamPDF);
 //METHOD : PUT
 
 router.put(

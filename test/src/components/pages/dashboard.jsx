@@ -11,14 +11,6 @@ import logo from "../../image/logo-no-background.png";
 import { Link } from "react-router-dom";
 
 const UserMenu = ({ info, setIsOpenProfile, setType }) => {
-   const type = info.account.type;
-   let viewtype;
-   if (type === "GV") {
-      viewtype = "Giảng viên";
-   }
-   if (type === "SV") {
-      viewtype = "Sinh viên";
-   }
    return (
       <>
          <div className="user-menu" onClick={(e) => e.stopPropagation()}>
@@ -26,7 +18,7 @@ const UserMenu = ({ info, setIsOpenProfile, setType }) => {
                <p className="info-box__text info-box__text--main  ">
                   {info.fullname}
                </p>
-               <p className="info-box__text info-box__text--sub">{viewtype}</p>
+               <p className="info-box__text info-box__text--sub"></p>
             </div>
             <ul className="user-menu__list">
                <li
@@ -78,76 +70,80 @@ const UserModel = ({ setIsOpenProfile, info, type }) => {
    const isPasswordForm = type === "password";
    return (
       <>
-         <div className="overlay" onClick={() => setIsOpenProfile(false)} />
-         <form id="profile-form" className="user-form ">
-            <header className="user-form__header">
-               <div className="header__icon-box">
-                  <i class="fa-regular fa-user"></i>
-               </div>
-               <div className="header__heading-box">
-                  <p className="form-header__heading">
-                     {/* <input
+         <div
+            className="flex-center overlay"
+            onClick={() => setIsOpenProfile(false)}
+         >
+            <form id="profile-form" className="user-form ">
+               <header className="user-form__header">
+                  <div className="header__icon-box">
+                     <i class="fa-regular fa-user"></i>
+                  </div>
+                  <div className="header__heading-box">
+                     <p className="form-header__heading">
+                        {/* <input
 							type="text"
 							disabled
 							className=""
 							value={'Nguyễn Trương Khánh Hoàng'}
 						/> */}
-                     {info.fullname}
-                  </p>
-               </div>
-               <div className="header__box">
-                  {!isPasswordForm ? (
-                     <button className="btn btn-edit-profile">
-                        <i class="fa-regular fa-pen-to-square"></i>
+                        {info.fullname}
+                     </p>
+                  </div>
+                  <div className="header__box">
+                     {!isPasswordForm ? (
+                        <button className="btn btn-edit-profile">
+                           <i class="fa-regular fa-pen-to-square"></i>
+                        </button>
+                     ) : (
+                        <div className="green-dot" title="Online"></div>
+                     )}
+                  </div>
+                  <div className="cross-btn-box">
+                     <button
+                        className="btn cross-btn-form"
+                        onClick={() => setIsOpenProfile(false)}
+                     >
+                        <i class="fa-solid fa-xmark"></i>
                      </button>
+                  </div>
+               </header>
+               <body className="user-form__body">
+                  {!isPasswordForm ? (
+                     <>
+                        <label className="body__row">
+                           <span className="row-text">Mã cá nhân:</span>
+                           <span className="row-text"> {info.id}</span>
+                        </label>
+                        <label className="body__row">
+                           <span className="row-text">Ngày sinh:</span>
+                           <span className="row-text">
+                              {vietNamFomatter.format(date)}
+                           </span>
+                        </label>
+                     </>
                   ) : (
-                     <div className="green-dot" title="Online"></div>
+                     <>
+                        <label className="body__row">
+                           <span className="row-text">Mật khẩu cũ :</span>
+                           <input type="password" />
+                        </label>
+                        <label className="body__row">
+                           <span className="row-text">Mật khẩu mới :</span>
+                           <input type="password" />
+                        </label>
+                     </>
                   )}
-               </div>
-               <div className="cross-btn-box">
-                  <button
-                     className="btn cross-btn-form"
-                     onClick={() => setIsOpenProfile(false)}
-                  >
-                     <i class="fa-solid fa-xmark"></i>
-                  </button>
-               </div>
-            </header>
-            <body className="user-form__body">
-               {!isPasswordForm ? (
-                  <>
-                     <label className="body__row">
-                        <span className="row-text">Mã cá nhân:</span>
-                        <span className="row-text"> {info.id}</span>
-                     </label>
-                     <label className="body__row">
-                        <span className="row-text">Ngày sinh:</span>
-                        <span className="row-text">
-                           {vietNamFomatter.format(date)}
-                        </span>
-                     </label>
-                  </>
+               </body>
+               {isPasswordForm ? (
+                  <footer className="user-form__footer">
+                     <button className="submit-profile">Xác nhận</button>
+                  </footer>
                ) : (
-                  <>
-                     <label className="body__row">
-                        <span className="row-text">Mật khẩu cũ :</span>
-                        <input type="password" />
-                     </label>
-                     <label className="body__row">
-                        <span className="row-text">Mật khẩu mới :</span>
-                        <input type="password" />
-                     </label>
-                  </>
+                  ""
                )}
-            </body>
-            {isPasswordForm ? (
-               <footer className="user-form__footer">
-                  <button className="submit-profile">Xác nhận</button>
-               </footer>
-            ) : (
-               ""
-            )}
-         </form>
+            </form>
+         </div>
       </>
    );
 };
@@ -214,14 +210,14 @@ function Dashboard() {
          });
    }, []);
 
-	return (
-		<div
-			id="main-layout"
-			className="grid wide"
-			// onClick={() => setIsOpen(false)}
-		>
-			<div className="layout--body">
-				<SideMenu info={info} />
+   return (
+      <div
+         id="main-layout"
+         className="grid wide"
+         // onClick={() => setIsOpen(false)}
+      >
+         <div className="layout--body">
+            <SideMenu info={info} />
 
             <div id="dashboard-container">
                {/* {isConfig && <UserModel />} */}
