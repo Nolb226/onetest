@@ -126,6 +126,7 @@ function ClassList() {
                               style={{
                                  width: "100%",
                                  height: "100%",
+                                 marginTop: "20px",
                                  fontSize: "1.6rem",
                                  color: "#777",
                               }}
@@ -154,7 +155,7 @@ function ClassList() {
                                     <h3>{item.name}</h3>
                                  </li>
                                  <li className="flex-center column-text">
-                                    <h3>{item.lecture.name}</h3>
+                                    <h3>{item.lecture_name}</h3>
                                  </li>
                                  <li className="flex-center column-text">
                                     <h3>{item.totalStudent}</h3>
@@ -175,7 +176,7 @@ function ClassList() {
                               <h3>{item.id}</h3>
                               <span style={{ color: "#555" }}>{item.name}</span>
                               <span style={{ color: "var(--highlight-color)" }}>
-                                 Môn:&nbsp; {item.lecture.name}
+                                 Môn:&nbsp; {item.lecture_name}
                               </span>
                               <span style={{ color: "#555" }}>
                                  Số lượng:&nbsp;{item.totalStudent}

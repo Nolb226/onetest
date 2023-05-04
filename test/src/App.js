@@ -119,9 +119,9 @@ function App() {
 								<Route path="create" element={<CreateClass />} />
 							</Route>
 							<Route path="exam" element={<Exam />}>
-								<Route index element={<ExamList />} />
+								<Route path="" element={<ExamList />} />
 								<Route path="create" element={<ClassList />} />
-								<Route path=":examId/detailExam" element={<ExamDetail />} />
+								<Route path="classId/detailExam" element={<ExamDetail />} />
 							</Route>
 							{
 								<Route
@@ -129,7 +129,7 @@ function App() {
 									element={<Student />}
 								/>
 							}
-							{/* <Route path="statistics" element={<Statistics />}></Route> */}
+							<Route path="statistics" element={<Statistics />}></Route>
 						</Route>
 
 						<Route path="admin" element={<Admin />}>

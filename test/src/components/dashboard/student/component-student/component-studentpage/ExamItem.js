@@ -20,7 +20,7 @@ function ExamButton({ classId, exam, isDone, isLock }) {
       return (
          <>
             <Link to={`../exam/${classId}/${exam}`}>
-               <button class="inf-btn exam-done">Xem điểm</button>
+               <button class="exam-done view-btn">Xem</button>
             </Link>
          </>
       );
@@ -56,16 +56,6 @@ function ExamItem({
    isLock,
    exam,
 }) {
-   //    const vietNamFomatter = new Intl.DateTimeFormat("vi-VN", {
-   //       year: "numeric",
-   //       month: "numeric",
-   //       day: "numeric",
-   //       hour: "numeric",
-   //       minute: "numeric",
-   //       second: "numeric",
-   //       hour12: false,
-   //       timeZone: "America/Los_Angeles",
-   //    });
    return (
       <ul
          className="flex-center table__content--item"

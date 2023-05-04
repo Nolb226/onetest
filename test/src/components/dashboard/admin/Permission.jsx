@@ -26,6 +26,21 @@ function Permission() {
 
    return (
       <>
+         <div className="flex-center createNew mobile-mode">
+            <input
+               type="text"
+               value={permission}
+               name="permissionName"
+               id="permissionName"
+               placeholder="Nhập tên nhóm quyền"
+               onChange={(e) => {
+                  setPermission(e.target.value);
+               }}
+            />
+            <button onClick={createNewPermission}>
+               <i className="fa-solid fa-plus"></i>
+            </button>
+         </div>
          <div className="gridContainer">
             <div className="left-item position-relative">
                <div className="createNew">
@@ -39,24 +54,13 @@ function Permission() {
                         setPermission(e.target.value);
                      }}
                   />
-                  <button
-                     style={{
-                        width: "80px",
-                        height: "100%",
-                        color: "#fff",
-                        backgroundColor: "var(--primary-color)",
-                        borderRadius: "0 5px 5px 0",
-                     }}
-                     onClick={createNewPermission}
-                  >
-                     Tạo mới
+                  <button onClick={createNewPermission}>
+                     <i className="fa-solid fa-plus"></i>
                   </button>
                </div>
 
                <div className="permissionList">
-                  <h2 style={{ fontWeight: "600", fontSize: "1.6rem" }}>
-                     Danh sách nhóm quyền đã tạo
-                  </h2>
+                  <h2>Nhóm quyền đã tạo</h2>
                   <ul>
                      {permissionName.map((name) => (
                         <li
@@ -81,22 +85,22 @@ function Permission() {
                   <ul className="permission-list">
                      <li className="permission-item">
                         <input type="checkbox" name="" id="" />
-                        <span>Tạo bài thi</span>
+                        <span>Xem</span>
                      </li>
 
                      <li className="permission-item">
                         <input type="checkbox" name="" id="" />
-                        <span>Tạo bài thi</span>
+                        <span>Thêm</span>
                      </li>
 
                      <li className="permission-item">
                         <input type="checkbox" name="" id="" />
-                        <span>Tạo bài thi</span>
+                        <span>Sửa</span>
                      </li>
 
                      <li className="permission-item">
                         <input type="checkbox" name="" id="" />
-                        <span>Tạo bài thi</span>
+                        <span>Xóa</span>
                      </li>
                   </ul>
                </li>
