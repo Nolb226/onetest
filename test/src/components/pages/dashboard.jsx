@@ -210,13 +210,23 @@ function Dashboard() {
          });
    }, []);
 
+   const menuElement = document.querySelector("#left-menu");
+
+   const handleCloseSideMenu = () => {
+      if (window.innerWidth < 740) {
+         menuElement.classList.remove("openMenu");
+         menuElement.classList.add("closeMenu");
+         document.querySelector(".menu-layer").style.display = "none";
+      }
+   };
+
    return (
       <div
          id="main-layout"
          className="grid wide"
          // onClick={() => setIsOpen(false)}
       >
-         <div className="layout--body">
+         <div className="layout--body" onClick={handleCloseSideMenu}>
             <SideMenu info={info} />
 
             <div id="dashboard-container">
@@ -224,6 +234,18 @@ function Dashboard() {
                <div className="top-bar">
                   <header className="header position-relative">
                      <div className="header__title">
+                        <i
+                           className="menu-bar-icon fa-solid fa-bars"
+                           style={{ marginRight: "20px" }}
+                           onClick={(e) => {
+                              e.stopPropagation();
+                              menuElement.classList.remove("closeMenu");
+                              menuElement.classList.add("openMenu");
+                              document.querySelector(
+                                 ".menu-layer"
+                              ).style.display = "block";
+                           }}
+                        ></i>
                         <h1></h1>
                      </div>
                      <div className="navigation flex-center">

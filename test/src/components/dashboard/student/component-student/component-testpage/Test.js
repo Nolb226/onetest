@@ -127,11 +127,6 @@ function Test() {
 			clearInterval(timer);
 			// console.log(clearInterval(test));
 			console.log(`After ${timer}`);
-			socket
-				.off('exam:clear', () => {
-					clearInterval(timer);
-				})
-				.off();
 			window.removeEventListener('popstate', handlePopState);
 			window.removeEventListener('beforeunload', handleBeforeUnload);
 			window.removeEventListener('blur', handleBlur);
@@ -160,8 +155,7 @@ function Test() {
 
 	return (
 		<>
-			<div className="empty-space"></div>
-			<div className="content-table">
+			<div className="content-table doing-test">
 				<QuestionsRender
 					answer={answer}
 					setAnswer={setAnswer}

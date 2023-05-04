@@ -32,6 +32,7 @@ import Permission from './components/dashboard/admin/Permission';
 import ExamDetail from './components/dashboard/teacher/exam/ExamDetail';
 import socket from './utils/socket';
 import { useEffect, useState } from 'react';
+import Bank from './components/dashboard/teacher/bank/Bank';
 
 function App() {
 	const currentUser = localStorage.getItem('currentUser');
@@ -178,6 +179,7 @@ function App() {
 								/>
 							}
 							<Route path="statistics" element={<Statistics />}></Route>
+							<Route path="bank" element={<Bank />}></Route>
 						</Route>
 
 						<Route path="admin" element={<Admin />}>
