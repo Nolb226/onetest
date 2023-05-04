@@ -83,11 +83,7 @@ function Student(prop) {
 			<li class="flex-center column-text" style={{}}>
 				{prop.student.studentresults?.map((grade, index) => {
 					let widthItem = 100 / prop.numberOfTest;
-<<<<<<< HEAD
 					if (index < prop.numberOfTest) {
-=======
-					if (prop.numberOfTest < 6) {
->>>>>>> 21d9f24399a96b113b68208e678d0f45e66cee01
 						return (
 							<div style={{ width: `${widthItem}%`, textAlign: 'left' }}>
 								<h3>{grade.grade}</h3>
