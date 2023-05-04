@@ -91,8 +91,12 @@ function CreateClass({ handleCreateClass }) {
               id="lecture"
               class="l-7 m-7 c-7 class-editpass-input"
             >
-               <option disabled>Chọn môn</option>
-               {lectures.length == 0 ?"":lectures.map((lecture) => <option value={lecture.id}>{lecture.name}</option> )}
+              <option disabled>Chọn môn</option>
+              {lectures.length == 0
+                ? ""
+                : lectures.map((lecture) => (
+                    <option value={lecture.id}>{lecture.name}</option>
+                  ))}
             </select>
           </div>
 

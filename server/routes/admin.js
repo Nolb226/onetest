@@ -5,6 +5,7 @@ const { route } = require('./auth');
 router.get('/accounts', adminController.getAllAccounts);
 router.get('/accounts/:accountId', adminController.getAccount);
 router.put('/accounts/:accountId', adminController.putAcount)
+router.patch('/accounts/:accountId', adminController.patchAccount)
 
 // router.get('/classes', adminController.getAllClasses);
 

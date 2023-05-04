@@ -8,7 +8,7 @@ const path = require('path');
 const Excel = require('exceljs');
 const Classes = require('../models/class');
 
-const pdfmake = require('pdfmake');
+// const pdfmake = require('pdfmake');
 
 const classDetails = require('../models/classdetail');
 const Chapter = require('../models/chapter');

@@ -1,23 +1,22 @@
-// const { validationResult } = require('express-validator');
-// const Department = require('../models/department');
-// const Major = require('../models/major');
-// const Teacher = require('../models/teacher');
-// const {
-// 	successResponse,
-// 	errorResponse,
-// 	throwError,
-// } = require('../util/helper');
+const { validationResult } = require('express-validator');
+const Department = require('../models/department');
+const Major = require('../models/major');
+const {
+	successResponse,
+	errorResponse,
+	throwError,
+} = require('../util/helper');
 
-// module.exports.getDepartments = async function (req, res, _) {
-// 	try {
-// 		const Departments = await Department.findAll({
-// 			attributes: ['id', 'name'],
-// 		});
-// 		successResponse(res, 200, Departments);
-// 	} catch (error) {
-// 		errorResponse(res, error);
-// 	}
-// };
+module.exports.getDepartments = async function (req, res, _) {
+	try {
+		const Departments = await Department.findAll({
+			attributes: ['id', 'name'],
+		});
+		successResponse(res, 200, Departments);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
 
 // module.exports.getDepartment = async function (req, res, _) {
 // 	const { departmentId } = req.params;
@@ -40,21 +39,21 @@
 // 		errorResponse(res, error);
 // 	}
 // };
-// module.exports.getMajorsInDepartment = async function (req, res, _) {
-// 	try {
-// 		const { departmentId } = req.params;
-// 		const department = await Department.findByPk(departmentId, {
-// 			attributes: ['id', 'name', 'headOfDepartment'],
-// 		});
-// 		if (!department) {
-// 			throwError('Could not find department');
-// 		}
-// 		const majors = await department.getMajors({ attributes: ['id', 'name'] });
-// 		successResponse(res, 200, majors);
-// 	} catch (error) {
-// 		errorResponse(res, error);
-// 	}
-// };
+module.exports.getMajorsInDepartment = async function (req, res, _) {
+	try {
+		const { departmentId } = req.params;
+		const department = await Department.findByPk(departmentId, {
+			attributes: ['id', 'name'],
+		});
+		if (!department) {
+			throwError('Could not find department');
+		}
+		const majors = await department.getMajors({ attributes: ['id', 'name'] });
+		successResponse(res, 200, majors);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
 
 // module.exports.postDepartment = async function (req, res, _) {
 // 	try {

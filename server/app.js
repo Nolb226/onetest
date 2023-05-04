@@ -200,7 +200,7 @@ app.use('/auth', authRoutes);
 app.use('/accounts', accountRoutes);
 // app.use('/students', studentRoutes);
 // app.use('/teachers', teacherRoutes);
-// app.use('/departments', departmentRoutes);
+app.use('/departments', departmentRoutes);
 // app.use('/majors', majorRoutes);
 app.use('/lectures', lectureRoutes);
 // app.use('/questions', questionsRoutes);

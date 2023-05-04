@@ -1,12 +1,12 @@
-// const router = require('express').Router();
-// const { body } = require('express-validator');
-// const departmentController = require('../controllers/departmentController');
+const router = require('express').Router();
+const { body } = require('express-validator');
+const departmentController = require('../controllers/departmentController');
 
-// router.get('/', departmentController.getDepartments);
+router.get('/', departmentController.getDepartments);
 
 // router.get('/:departmentId', departmentController.getDepartment);
 
-// router.get('/:departmentId/majors', departmentController.getMajorsInDepartment);
+router.get('/:departmentId/majors', departmentController.getMajorsInDepartment);
 
 // router.post(
 // 	'/',
@@ -36,4 +36,4 @@
 
 // router.delete('/:departmentId', departmentController.deleteDepartment);
 
-// module.exports = router;
+module.exports = router;
