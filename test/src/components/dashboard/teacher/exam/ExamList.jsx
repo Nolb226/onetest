@@ -129,7 +129,7 @@ function ExamList() {
                         >
                            <li className="flex-center column-text exam-name">
                               <h3>
-                                 {exam.name} - {exam.id}
+                                 {exam.name} - {exam.examId}
                               </h3>
                            </li>
 
@@ -162,8 +162,8 @@ function ExamList() {
                            </li>
                            <li className="flex-center column-text">
                               <Link
-                                 // to={`${Class.Class.id}/detailExam`}
-                                 to={`classId/detailExam`}
+                                 to={`${exam.id}/detailExam`}
+                                 // to={`classId/detailExam`}
                                  relative="path"
                               >
                                  <button className="view-btn">Xem</button>

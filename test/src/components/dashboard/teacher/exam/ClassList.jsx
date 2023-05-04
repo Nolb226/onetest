@@ -126,6 +126,7 @@ function ClassList() {
                               style={{
                                  width: "100%",
                                  height: "100%",
+                                 marginTop: "20px",
                                  fontSize: "1.6rem",
                                  color: "#777",
                               }}

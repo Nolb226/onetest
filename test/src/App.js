@@ -143,7 +143,7 @@ function App() {
                            element={<Student />}
                         />
                      }
-                     {/* <Route path="statistics" element={<Statistics />}></Route> */}
+                     <Route path="statistics" element={<Statistics />}></Route>
                   </Route>
 
                   <Route path="admin" element={<Admin />}>
