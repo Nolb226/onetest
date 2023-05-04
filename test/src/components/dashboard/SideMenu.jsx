@@ -15,9 +15,9 @@ function SideMenu({ info }) {
    const navigator = useNavigate();
    const { pathname } = useLocation();
 
-	useEffect(() => {
-		console.log(pathname.split('/')[3]);
-	}, [pathname]);
+   useEffect(() => {
+      console.log(pathname.split("/")[3]);
+   }, [pathname]);
 
    const teacherAccount = [
       {
@@ -42,6 +42,14 @@ function SideMenu({ info }) {
          icon: "menu-icon fa-solid fa-chart-simple",
          name: "Thống kê",
          nav: "/teacher/statistics",
+      },
+
+      {
+         idPemission: 4,
+         path: `/bank`,
+         icon: "menu-icon fa-solid fa-building-columns",
+         name: "Ngân hàng",
+         nav: "/teacher/bank",
       },
    ];
 
@@ -121,93 +129,102 @@ function SideMenu({ info }) {
    }
 
    return (
-      <div id="left-menu" className="position-relative flex-center">
-         <div className="left-menu__logo flex-center">
-            <img
-               className="logo-menu-pc"
-               src="../../image/logo-menu-header.svg"
-               alt=""
-            />
-            <img
-               className="logo-menu-tablet"
-               src="../../image/logo-menu-header-tablet.svg"
-               alt=""
-            />
-         </div>
-         <div className="menu-list flex-center flex-direction-col">
-            <ul>
-               <h1>Học sinh</h1>
-               {studentAccount.map((item) => {
-                  return (
-                     <li
-                        className="menu-item flex-center"
-                        onClick={(e) => {
-                           navigator(`${item.nav}`);
-                           activeButton(e);
-                           document.querySelector(
-                              ".header__title > h1"
-                           ).textContent = item.name;
-                        }}
-                        key={item.idPemission}
-                        title={item.name}
-                     >
-                        <IconComponent icon={item.icon} />
-                        <span className="menu-item__name">{item.name}</span>
-                     </li>
-                  );
-               })}
-            </ul>
+      <>
+         <div className="menu-layer"> </div>
+         <div
+            id="left-menu"
+            className="position-relative flex-center"
+            onClick={(e) => {
+               e.stopPropagation();
+            }}
+         >
+            <div className="left-menu__logo flex-center">
+               <img
+                  className="logo-menu-pc"
+                  src="../../image/logo-menu-header.svg"
+                  alt=""
+               />
+               <img
+                  className="logo-menu-tablet"
+                  src="../../image/logo-menu-header-tablet.svg"
+                  alt=""
+               />
+            </div>
+            <div className="menu-list flex-center flex-direction-col">
+               <ul>
+                  <h1>Học sinh</h1>
+                  {studentAccount.map((item) => {
+                     return (
+                        <li
+                           className="menu-item flex-center"
+                           onClick={(e) => {
+                              navigator(`${item.nav}`);
+                              activeButton(e);
+                              document.querySelector(
+                                 ".header__title > h1"
+                              ).textContent = item.name;
+                           }}
+                           key={item.idPemission}
+                           title={item.name}
+                        >
+                           <IconComponent icon={item.icon} />
+                           <span className="menu-item__name">{item.name}</span>
+                        </li>
+                     );
+                  })}
+               </ul>
 
-            <ul style={{ width: "100%" }}>
-               <h1>Quản lý</h1>
-               {teacherAccount.map((item) => {
-                  return (
-                     <li
-                        className="menu-item flex-center"
-                        onClick={(e) => {
-                           navigator(`${item.nav}`);
-                           activeButton(e);
-                           document.querySelector(
-                              ".header__title > h1"
-                           ).textContent = item.name;
-                        }}
-                        key={item.idPemission}
-                     >
-                        <IconComponent icon={item.icon} />
-                        <span className="menu-item__name">{item.name}</span>
-                     </li>
-                  );
-               })}
-            </ul>
+               <ul style={{ width: "100%" }}>
+                  <h1>Quản lý</h1>
+                  {teacherAccount.map((item) => {
+                     return (
+                        <li
+                           className="menu-item flex-center"
+                           onClick={(e) => {
+                              navigator(`${item.nav}`);
+                              activeButton(e);
+                              document.querySelector(
+                                 ".header__title > h1"
+                              ).textContent = item.name;
+                           }}
+                           key={item.idPemission}
+                        >
+                           <IconComponent icon={item.icon} />
+                           <span className="menu-item__name">{item.name}</span>
+                        </li>
+                     );
+                  })}
+               </ul>
 
-            <ul style={{ width: "100%" }}>
-               <h1>Quản trị</h1>
-               {adminAccount.map((item) => {
-                  return (
-                     <li
-                        className="menu-item flex-center"
-                        onClick={(e) => {
-                           navigator(`${item.nav}`);
-                           activeButton(e);
-                           document.querySelector(
-                              ".header__title > h1"
-                           ).textContent = item.name;
-                        }}
-                        key={item.idPemission}
-                     >
-                        <IconComponent icon={item.icon} />
-                        <span className="menu-item__name">{item.name}</span>
-                     </li>
-                  );
-               })}
-            </ul>
-         </div>
+               <ul style={{ width: "100%" }}>
+                  <h1>Quản trị</h1>
+                  {adminAccount.map((item) => {
+                     return (
+                        <li
+                           className="menu-item flex-center"
+                           onClick={(e) => {
+                              navigator(`${item.nav}`);
+                              activeButton(e);
+                              document.querySelector(
+                                 ".header__title > h1"
+                              ).textContent = item.name;
+                           }}
+                           key={item.idPemission}
+                        >
+                           <IconComponent icon={item.icon} />
+                           <span className="menu-item__name">{item.name}</span>
+                        </li>
+                     );
+                  })}
+               </ul>
+            </div>
 
-         {/* <div className="themes flex-center position-absolute">
+            {/* <div className="themes flex-center position-absolute">
             <i className="menu-icon fa-solid fa-circle-half-stroke"></i>
             <ul className="themes-list"></ul>
          </div> */}
-      </div>
+         </div>
+      </>
    );
 }
 

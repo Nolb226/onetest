@@ -30,6 +30,7 @@ import Admin from "./components/dashboard/admin/Admin";
 import ManageAccount from "./components/dashboard/admin/ManageAccount";
 import Permission from "./components/dashboard/admin/Permission";
 import ExamDetail from "./components/dashboard/teacher/exam/ExamDetail";
+import Bank from "./components/dashboard/teacher/bank/Bank";
 
 function App() {
    const currentUser = localStorage.getItem("currentUser");
@@ -144,6 +145,7 @@ function App() {
                         />
                      }
                      <Route path="statistics" element={<Statistics />}></Route>
+                     <Route path="bank" element={<Bank />}></Route>
                   </Route>
 
                   <Route path="admin" element={<Admin />}>
