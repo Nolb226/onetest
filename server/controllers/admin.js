@@ -138,6 +138,7 @@ exports.getAllAccounts = async (req, res, _) => {
 			account_id,
 			CONCAT(lastName, ' ', firstName) as fullname,
 			email,
+      createdAt,
 			accounts.type,
 			isActive
 			FROM
