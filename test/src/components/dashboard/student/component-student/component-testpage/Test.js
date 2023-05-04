@@ -127,6 +127,11 @@ function Test() {
 			clearInterval(timer);
 			// console.log(clearInterval(test));
 			console.log(`After ${timer}`);
+			socket
+				.off('exam:clear', () => {
+					clearInterval(timer);
+				})
+				.off();
 			window.removeEventListener('popstate', handlePopState);
 			window.removeEventListener('beforeunload', handleBeforeUnload);
 			window.removeEventListener('blur', handleBlur);

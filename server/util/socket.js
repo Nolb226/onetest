@@ -14,6 +14,7 @@ module.exports = {
 		});
 		io.on('connection', (socket) => {
 			console.log(socket.handshake.auth.token);
+
 			socket.on('exam:start', (response) => {
 				// const test = await Student_Result.findByPk(response.id);
 				// const exam = await Exam.findByPk(test.examId);
