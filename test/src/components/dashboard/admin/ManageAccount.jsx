@@ -16,6 +16,7 @@ function ManageAccount() {
         },
       });
       const data = await userreq.json();
+      console.log(data);
       setAccountList(data.data);
     };
     getAccountData();
@@ -105,7 +106,7 @@ function ManageAccount() {
         <div className="grid table__content">
           <div className="table__content--list">
             {accountList.length == 0
-              ? ""
+              ? <h1 className="flex-center" style={{height:"100%",fontSize:"15px",marginTop:"50px"}}>Không tồn tại tài khoản</h1>
               : accountList.map((account, index) => {
                   return (
                     <ul
@@ -128,7 +129,7 @@ function ManageAccount() {
                       </li>
 
                       <li className="flex-center column-text">
-                        <h3>{account.createdAt.split("T")[0]}</h3>
+                        <h3>{account?.createdAt?.split("T")[0]}</h3>
                       </li>
 
                       <li className="flex-center column-text">
