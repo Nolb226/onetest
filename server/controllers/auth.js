@@ -61,6 +61,8 @@ exports.login = async (req, res, next) => {
 		}
 
 		const isValid = bycrypt.compareSync(password, account.password);
+
+		console.log(isValid);
 		if (!isValid) {
 			throwError('Username or password is incorrect', 401);
 		}
@@ -75,6 +77,7 @@ exports.login = async (req, res, next) => {
 		res.status(200).json({ token, type: account.type });
 		// res.status(200).json(token);
 	} catch (error) {
+		console.log(error);
 		errorResponse(res, error);
 	}
 };

@@ -35,32 +35,6 @@ function Test() {
 	// const []
 
 	useEffect(() => {
-		let timer = null;
-		// window.addEventListener('blur', handleBlur);
-		const startTimer = (duration) => {
-			const countDownDuration = () => {
-				// -
-				// Math.round((new Date().getTime() - startTime) / 1000);
-
-				if (time < 0) {
-					// clearInterval(timer);
-					setDuration({ hours: '00', minutes: '00', seconds: '00' });
-					return;
-				}
-				const hours = String(parseInt(time / 3600, 10)).padStart(2, '0');
-				const others = String(parseInt(time % 3600, 10)).padStart(2, '0');
-				const minutes = String(parseInt(others / 60, 10)).padStart(2, '0');
-				const seconds = String(parseInt(others % 60, 10)).padStart(2, '0');
-				setDuration((prev) => ({ ...prev, hours, minutes, seconds }));
-				time--;
-				console.log(time);
-			};
-			let time = parseInt(duration, 10);
-			timer = setInterval(countDownDuration, 1000);
-
-			// countDownDuration();
-			console.log(timer);
-		};
 		const currentUser = localStorage.getItem('currentUser');
 
 		fetch(`${api}/classes/${state?.classId}/exams/${examId}/details`, {
@@ -84,10 +58,7 @@ function Test() {
 			.catch((error) => {
 				console.log(error);
 			});
-		startTimer(apiDuration);
 		return () => {
-			console.log(timer);
-			clearInterval(timer);
 			// clearInterval(a);
 			// window.removxeEventListener('blur', handleBlur);
 		};
@@ -103,22 +74,27 @@ function Test() {
 	// 	//
 	// };
 
-	// useEffect(() => {
-	// 	const handleOnBlur = (e) => {
-	// 		setClickedOutside((prev) => prev + 1);
-	// 	};
+	useEffect(() => {
+		const handleOnBlur = (e) => {
+			setClickedOutside((prev) => prev + 1);
+		};
 
-	// 	window.addEventListener('blur', handleOnBlur);
-	// 	window.addEventListener('beforeunload', handleBeforeUnload);
-	// 	window.addEventListener('unload', handleBeforeUnload);
-	// 	window.addEventListener('popstate', handleBeforeUnload);
-	// 	return () => {
-	// 		window.removeEventListener('blur', handleOnBlur);
-	// 		window.removeEventListener('beforeunload', handleBeforeUnload);
-	// 		window.removeEventListener('unload', handleBeforeUnload);
-	// 		window.removeEventListener('popstate', handleBeforeUnload);
-	// 	};
-	// }, []);
+		const handleBeforeUnload = (e) => {
+			e.preventDefault();
+			e.returnValue = '';
+			setIsOpen(true);
+			return '';
+		};
+
+		window.addEventListener('blur', handleOnBlur);
+		window.addEventListener('beforeunload', handleBeforeUnload);
+		window.addEventListener('popstate', handleBeforeUnload);
+		return () => {
+			window.removeEventListener('blur', handleOnBlur);
+			window.removeEventListener('beforeunload', handleBeforeUnload);
+			window.removeEventListener('popstate', handleBeforeUnload);
+		};
+	}, []);
 	console.log(clickedOutside);
 	const handleSubmit = () => {
 		setSubmitted({
@@ -140,6 +116,8 @@ function Test() {
 					setIsOpen={setIsOpen}
 					submitted={submitted}
 					duration={duration}
+					apiDuration={apiDuration}
+					setDuration={setDuration}
 				/>
 			</div>
 			{isOpen && !submitted.status && (

@@ -640,12 +640,16 @@ exports.postClass = async (req, res, _) => {
 					const day = cuttedDOB[0];
 					console.log(student['Mã lớp'].slice(0, 3));
 					await newClass.createAccount({
-						password: await bycrypt.hash(accountpassword,10) ,
+						password: await bycrypt.hash(accountpassword, 10),
 						account_id: student['MSSV'] || student['Mã sinh viên'],
 						dob: new Date(year, month, day),
 						firstName: student['Tên'],
 						lastName: student['Họ lót'],
-						majorId: student['chuyên ngành'] || student['Chuyên ngành'] || student['Mã lớp'].slice(0, 3) ,
+						type: 'SV',
+						majorId:
+							student['chuyên ngành'] ||
+							student['Chuyên ngành'] ||
+							student['Mã lớp'].slice(0, 3),
 					});
 				})
 			);

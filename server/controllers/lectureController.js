@@ -39,7 +39,10 @@ exports.getLecture = async (req, res, _) => {
 exports.getLecturesUser = async (req, res, _) => {
 	try {
 		const { account } = req;
-		const lectures = await account.getLectures({joinTableAttributes:[],attributes:{exclude:["createdAt", "updatedAt"]}});
+		const lectures = await account.getLectures({
+			joinTableAttributes: [],
+			attributes: { exclude: ['createdAt', 'updatedAt'] },
+		});
 		successResponse(res, 200, lectures);
 	} catch (error) {
 		console.log(error);
@@ -47,21 +50,21 @@ exports.getLecturesUser = async (req, res, _) => {
 	}
 };
 
-// exports.getLectureChapters = async (req, res, _) => {
-// 	try {
-// 		const { lectureId } = req.params;
-// 		const lecture = await Lecture.findByPk(lectureId);
-// 		if (!lecture) {
-// 			throwError(`Couldn't find lecture`, 404);
-// 		}
-// 		const chapters = await lecture.getChapters({
-// 			attributes: ['id', 'name', 'numberOfQuestions'],
-// 		});
-// 		successResponse(res, 200, chapters, req.method);
-// 	} catch (error) {
-// 		errorResponse(res, error);
-// 	}
-// };
+exports.getLectureChapters = async (req, res, _) => {
+	try {
+		const { lectureId } = req.params;
+		const lecture = await Lecture.findByPk(lectureId);
+		if (!lecture) {
+			throwError(`Couldn't find lecture`, 404);
+		}
+		const chapters = await lecture.getChapters({
+			attributes: ['id', 'name', 'numberOfQuestions'],
+		});
+		successResponse(res, 200, chapters, req.method);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
 
 // exports.getLectureStudentResults = async (req, res) => {
 // 	try {
@@ -117,42 +120,42 @@ exports.getLecturesUser = async (req, res, _) => {
 // 	}
 // };
 
-
-exports.postLectureQuestion = async (req,res,_)=> {
+exports.postLectureQuestion = async (req, res, _) => {
 	try {
-		const {lectureId,chapterId} = req.params;
+		const { lectureId, chapterId } = req.params;
 		const lecture = await Lecture.findByPk(lectureId);
-		const {quetions} = req.body;
-		const [chapter,created]= await Chapter.findOrCreate({
-			where:{
-				id:`${lectureId}-${chapterId}`
+		const { quetions } = req.body;
+		const [chapter, created] = await Chapter.findOrCreate({
+			where: {
+				id: `${lectureId}-${chapterId}`,
 			},
 			defaults: {
 				lectureId: lecture.id,
 				name: `Chương ${chapterId} ${lecture.name}`,
 				numberOfQuestions: 0,
 			},
-		})
-		await Promise.all(quetions.map(async(question)=> {
-			try {
-				const created =await chapter.createQuestion(question)
-				
-				return created;
+		});
+		await Promise.all(
+			quetions.map(async (question) => {
+				try {
+					const created = await chapter.createQuestion(question);
 
-			} catch (error) {
-				throwError(`${error}`,400);
-			}
-		}))
-		
+					return created;
+				} catch (error) {
+					throwError(`${error}`, 400);
+				}
+			})
+		);
+
 		const total = await Question.count({
 			where: { chapterId: chapter.id },
 		});
 		await chapter.update({
 			numberOfQuestions: total,
 		});
-			
-		successResponse(res,200,_,req.method)
+
+		successResponse(res, 200, _, req.method);
 	} catch (error) {
-		errorResponse(res,error)
+		errorResponse(res, error);
 	}
-}
+};

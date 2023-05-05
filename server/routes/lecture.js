@@ -7,10 +7,13 @@ router.get('/user', isAuth, lectureController.getLecturesUser);
 
 // router.get('/:lectureId', lectureController.getLecture);
 
-// router.get('/:lectureId/chapters', lectureController.getLectureChapters);
+router.get('/:lectureId/chapters', lectureController.getLectureChapters);
 
 // router.get('/:lectureId/dashboard', lectureController.getLectureStudentResults);
 
-router.post('/:lectureId/chapters/:chapterId/questions',lectureController.postLectureQuestion)
+router.post(
+	'/:lectureId/chapters/:chapterId/questions',
+	lectureController.postLectureQuestion
+);
 
 module.exports = router;
