@@ -369,6 +369,7 @@ function SelectFromBank() {
                         <option value="3">Ngẫu nhiên</option>
                      </select>
                   </li>
+
                   <li
                      className="flex-center form-group"
                      style={{
@@ -764,7 +765,7 @@ function SelectFromBank() {
                   style={{
                      position: "absolute",
                      top: "0",
-                     zIndex: "100",
+                     zIndex: "98",
                      width: "100%",
                      padding: "0 10px",
                      marginBottom: "0px",

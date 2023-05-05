@@ -31,6 +31,7 @@ import ManageAccount from "./components/dashboard/admin/ManageAccount";
 import Permission from "./components/dashboard/admin/Permission";
 import ExamDetail from "./components/dashboard/teacher/exam/ExamDetail";
 import Bank from "./components/dashboard/teacher/bank/Bank";
+import AddNewQuestion from "./components/dashboard/teacher/bank/AddNewQuestion";
 
 function App() {
    const currentUser = localStorage.getItem("currentUser");
@@ -130,6 +131,7 @@ function App() {
                         <Route path=":classId/edit" element={<Repass />} />
                         <Route path="create" element={<CreateClass />} />
                      </Route>
+
                      <Route path="exam" element={<Exam />}>
                         <Route path="" element={<ExamList />} />
                         <Route path="create" element={<ClassList />} />
@@ -144,8 +146,16 @@ function App() {
                            element={<Student />}
                         />
                      }
+
                      <Route path="statistics" element={<Statistics />}></Route>
-                     <Route path="bank" element={<Bank />}></Route>
+
+                     <Route path="bank" element={<Bank />}>
+                        {/* <Route path="" element={<Bank />} /> */}
+                        <Route
+                           path="addQuestion"
+                           element={<AddNewQuestion />}
+                        />
+                     </Route>
                   </Route>
 
                   <Route path="admin" element={<Admin />}>
