@@ -59,22 +59,36 @@ const UserMenu = ({ info, setIsOpenProfile, setType }) => {
   );
 };
 
-const UserModel = ({ setIsOpenProfile, info, type, handleUser }) => {
+const UserModel = ({ setIsOpenProfile, info, type, handleUpdate }) => {
+  const [user, setUser] = useState({ ...info });
   const vietNamFomatter = new Intl.DateTimeFormat("vi-VN", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
   const date = new Date("2003", "9", "30");
-//   console.log(date);
+  //   console.log(date);
   const isPasswordForm = type === "password";
+  const handleUser = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const submit = (e) => {
+	if(!isPasswordForm){
+		e.preventDefault()
+		handleUpdate(user)
+	}else{
+		
+	}
+  }
+
   return (
     <>
       <div
         className="flex-center overlay"
         // onClick={() => setIsOpenProfile(false)}
       >
-        <form id="profile-form" className="user-form ">
+        <form id="profile-form" className="user-form " onSubmit={(e) => submit(e)}>
           <header className="user-form__header">
             <div className="header__icon-box">
               <i class="fa-regular fa-user"></i>
@@ -85,8 +99,8 @@ const UserModel = ({ setIsOpenProfile, info, type, handleUser }) => {
                   type="text"
                   className=""
                   name="fullName"
-                  value={info.fullName}
-                  onChange={(e) =>  handleUser(e)}
+                  value={user.fullName}
+                  onChange={(e) => handleUser(e)}
                 />
                 {/* {info.fullname} */}
               </p>
@@ -94,7 +108,8 @@ const UserModel = ({ setIsOpenProfile, info, type, handleUser }) => {
             <div className="header__box">
               {!isPasswordForm ? (
                 <button className="btn btn-edit-profile">
-                  <i class="fa-regular fa-pen-to-square"></i>
+                  {/* <i class="fa-regular fa-pen-to-square"></i> */}
+				  <h1>Lưu</h1>
                 </button>
               ) : (
                 <div className="green-dot" title="Online"></div>
@@ -118,13 +133,19 @@ const UserModel = ({ setIsOpenProfile, info, type, handleUser }) => {
                     type="text"
                     className="row-text"
                     name="account_id"
-                    value={info.account_id}
+                    value={user.account_id}
                     onChange={(e) => handleUser(e)}
                   />
                 </label>
                 <label className="body__row">
                   <span className="row-text">Ngày sinh:</span>
-                  <input className="row-text" type="date" name="dob" onChange={(e) => handleUser(e)} value={info.dob} />
+                  <input
+                    className="row-text"
+                    type="date"
+                    name="dob"
+                    onChange={(e) => handleUser(e)}
+                    value={user.dob}
+                  />
                 </label>
               </>
             ) : (
@@ -208,17 +229,40 @@ function Dashboard() {
     })
       .then((response) => response.json())
       .then((infoAPI) => {
-        setInfo({...infoAPI.data,fullName:infoAPI.data.lastName+' '+infoAPI.data.firstName});
+        setInfo({
+          ...infoAPI.data,
+          fullName: infoAPI.data?.lastName + " " + infoAPI.data?.firstName,
+        });
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
 
-  const handleUser = (e) => {
-    setInfo({ ...info, [e.target.name]: e.target.value });
+  const handleUpdate = (newInfo) => {
+	console.log(newInfo);
+    const currentUser = localStorage.getItem("currentUser");
+    fetch(`${api}/accounts/${info.account_id}/edit`, {
+      method: "PUT",
+      body: JSON.stringify(newInfo),
+      headers: {
+        Authorization: "Bearer " + currentUser,
+		"Content-type": "application/json",
+      },
+    })
+      .then((response) =>{ if (response.ok) {
+		alert("Cập nhật thông tin thành công")
+		setInfo(newInfo)
+	}else{
+		alert("Cập nhật thông tin thất bại")
+	}
+
+	  return response.json()})
+
+	
+	
   };
-//   console.log(info);
+  //   console.log(info);
   return (
     <div
       id="main-layout"
@@ -273,17 +317,17 @@ function Dashboard() {
                       setIsOpen(!isOpen);
                       setIsOpenNotifications(false);
                     }}
-                    title={info.fullname || "Nguyen Truong Khanh Hoang"}
+                    title={info.fullName || "Nguyen Truong Khanh Hoang"}
                   >
                     {/* <div className="information">
-                                 <div className="flex-center name inf-children">
-                                    {info.fullname ||
-                                       "Nguyen Truong Khanh Hoang"}
-                                 </div>
-                                 <div className="flex-center code inf-children">
-                                    {info.id || "3121410146"}
-                                 </div>
-                              </div> */}
+								 <div className="flex-center name inf-children">
+									{info.fullname ||
+									   "Nguyen Truong Khanh Hoang"}
+								 </div>
+								 <div className="flex-center code inf-children">
+									{info.id || "3121410146"}
+								 </div>
+							  </div> */}
                     <div className="nav__icon flex-center ">
                       <i className="fa-regular fa-user"></i>
                     </div>
@@ -308,7 +352,7 @@ function Dashboard() {
                 info={info}
                 type={type}
                 setIsOpenProfile={setIsOpenProfile}
-                handleUser={handleUser}
+				handleUpdate={handleUpdate}
               />
             )}
             <Outlet />

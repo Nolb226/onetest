@@ -11,4 +11,6 @@ router.get('/user', isAuth, lectureController.getLecturesUser);
 
 // router.get('/:lectureId/dashboard', lectureController.getLectureStudentResults);
 
+router.post('/:lectureId/chapters/:chapterId/questions',lectureController.postLectureQuestion)
+
 module.exports = router;

@@ -11,8 +11,7 @@ const {
 } = require('../util/helper');
 const { where } = require('sequelize');
 const Permission_Group = require('../models/permission_group');
-const { getIO } = require('../util/socket');
-const socket = require('../util/socket');
+
 
 exports.signup = async (req, res, next) => {
 	try {

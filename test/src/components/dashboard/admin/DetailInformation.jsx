@@ -37,7 +37,7 @@ function DetailInformation(prop) {
   const handleUpdate = (e) => {
     // e.preventDefault();
     const formData = new FormData();
-    let lastname =''
+    let lastName =''
     for (let index = 0; index < account.fullname.split(" ").length-1; index++) {
       if (index == account.fullname.split(" ").length-2) {
         lastname+=account.fullname.split(" ")[index]
@@ -48,7 +48,7 @@ function DetailInformation(prop) {
     }
     formData.append("account_id", account.account_id);
     formData.append("firstName", account.fullname.split(" ").at(-1));
-    formData.append("lastName", lastname );
+    formData.append("lastName", lastName );
     formData.append("dob", account.dob);
     formData.append("departmentId", account.department_id);
     formData.append("majorId", account.major_id);

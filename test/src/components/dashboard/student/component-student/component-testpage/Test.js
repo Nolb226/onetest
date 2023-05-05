@@ -12,7 +12,6 @@ import QuestionItem from './QuestionItem';
 import Info from '../Info';
 import api from '../../../../../config/config';
 import QuestionsRender from './QuestionsRender';
-import socket from '../../../../../utils/socket';
 
 function Test() {
 	const [questions, setQuestions] = useState([]); //Chứa mảng câu hỏi
@@ -67,12 +66,10 @@ function Test() {
 			const test = {
 				...duration,
 			};
-			socket.emit('exam:end', test);
 		};
 
 		const handleBlur = () => {
 			if (!document.hasFocus()) {
-				socket.emit('exam:click');
 			}
 		};
 
@@ -82,7 +79,6 @@ function Test() {
 			const test = {
 				...duration,
 			};
-			socket.emit('exam:end', test);
 		};
 
 		window.addEventListener('blur', handleBlur);
@@ -101,10 +97,6 @@ function Test() {
 					...submitted,
 					status: questionsAPI.data.isDone,
 				});
-				socket.emit('exam:start', {
-					id: questionsAPI.data.id,
-					timeEnd: questionsAPI.data.timeEnd,
-				});
 				clearInterval(timer);
 				startTimer(questionsAPI.data.duration);
 			})
@@ -116,10 +108,6 @@ function Test() {
 			.catch((error) => {
 				console.log(error);
 			});
-
-		socket.on('exam:clear', () => {
-			clearInterval(timer);
-		});
 		console.log(timer);
 
 		return () => {
@@ -127,11 +115,7 @@ function Test() {
 			clearInterval(timer);
 			// console.log(clearInterval(test));
 			console.log(`After ${timer}`);
-			socket
-				.off('exam:clear', () => {
-					clearInterval(timer);
-				})
-				.off();
+
 			window.removeEventListener('popstate', handlePopState);
 			window.removeEventListener('beforeunload', handleBeforeUnload);
 			window.removeEventListener('blur', handleBlur);
@@ -139,13 +123,6 @@ function Test() {
 	}, []);
 
 	useEffect(() => {}, []);
-
-	socket.on('test', (response) => {
-		setDuration(response);
-	});
-	socket.on('exam:expired', (response) => {
-		navigator('../');
-	});
 
 	if (!state?.classId || submitted.status) {
 		navigator(`./result`);

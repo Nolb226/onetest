@@ -13,6 +13,7 @@ router.get('/another-route', (req, res) => {
 	// router code here
 });
 
-router.put('/:accountId/edit',)
+router.put('/:accountId/edit',accountController.putAccount) 
+router.patch('/:accountId/pass/edit',accountController.patchPass )
 
 module.exports = router;

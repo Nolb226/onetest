@@ -10,6 +10,8 @@ function CreateClass({ handleCreateClass }) {
   });
   const [lectures, setLecture] = useState([]);
 
+  const navigator = useNavigate()
+
   useEffect(() => {
     const currentUser = localStorage.getItem(`currentUser`);
     fetch(`${api}/lectures/user`, {
