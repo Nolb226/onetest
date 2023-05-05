@@ -40,8 +40,35 @@ function App() {
       /* <Route path="*" element={<Home />}></Route> */
    }
 
+   // socket.connect();
+
+   const [Components, setComponents] = useState([]);
+
+   // const Components = [
+   // 	{
+   // 		classes: ViewClass,
+   // 		path: 'classes',
+   // 		childrens: [
+   // 			{
+   // 				// index: true,
+   // 				join: JoinClass,
+   // 				path: 'join',
+   // 			},
+   // 		],
+   // 	},
+   // 	{
+   // 		exams: StudentPage,
+   // 		path: 'exams',
+   // 	},
+   // ];
+
+   useEffect(() => {}, []);
+
+   const test = "classes";
+   console.log(Components);
    return (
       <div id="app" className="position-relative">
+         <Routes></Routes>
          {/* <Routes>
 				{!currentUser ? (
 					<>
@@ -96,6 +123,27 @@ function App() {
                </>
             ) : (
                <Route exact path="/" element={<Dashboard />}>
+                  {/* {Components.map((component) => {
+							const Test = component[test];
+							if (component.childrens) {
+								return (
+									<Route path={component.path} element={<Test />}>
+										{component.childrens.map((child) => {
+											console.log(child);
+											const ChildTest = child['join'];
+											return (
+												<Route
+													key={child.path}
+													path={child.path}
+													element={<ChildTest />}
+												/>
+											);
+										})}
+									</Route>
+								);
+							}
+							return <Route path={component.path} element={<Test />} />;
+						})} */}
                   <Route path="student" element={<Student />}>
                      <Route
                         path=""

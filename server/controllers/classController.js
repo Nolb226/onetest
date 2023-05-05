@@ -7,6 +7,9 @@ const fs = require('fs');
 const path = require('path');
 const Excel = require('exceljs');
 const Classes = require('../models/class');
+
+const pdfmake = require('pdfmake');
+
 const classDetails = require('../models/classdetail');
 const Chapter = require('../models/chapter');
 
@@ -25,8 +28,6 @@ const e = require('express');
 const sequelize = require('../util/database');
 const { Op, QueryTypes } = require('sequelize');
 const Question = require('../models/question');
-const { getIO } = require('../util/socket');
-const socket = require('../util/socket');
 const Account = require('../models/account');
 const deleteExcel = function (filePath) {
 	const file = path.join(__dirname, '..', filePath);
@@ -235,14 +236,23 @@ exports.getAllStudent = async (req, res, _) => {
 		const total = await classDetails.count({ where: { classId } });
 		const total_exam = await Exam.count({ where: { classId } });
 		const exam_name = await classroom.getExams({
-			attributes: ['examId', 'name'],
+			attributes: ['id', 'examId', 'name'],
 		});
+		const results = await Promise.all(
+			exam_name.map(async (exam) => {
+				const result = await exam.getStudentresults({});
+				// delete exam.toJSON().id;
+				console.log(result);
+				return result;
+			})
+		);
 		const data = {
 			exam_name,
 			class_name: classroom.name,
 			data: students,
 			total,
 			total_exam,
+			results,
 		};
 		// data.totals = totals;
 		return successResponse(res, 200, data);
@@ -282,7 +292,8 @@ exports.getClassesExams = async (req, res, _) => {
 						lectures.name as lecture_name,
 						exams.name,
 						exams.id,
-						exams.isLock
+						exams.isLock,
+						exams.examId
 
 			FROM      	classes
 			JOIN		exams
@@ -402,6 +413,7 @@ exports.getClassExam = async (req, res, _) => {
 						exams.examId as exam_id,
 						exams.duration,
 						totalQuestions,
+						clickedOutside,
 						grade,
 						content,
 						isDone
@@ -449,21 +461,38 @@ exports.getClassExam = async (req, res, _) => {
 
 exports.getClassExamStudentResults = async (req, res, _) => {
 	try {
-		const { classId, examId } = req.params;
-		const foundedClass = await Classes.findByPk(classId);
-		if (!foundedClass) {
-			throwError(`Could not find class`, 404);
-		}
-		const [exam] = await foundedClass.getExams({ where: { id: examId } });
-		if (!exam) {
-			throwError(`Could not find exam`, 404);
-		}
+		const { examId } = req.params;
+		const exam = await Exam.findByPk(examId);
 		const studentresults = await exam.getAccounts({
-			attributes: ['id', 'firstName', 'lastName'], //tên các field cần lấy
-			through: { attributes: ['grade'] }, //tên các field cần lấy, through: gọi bản chi tiết
+			attributes: [
+				'id',
+				'account_id',
+				'dob',
+				[
+					sequelize.fn(
+						'CONCAT',
+						sequelize.col('lastName'),
+						' ',
+						sequelize.col('firstName')
+					),
+					'fullname',
+				],
+			],
+			order: [['firstName', 'ASC']],
+			through: {
+				where: {
+					isDone: true,
+				},
+			},
+			joinTableAttributes: ['grade', 'clickedOutside'],
+			// through: { attributes: ['grade', 'clickedOutside'] }, //tên các field cần lấy, through: gọi bản chi tiết
 		});
+		const results = {
+			students: studentresults,
+			examId: exam.examId,
+		};
 
-		successResponse(res, 200, studentresults);
+		successResponse(res, 200, results);
 	} catch (error) {
 		errorResponse(res, error);
 	}
@@ -1109,6 +1138,7 @@ exports.postClassStudentExam = async (req, res, _) => {
 		const studentresults = await Student_Result.findOne({
 			where: { accountId: req.account.id, examId },
 		});
+		const exam = await Exam.findByPk(examId);
 		const { content } = studentresults;
 		let grade = 0;
 		const newContent = await Promise.all(
@@ -1126,7 +1156,7 @@ exports.postClassStudentExam = async (req, res, _) => {
 				});
 				if (isIn !== -1) {
 					if (questionInBank.correctAns === questions[isIn].studentAns) {
-						grade += 1;
+						grade += 10 / exam.totalQuestions;
 					}
 
 					console.log(questionInBank.toJSON());
@@ -1148,6 +1178,211 @@ exports.postClassStudentExam = async (req, res, _) => {
 			isDone: true,
 		});
 		successResponse(res, 200, test, 'POST');
+	} catch (error) {
+		console.log(error);
+		errorResponse(res, error);
+	}
+};
+
+exports.postExamPDF = async (req, res, _) => {
+	try {
+		const font = {
+			Roboto: {
+				normal: path.join(__dirname, '..', 'fonts/Roboto-Regular.ttf'),
+				bold: path.join(__dirname, '..', 'fonts/Roboto-Medium.ttf'),
+				italics: path.join(__dirname, '..', 'fonts/Roboto-Italic.ttf'),
+				bolditalics: path.join(
+					__dirname,
+					'..',
+					'fonts/Roboto-MediumItalic.ttf'
+				),
+			},
+		};
+
+		const printer = new pdfmake(font);
+		const { examId } = req.params;
+		const { student, accountId } = req.body;
+
+		const [result] = await sequelize.query(
+			`
+			SELECT 	SEC_TO_TIME(exams.duration*60 - TIME_TO_SEC(studentresults.duration)) as duration,
+		classes.id as class_id,
+        lectures.name as lecture_name,
+        DATE_FORMAT(exams.timeStart, "%d/%m/%y %H:%i:%s") as timeStart,
+       	DATE_FORMAT(exams.timeEnd, "%d/%m/%y %H:%i:%s") as timeEnd,
+        easy,
+        hard,
+        content,
+		totalQuestions,
+		exams.examId as examId
+
+FROM	lectures
+JOIN	classes
+ON		classes.lectureId = lectures.id
+JOIN	exams
+ON		exams.classId = classes.id
+JOIN	studentresults	ON studentresults.examId = exams.id
+JOIN	accounts as teacher ON teacher.id = classes.accountId
+JOIN	accounts as student	ON student.id = studentresults.accountId
+WHERE
+	student.id = "${student}" AND exams.id = "${examId}" 
+			`,
+			{
+				type: QueryTypes.SELECT,
+			}
+		);
+
+		const { content: questions } = result;
+		console.log(result);
+
+		const content = JSON.parse(questions).map((question, index) => {
+			return [
+				{
+					text: [
+						{ text: `Câu ${index + 1}: ` },
+						{ text: `${question.description}` },
+					],
+					style: 'header',
+					margin: [0, 15],
+				},
+				{
+					type: 'none',
+					ul: [
+						{
+							text: `A. ${question.answerA}`,
+							color: question.correctAns === 'A' ? '#2f9e44' : '#1d1d1f',
+						},
+						{
+							text: `B. ${question.answerB}`,
+							color: question.correctAns === 'B' ? '#2f9e44' : '#1d1d1f',
+						},
+						{
+							text: `C. ${question.answerC}`,
+							color: question.correctAns === 'C' ? '#2f9e44' : '#1d1d1f',
+						},
+						{
+							text: `D. ${question.answerD}`,
+							color: question.correctAns === 'D' ? '#2f9e44' : '#1d1d1f',
+						},
+					],
+				},
+			];
+		});
+
+		const docDef = {
+			watermark: {
+				text: `Best of Test - BoT`,
+				color: '#161F80',
+				opacity: 0.2,
+				bold: true,
+			},
+			header: '',
+			footer: {
+				width: '100%',
+				background: '#161F80',
+
+				columns: [
+					{
+						width: '100%',
+						text: 'Tất cả bản quyền thuộc về Group5 ( Best of Test - BoT )',
+						lineHeight: 1.2,
+						color: '#f5f5f7',
+					},
+				],
+				margin: [0, 20, 0, 0],
+				stack: [
+					{
+						canvas: [
+							{
+								type: 'rect',
+								x: 0,
+								y: 0,
+								w: 595.28,
+								h: 50,
+								color: '#161F80',
+							},
+						],
+					},
+				],
+			},
+
+			content: [
+				{
+					columns: [
+						{
+							image: './logo-no-background.png',
+							fit: [100, 200],
+							alignment: 'right',
+							width: 'auto',
+						},
+						{
+							type: 'none',
+							ul: [
+								`Mã lớp: ${result.class_id}`,
+								`Môn: ${result.lecture_name}`,
+								`Tổng số câu hỏi :${result.totalQuestions}`,
+								`Thời gian bắt đầu: ${result.timeStart}`,
+								`Thời gian làm bài: ${result.duration}`,
+								`Độ khó: ${result.easy} Dễ / ${result.hard} Khó`,
+							],
+							lineHeight: 1.6,
+							margin: [-10, 0, 0, 0],
+							width: 'auto',
+						},
+						{
+							qr: `${process.env.FRONTEND || 'localhost'}:3000`,
+							fit: 70,
+							alignment: 'right',
+							width: 'auto',
+						},
+					],
+					columnGap: 20,
+				},
+
+				{
+					text: 'Đáp án',
+					fontSize: 14,
+					bold: true,
+					alignment: 'center',
+					margin: [0, 30, 50, 0],
+				},
+
+				content,
+			],
+			styles: {
+				header: {
+					bold: true,
+					fontSize: 12,
+				},
+			},
+			defaultStyle: {
+				color: '#1d1d1f',
+				fontSize: 12,
+			},
+			background: function (curPage, pageSize) {
+				return {
+					canvas: [
+						{
+							type: 'rect',
+							x: 0,
+							y: 0,
+							w: pageSize.width,
+							h: pageSize.height,
+							color: '#f5f5f7',
+						},
+					],
+				};
+			},
+		};
+
+		console.log();
+
+		const pdfDoc = printer.createPdfKitDocument(docDef);
+		pdfDoc.pipe(
+			fs.createWriteStream(`./pdf/${result.examId}-${accountId}.pdf`)
+		);
+		pdfDoc.end();
+		successResponse(res, 200, _, req.method);
 	} catch (error) {
 		console.log(error);
 		errorResponse(res, error);
@@ -1193,13 +1428,17 @@ exports.postClassToGetExcel = async (req, res, _) => {
 
 		const results = await Promise.all(
 			exams.map(async (exam) => {
-				const result = await exam.getStudentresults({});
+				const result = await exam.getStudentresults({
+					attributes: ['grade', 'accountId', 'examId'],
+					order: [['examId', 'DESC']],
+				});
+
 				// delete exam.toJSON().id;
-				console.log(result);
 				return result;
 			})
 		);
-		console.log(examCols);
+		results.forEach((x) => x.forEach((x) => console.log(x.toJSON())));
+		// console.log(results);
 
 		// Workbook setup
 		const workbook = new Excel.Workbook();
@@ -1323,7 +1562,7 @@ exports.postClassToGetExcel = async (req, res, _) => {
 		bheaderRowLeft.alignment = { horizontal: 'center' };
 
 		const examRow = examCols.map((exam) => {
-			return Object.values(exam.toJSON());
+			return Object.values(exam);
 		});
 		if (exams.length) {
 			worksheet.mergeCells('G6', `${alphabet[5 + exams.length]}6`);
@@ -1414,12 +1653,22 @@ exports.postClassToGetExcel = async (req, res, _) => {
 
 			const student_arr = Object.values(studentRefactor);
 			//convert to array
-			const resultCols = results.filter((x) => x.accountId === student.id);
+			const resultCols = results.map((result) => {
+				return result
+					.find((x) => {
+						console.log(x.toJSON());
+						return x.toJSON().accountId === student.id;
+					})
+					?.toJSON();
+			});
+
 			const grade_arr = resultCols.map((item) => {
-				if (item.grade === null) {
-					return 'Chưa làm';
+				if (item !== undefined) {
+					if (item.grade === null) {
+						return 'Chưa làm';
+					}
+					return item.grade;
 				}
-				return item.grade;
 			});
 			student_arr.shift();
 

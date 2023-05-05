@@ -1,6 +1,5 @@
 import './modal.css';
 import api from '../../../config/config.js';
-import socket from '../../../utils/socket';
 
 function SignInModal({ toggle1, toggle2 }) {
 	async function checkSignIn(event) {
@@ -8,8 +7,6 @@ function SignInModal({ toggle1, toggle2 }) {
 		let formData = new FormData();
 
 		let inputs = document.querySelectorAll('input[name]');
-
-		console.log(inputs);
 
 		inputs.forEach((input) => {
 			formData.append(input.name, input.value);
@@ -22,9 +19,9 @@ function SignInModal({ toggle1, toggle2 }) {
 
 			if (!resonse.ok) return alert('Loi roi ban oi!');
 			const data = await resonse.json();
-			socket.connect();
 
-			// socket.emit('login', { id: 123 });
+			// socket.connect();
+			// socket.emit('login');
 			localStorage.setItem('currentUser', data.token);
 			if (data.type === 'SV') {
 				window.location.href = './student';
@@ -32,6 +29,7 @@ function SignInModal({ toggle1, toggle2 }) {
 			if (data.type === 'GV') {
 				window.location.href = './teacher';
 			}
+			// socket.disconnected();
 		} catch (error) {
 			console.log(error);
 		}
