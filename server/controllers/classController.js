@@ -259,6 +259,10 @@ exports.getAllStudent = async (req, res, _) => {
 				{
 					model: Student_Result,
 					attributes: ['grade'],
+					include :[{
+						model: Exam,
+						where:{classId}
+					}]
 				},
 			],
 			order: ['firstName', 'account_id'],

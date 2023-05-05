@@ -63,59 +63,59 @@ exports.getLecturesUser = async (req, res, _) => {
 // 	}
 // };
 
-// exports.getLectureStudentResults = async (req, res) => {
-// 	try {
-// 		const { lectureId } = req.params;
-// 		const lecture = await Lecture.findByPk(lectureId);
-// 		if (!lecture) {
-// 			throwError('Could not find lecture', 404);
-// 		}
-// 		const grade = [
-// 			'grade_0',
-// 			'grade_1',
-// 			'grade_2',
-// 			'grade_3',
-// 			'grade_4',
-// 			'grade_5',
-// 			'grade_6',
-// 			'grade_7',
-// 			'grade_8',
-// 			'grade_9',
-// 			'grade_10',
-// 		];
-// 		const query = grade
-// 			.map((col, index) => {
-// 				return `
-// 			(SELECT 	COUNT(grade)
-// 				FROM 		classes
-// 				JOIN		exams
-// 				ON			exams.classId = classes.id
-// 				JOIN 		studentresults
-// 				ON 			studentresults.examId	= exams.id
-// 				WHERE 		classes.lectureId 			="${lectureId}"
-// 				AND			grade IS NOT NULL
-// 				AND			grade = "${index}")
+exports.getLectureStudentResults = async (req, res) => {
+	try {
+		const { lectureId } = req.params;
+		const lecture = await Lecture.findByPk(lectureId);
+		if (!lecture) {
+			throwError('Could not find lecture', 404);
+		}
+		const grade = [
+			'grade_0',
+			'grade_1',
+			'grade_2',
+			'grade_3',
+			'grade_4',
+			'grade_5',
+			'grade_6',
+			'grade_7',
+			'grade_8',
+			'grade_9',
+			'grade_10',
+		];
+		const query = grade
+			.map((col, index) => {
+				return `
+			(SELECT 	COUNT(grade)
+				FROM 		classes
+				JOIN		exams
+				ON			exams.classId = classes.id
+				JOIN 		studentresults
+				ON 			studentresults.examId	= exams.id
+				WHERE 		classes.lectureId 			="${lectureId}"
+				AND			grade IS NOT NULL
+				AND			grade = "${index}")
 
-// 			 as ${col}
-// 			`;
-// 			})
-// 			.join(',');
-// 		console.log(query);
-// 		console.log(1);
+			 as ${col}
+			`;
+			})
+			.join(',');
+		console.log(query);
+		console.log(1);
 
-// 		const [result] = await sequelize.query(
-// 			`
-// 				SELECT
-// 							${query}
+		const [result] = await sequelize.query(
+			`
+				SELECT
+							${query}
 
-// 			`,
-// 			{ type: sequelize.QueryTypes.SELECT }
-// 		);
-// 		successResponse(res, 200, result, req.method);
-// 	} catch (error) {
-// 		errorResponse(res, error);
-// 	}
-// };
+			`,
+			{ type: sequelize.QueryTypes.SELECT }
+		);
+		successResponse(res, 200, result, req.method);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
 
 
 exports.postLectureQuestion = async (req,res,_)=> {
