@@ -40,10 +40,10 @@ function DetailInformation(prop) {
     let lastName =''
     for (let index = 0; index < account.fullname.split(" ").length-1; index++) {
       if (index == account.fullname.split(" ").length-2) {
-        lastname+=account.fullname.split(" ")[index]
+        lastName+=account.fullname.split(" ")[index]
       }
       else{
-        lastname+=account.fullname.split(" ")[index] + " "
+        lastName+=account.fullname.split(" ")[index] + " "
       }
     }
     formData.append("account_id", account.account_id);

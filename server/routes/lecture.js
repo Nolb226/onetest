@@ -9,7 +9,7 @@ router.get('/user', isAuth, lectureController.getLecturesUser);
 
 router.get('/:lectureId/chapters', lectureController.getLectureChapters);
 
-// router.get('/:lectureId/dashboard', lectureController.getLectureStudentResults);
+router.get('/:lectureId/dashboard', lectureController.getLectureStudentResults);
 
 router.post(
 	'/:lectureId/chapters/:chapterId/questions',

@@ -3,6 +3,7 @@ const Functions = require("../models/function");
 const sequelize = require("../util/database");
 const { successResponse, errorResponse } = require("../util/helper");
 const Account = require("../models/account");
+const bycrypt = require('bcryptjs');
 
 exports.getUserAccount = async (req, res, _) => {
   try {
@@ -99,28 +100,20 @@ exports.patchPass = async (req, res, _) => {
 		  },
 		});
 		// console.log(accountFounded);
-		console.log(req.body);
-		const { account_id, dob, fullName } = req.body;
-		if (!accountFounded) {
-		  throwError("Account not found", 404);
+		const { oldPass, password } = req.body;
+    const isValid = bycrypt.compareSync(oldPass, accountFounded.password);
+    if (!accountFounded) {
+      throwError("Account not found", 404);
+    }
+		if (!isValid) {
+			throwError('Username or password is incorrect', 401);
 		}
 		// console.log(fullName);
-		let lastName = "";
-		for (let index = 0; index < fullName.split(" ").length - 1; index++) {
-		  if (index == fullName.split(" ").length - 2) {
-			lastName += fullName.split(" ")[index];
-		  } else {
-			lastName += fullName.split(" ")[index] + " ";
-		  }
-		}
 		await accountFounded.update({
-		  account_id,
-		  firstName:fullName.split(" ").at(-1),
-		  lastName,
-		  dob
+      password: await bycrypt.hash(password, 10)
 		});
 	
-		successResponse(res, 200,_, "PUT");
+		successResponse(res, 200,_, "PATCH");
 	  } catch (error) {
 		errorResponse(res, error);
 	  }

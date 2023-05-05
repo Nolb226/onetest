@@ -161,7 +161,7 @@ function ManageAccount() {
 										key={index}
 									>
 										<li className="flex-center column-text">
-											<h3>{index + 1}</h3>
+											<h3>{(10 * (page-1))+index+1}</h3>
 										</li>
 
 										<li className="flex-center column-text">
