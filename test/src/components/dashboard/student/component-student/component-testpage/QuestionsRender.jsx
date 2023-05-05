@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AnswerSelectItem from './AnswerSelectItem';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import QuestionItem from './QuestionItem';
 import api from '../../../../../config/config';
 import socket from '../../../../../util/socket';
@@ -20,7 +20,7 @@ function QuestionsRender({
 	setAnswer,
 }) {
 	// console.log(answer);
-
+	const navigator = useNavigate();
 	const handleAnswerQuestion = (question, value) => {
 		const list = [
 			...answer.filter((questioninlist) => {
@@ -47,7 +47,9 @@ function QuestionsRender({
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({ questions: answer, duration }),
-		}).catch((error) => console.log(error));
+		})
+			.then(() => navigator('../'))
+			.catch((error) => console.log(error));
 
 		// history.push('/class');
 	};

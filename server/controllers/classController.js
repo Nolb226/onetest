@@ -832,7 +832,7 @@ exports.postClassExam = async (req, res) => {
 						console.log(student);
 						return await student.addExam(exam, {
 							through: {
-								duration: `00:${duration}:00`,
+								duration: duration * 60,
 
 								content: newQuestions,
 							},
@@ -841,7 +841,7 @@ exports.postClassExam = async (req, res) => {
 				);
 				await student.addExam(exam, {
 					through: {
-						duration: `00:${duration}:00`,
+						duration: duration * 60,
 						content: newQuestions,
 					},
 				});
