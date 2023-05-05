@@ -7,8 +7,9 @@ const fs = require('fs');
 const path = require('path');
 const Excel = require('exceljs');
 const Classes = require('../models/class');
+const bycrypt = require('bcryptjs');
 
-const pdfmake = require('pdfmake');
+// const pdfmake = require('pdfmake');
 
 const classDetails = require('../models/classdetail');
 const Chapter = require('../models/chapter');
@@ -603,10 +604,10 @@ exports.postClass = async (req, res, _) => {
 		if (!errors.isEmpty()) {
 			throwError(errors.array(), 400);
 		}
-		const { user } = req;
+		const { account } = req;
 		const { id, name, password, year, semester, lectureId, accountpassword } =
 			req.body;
-		const newClass = await Class.create({
+		const newClass = await account.createClass({
 			name,
 			password,
 			semester,
@@ -614,7 +615,9 @@ exports.postClass = async (req, res, _) => {
 			lectureId,
 		});
 
-		await user.addClass(newClass);
+		// sequelize.query(`INSERT INTO classes VALUES ()`)
+
+		// await user.addClass(newClass);
 
 		if ((file = req.file)) {
 			const filePath = await file.path;
@@ -636,13 +639,13 @@ exports.postClass = async (req, res, _) => {
 					const month = cuttedDOB[1];
 					const day = cuttedDOB[0];
 					console.log(student['Mã lớp'].slice(0, 3));
-					await newClass.createClassStudent({
-						accountpassword,
-						id: student['MSSV'] || student['Mã sinh viên'],
+					await newClass.createAccount({
+						password: await bycrypt.hash(accountpassword,10) ,
+						account_id: student['MSSV'] || student['Mã sinh viên'],
 						dob: new Date(year, month, day),
-						fullname:
-							student['Họ tên'] || student['Họ lót'] + ' ' + student['Tên'],
-						majorId: student['chuyên ngành'] || student['Mã lớp'].slice(0, 3),
+						firstName: student['Tên'],
+						lastName: student['Họ lót'],
+						majorId: student['chuyên ngành'] || student['Chuyên ngành'] || student['Mã lớp'].slice(0, 3) ,
 					});
 				})
 			);
@@ -765,7 +768,6 @@ exports.postClassExam = async (req, res) => {
 				await student.addExam(exam, {
 					through: { content: newQuestions },
 				});
-				getIO().emit('create-exam', exam.id);
 				successResponse(res, 200, result);
 			} catch (error) {
 				console.log(error);

@@ -195,7 +195,7 @@
 }
 
 #detail-information {
-   display: none;
+   display: flex;
    position: fixed;
    height: 100vh;
    top: 0;

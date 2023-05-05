@@ -138,6 +138,7 @@ exports.getAllAccounts = async (req, res, _) => {
 			account_id,
 			CONCAT(lastName, ' ', firstName) as fullname,
 			email,
+      createdAt,
 			accounts.type,
 			isActive
 			FROM
@@ -146,7 +147,8 @@ exports.getAllAccounts = async (req, res, _) => {
 			LIMIT ${(page - 1) * perPage} ,${perPage};`,
 			{ type: sequelize.QueryTypes.SELECT }
 		);
-		successResponse(res, 200, accounts, req.method);
+		const totalAccount = await Account.count();
+		successResponse(res, 200, { accounts, totalAccount }, req.method);
 	} catch (error) {
 		errorResponse(res, error);
 	}
@@ -170,8 +172,8 @@ exports.getAccount = async (req, res, _) => {
 			accounts.isActive
 			FROM
 			accounts
-			JOIN departments ON accounts.departmentId = departments.id
-			JOIN majors ON majors.id = accounts.majorId
+      LEFT JOIN majors ON accounts.majorId = majors.id
+      LEFT JOIN departments ON accounts.departmentId = departments.id
 			WHERE		account_id = "${accountId}"`,
 			{ type: sequelize.QueryTypes.SELECT }
 		);
@@ -243,7 +245,6 @@ exports.putAcount = async (req, res, _) => {
 			majorId,
 			isActive,
 			type,
-			email,
 		} = req.body;
 		if (!accountFounded) {
 			throwError('Account not found', 404);
@@ -257,10 +258,37 @@ exports.putAcount = async (req, res, _) => {
 			majorId,
 			isActive,
 			type,
-			email,
 		});
 
 		successResponse(res, 201, accountFounded, 'PUT');
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
+
+exports.patchAccount = async (req, res, _) => {
+	try {
+		const { accountId } = req.params;
+		const accountFounded = await Account.findOne({
+			where: {
+				account_id: accountId,
+			},
+		});
+
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			throwError(errors.array(), 409);
+		}
+
+		const { isActive } = req.body;
+		if (!accountFounded) {
+			throwError('Account not found', 404);
+		}
+		await accountFounded.update({
+			isActive,
+		});
+
+		successResponse(res, 201, accountFounded, 'PATCH');
 	} catch (error) {
 		errorResponse(res, error);
 	}

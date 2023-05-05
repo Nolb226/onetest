@@ -1,26 +1,35 @@
 import { useState, useEffect } from 'react';
 import api from '../../.././config/config.js';
 import DetailInformation from './DetailInformation.jsx';
+import Paginator from '../teacher/Class/Paginator.jsx';
 
 function ManageAccount() {
 	const currentUser = localStorage.getItem('currentUser');
 	const [accountList, setAccountList] = useState([]);
 	const [isOpenModal, setIsOpenModal] = useState(false);
 	const [accountId, setAccountId] = useState('');
-
+	const [page, setPage] = useState(1);
+   	const [totalPage, setTotalPage] = useState(1);
+	
 	useEffect(() => {
 		const getAccountData = async () => {
-			const userreq = await fetch(`${api}/admin/accounts`, {
+			const userreq = await fetch(`${api}/admin/accounts?&page=${page}`, {
 				headers: {
 					Authorization: 'Bearer ' + currentUser,
 				},
 			});
 			const data = await userreq.json();
 			console.log(data);
-			setAccountList(data.data);
+			setAccountList(data.data.accounts);
+			setTotalPage(Math.ceil((data.data.totalAccount-1) / 10));
 		};
 		getAccountData();
-	}, []);
+	}, [page]);
+
+	const handlePageChange = (newPage) => {
+		setPage(newPage);
+		console.log(newPage);
+	 };
 
 	//   const handleLock = (classID, exam) => {
 	//     fetch(`${api}/classes/${classID}/exams/${exam.id}`, {
@@ -52,6 +61,34 @@ function ManageAccount() {
 		setIsOpenModal(!isOpenModal);
 	};
 
+	const updateIsActive = (id,newaccount) => {
+		// console.log(newaccount);
+		const currentUser = localStorage.getItem(`currentUser`);
+      fetch(`${api}/admin/accounts/${id}`, {
+         method: "PATCH",
+         body:JSON.stringify(newaccount),
+         headers: {
+            Authorization: "Bearer " + currentUser,
+            "Content-type": "application/json",
+         },
+      }).then((response) => response.json());
+      //   .then((json) => console.log(json.data));
+
+      updateAccounts(id,newaccount);
+	}
+
+	const updateAccounts = (id,newaccount) => {
+		// console.log(newaccount);
+		const list = accountList.map((account) => {
+			if (account.account_id === id) {
+			   return { ...account, ...newaccount };
+			}
+			return account;
+		 });
+   
+		 setAccountList(list);
+	}
+
 	return (
 		<>
 			<div className="flex-center search-bar">
@@ -65,7 +102,7 @@ function ManageAccount() {
                <span>Tạo bài thi</span>
             </button> */}
 			</div>
-			<div className="table-zone grid">
+			<div className="table-zone grid position-relative">
 				<header className="table__header">
 					<ul
 						className="table__content--heading"
@@ -121,6 +158,7 @@ function ManageAccount() {
 											display: 'grid',
 											gridTemplateColumns: '5% 15% 35% 10% 20% 10% 5%',
 										}}
+										key={index}
 									>
 										<li className="flex-center column-text">
 											<h3>{index + 1}</h3>
@@ -146,9 +184,11 @@ function ManageAccount() {
 										<li className="flex-center column-text position-relative">
 											<input
 												type="checkbox"
-												name=""
+												name="account.isActive"
 												id=""
 												checked={account.isActive}
+												onClick={()=>updateIsActive(account.account_id,{isActive:!account.isActive})}
+												style={{height: "20px",width: "20px",zIndex:"2"}}
 											/>
 											<span
 												class="checkmark"
@@ -181,9 +221,14 @@ function ManageAccount() {
 						)}
 					</div>
 				</div>
+				<Paginator
+                     handlePageChange={handlePageChange}
+                     page={page}
+                     totalPage={totalPage}
+                  />
 			</div>
 			{isOpenModal ? (
-				<DetailInformation accountId={accountId} handleModal={handleModal} />
+				<DetailInformation accountId={accountId} handleModal={handleModal} updateAccounts={updateAccounts} />
 			) : (
 				''
 			)}

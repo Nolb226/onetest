@@ -11,7 +11,6 @@ const {
 } = require('../util/helper');
 const { where } = require('sequelize');
 const Permission_Group = require('../models/permission_group');
-const { route } = require('../routes/auth');
 
 exports.signup = async (req, res, next) => {
 	try {

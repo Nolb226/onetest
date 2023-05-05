@@ -1,6 +1,8 @@
+const Chapter = require('../models/chapter');
 const Class = require('../models/class');
 const Exam = require('../models/exam');
 const Lecture = require('../models/lecture');
+const Question = require('../models/question');
 // const Student = require('../models/student');
 const Student_Result = require('../models/student_result');
 const sequelize = require('../util/database');
@@ -114,3 +116,43 @@ exports.getLecturesUser = async (req, res, _) => {
 // 		errorResponse(res, error);
 // 	}
 // };
+
+
+exports.postLectureQuestion = async (req,res,_)=> {
+	try {
+		const {lectureId,chapterId} = req.params;
+		const lecture = await Lecture.findByPk(lectureId);
+		const {quetions} = req.body;
+		const [chapter,created]= await Chapter.findOrCreate({
+			where:{
+				id:`${lectureId}-${chapterId}`
+			},
+			defaults: {
+				lectureId: lecture.id,
+				name: `Chương ${chapterId} ${lecture.name}`,
+				numberOfQuestions: 0,
+			},
+		})
+		await Promise.all(quetions.map(async(question)=> {
+			try {
+				const created =await chapter.createQuestion(question)
+				
+				return created;
+
+			} catch (error) {
+				throwError(`${error}`,400);
+			}
+		}))
+		
+		const total = await Question.count({
+			where: { chapterId: chapter.id },
+		});
+		await chapter.update({
+			numberOfQuestions: total,
+		});
+			
+		successResponse(res,200,_,req.method)
+	} catch (error) {
+		errorResponse(res,error)
+	}
+}

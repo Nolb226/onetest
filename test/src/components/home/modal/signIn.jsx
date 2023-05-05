@@ -21,7 +21,7 @@ function SignInModal({ toggle1, toggle2 }) {
 			const data = await resonse.json();
 
 			// socket.connect();
-			// socket.emit('login');
+
 			localStorage.setItem('currentUser', data.token);
 			if (data.type === 'SV') {
 				window.location.href = './student';
