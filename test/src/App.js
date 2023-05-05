@@ -42,8 +42,6 @@ function App() {
 
    // socket.connect();
 
-   const [Components, setComponents] = useState([]);
-
    // const Components = [
    // 	{
    // 		classes: ViewClass,
@@ -62,10 +60,6 @@ function App() {
    // 	},
    // ];
 
-   useEffect(() => {}, []);
-
-   const test = "classes";
-   console.log(Components);
    return (
       <div id="app" className="position-relative">
          <Routes></Routes>
@@ -163,9 +157,12 @@ function App() {
                            <Route index element={<Detail />} />
                         </Route>
                      </Route>
-
                      <Route path="exam/:examId" element={<Test />} />
                      <Route path="result/" element={<Result />} />
+                     <Route
+                        path="exams/:classId/:examId"
+                        element={<Result />}
+                     />
                      {<Route path="*" element={<Student />} />}
                   </Route>
                   <Route path="teacher" element={<Teacher />}>
@@ -184,7 +181,7 @@ function App() {
                         <Route path="" element={<ExamList />} />
                         <Route path="create" element={<ClassList />} />
                         <Route
-                           path="classId/detailExam"
+                           path=":examId/detailExam"
                            element={<ExamDetail />}
                         />
                      </Route>

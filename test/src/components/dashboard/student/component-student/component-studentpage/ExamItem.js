@@ -19,7 +19,7 @@ function ExamButton({ classId, exam, isDone, isLock }) {
 
       return (
          <>
-            <Link to={`../exam/${classId}/${exam}`}>
+            <Link to={`../../../exams/${classId}/${exam}`}>
                <button class="exam-done view-btn">Xem</button>
             </Link>
          </>

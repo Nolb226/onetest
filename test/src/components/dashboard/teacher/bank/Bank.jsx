@@ -53,6 +53,7 @@ const answer = {
 };
 
 function Question({ questionObject }) {
+   console.log(questionObject);
    useEffect(() => {
       const liElement = document.getElementById(`${questionObject.id}`);
       liElement.querySelectorAll("input[type=radio]").forEach((item) => {
@@ -69,6 +70,7 @@ function Question({ questionObject }) {
             padding: "5px 0",
             borderBottom: "solid 1px #d5d5d5",
          }}
+         key={questionObject.chapterId}
          // data-level={questionObject.level}
          // data-chapterId={questionObject.chapterId}
       >
@@ -216,7 +218,7 @@ function Bank() {
    const [examChapter, setExamChapter] = useState([]);
    const [examQuestions, setExamQuestions] = useState([]);
    const [chapters, setChapters] = useState([]);
-   const [type, setType] = useState(1);
+   const [lectureId, setLectureId] = useState("");
    const [questionArray, setQuestionArray] = useState([]);
    const [isLoading, setIsLoading] = useState(false);
    const [isLoadingData, setIsLoadingData] = useState(false);
@@ -226,38 +228,23 @@ function Bank() {
    const hardElement = document.getElementById("hard");
    const totalElement = document.getElementById("totalQuestions");
 
-   // console.log(examQuestions);
+   // window.onbeforeunload = preventFunc(e);
 
-   const increase = (level) => {
-      totalElement.value = parseInt(totalElement.value) + 1;
-
-      if (level == "0") easyElement.value = parseInt(easyElement.value) + 1;
-      else hardElement.value = parseInt(hardElement.value) + 1;
-   };
-
-   const decrease = (level) => {
-      totalElement.value = parseInt(totalElement.value) - 1;
-      if (level == "0") easyElement.value = parseInt(easyElement.value) - 1;
-      else hardElement.value = parseInt(hardElement.value) - 1;
-   };
-
-   function getQuestionList(e) {
-      console.log("form click");
-      const checkbox = e.target.closest("input[type='checkbox']");
-      if (!checkbox) return;
-      let question = {};
-      if (checkbox.checked === true) {
-         increase(checkbox.dataset.level);
-      } else if (checkbox.checked === false) {
-         decrease(checkbox.dataset.level);
-      }
-   }
+   window.addEventListener(
+      "beforeunload",
+      (e) => {
+         e.preventDefault();
+         window.confirm("warning");
+      },
+      false
+   );
 
    // ----- Fetch API to get Chapters from Subject -----
 
    const getExamChapter = async () => {
-      // setIsLoadingData(true);
-      await fetch(`${api}/classes/841109222-12/chapters`, {
+      setIsLoadingData(true);
+      setExamQuestions([]);
+      await fetch(`${api}/lectures/${lectureId}/chapters`, {
          headers: {
             Authorization: "Bearer " + currentUser,
          },
@@ -268,24 +255,18 @@ function Bank() {
             setIsLoadingData(false);
          });
    };
+
    useEffect(() => {
       getExamChapter();
-   }, []);
+   }, [lectureId]);
 
    // ----- Fetch API to get Questions from Chapters -----
 
-   const handleChapterGuide = (length) => {
-      if (length === 0)
-         document.querySelector(".chapter-guide").style.display = "flex";
-      else document.querySelector(".chapter-guide").style.display = "none";
-   };
-
    const getExamQuestions = async () => {
       setIsLoadingData(true);
+      console.log(chapters);
       await fetch(
-         `${api}/classes/841109222-12/chapters/questions?chapters=${chapters.join(
-            ","
-         )}`,
+         `${api}/classes/841109222-12/chapters/questions?chapters=${chapters}`,
          {
             headers: {
                Authorization: "Bearer " + currentUser,
@@ -294,6 +275,7 @@ function Bank() {
       )
          .then((data) => data.json())
          .then((data) => {
+            console.log(data.data);
             setExamQuestions(data.data);
             setIsLoadingData(false);
          });
@@ -301,34 +283,19 @@ function Bank() {
 
    useEffect(() => {
       getExamQuestions();
-      handleChapterGuide(chapters.length);
    }, [chapters]);
 
-   const handleRemoveChapter = (chapter) => {
-      setChapters(chapters.filter((item) => item !== chapter));
-   };
+   // ----- Handle when change question list -----
 
-   // ----- Handle when select type of created-method -----
-
-   const handleChapterMenu = (e) => {
-      console.log(e.target);
-      e.stopPropagation();
-      document.querySelector(".chapter-menu").classList.toggle("display-flex");
-      handleChapterGuide(chapters.length);
-   };
+   useEffect(() => {
+      console.log(examQuestions);
+   }, [examQuestions]);
 
    return (
       <>
          {Outlet || (
             <>
-               <div
-                  className="create-select-from-bank__layout"
-                  onClick={() => {
-                     document
-                        .querySelector(".chapter-menu")
-                        .classList.remove("display-flex");
-                  }}
-               >
+               <div className="create-select-from-bank__layout">
                   <div className="bank-menu">
                      <button
                         className="add-new-question"
@@ -374,7 +341,6 @@ function Bank() {
                                  }}
                               >
                                  <input
-                                    rules="require"
                                     className="form-control"
                                     type="text"
                                     name="examId"
@@ -389,6 +355,9 @@ function Bank() {
                                        borderRadius: "4px",
                                        border: "solid 2px #BFBFBF",
                                     }}
+                                    onChange={(e) =>
+                                       setLectureId(e.target.value)
+                                    }
                                  />
                                  <label
                                     htmlFor="examId"
@@ -396,7 +365,7 @@ function Bank() {
                                  ></label>
                               </div>
                            </li>
-
+                           {/* 
                            <li
                               className="flex-center form-group"
                               style={{
@@ -446,7 +415,7 @@ function Bank() {
                                     className="form-message"
                                  ></label>
                               </div>
-                           </li>
+                           </li> */}
 
                            <li
                               className="flex-center form-group"
@@ -463,7 +432,7 @@ function Bank() {
                                  style={label}
                                  className="form-label"
                               >
-                                 Ngành
+                                 Chương
                               </label>
                               <div
                                  style={{
@@ -473,14 +442,11 @@ function Bank() {
                                     justifyContent: "flex-start",
                                  }}
                               >
-                                 <input
-                                    rules="require"
+                                 <select
                                     className="form-control"
                                     type="text"
-                                    name="examId"
-                                    id="examId"
-                                    disabled="true"
-                                    placeholder="Công nghệ thông tin"
+                                    name="chapter"
+                                    id="chapter"
                                     style={{
                                        fontSize: "1.4rem",
                                        paddingLeft: "10px",
@@ -490,11 +456,28 @@ function Bank() {
                                        borderRadius: "4px",
                                        border: "solid 2px #BFBFBF",
                                     }}
-                                 />
-                                 <label
-                                    htmlFor="examId"
-                                    className="form-message"
-                                 ></label>
+                                    onChange={(e) => {
+                                       setChapters(
+                                          e.target.value.split(" ")[1]
+                                       );
+                                    }}
+                                 >
+                                    <option className="chapter flex-center">
+                                       <span>Chọn chương</span>
+                                    </option>
+                                    {examChapter?.map((chapter, index) => {
+                                       if (chapter.name !== "Chương chung") {
+                                          return (
+                                             <option
+                                                className="chapter flex-center"
+                                                key={index}
+                                             >
+                                                <span>Chương {index}</span>
+                                             </option>
+                                          );
+                                       }
+                                    })}
+                                 </select>
                               </div>
                            </li>
 
@@ -659,113 +642,15 @@ function Bank() {
                      </div>
 
                      <div className="question-list_container">
-                        <div
-                           className="flex-center"
-                           style={{
-                              position: "absolute",
-                              top: "0",
-                              zIndex: "98",
-                              width: "100%",
-                              padding: "0 10px",
-                              marginBottom: "0px",
-                              backgroundColor: "#fff",
-                           }}
-                           onClick={(e) => handleChapterMenu(e)}
-                        >
-                           <ul
-                              style={{
-                                 flex: 1,
-                                 display: "flex",
-                                 flexWrap: "nowrap",
-                                 overflowX: "scroll",
-                                 width: "100%",
-                                 height: "50px",
-                                 whiteSpace: "nowrap",
-                                 justifyContent: "flex-start",
-                              }}
-                              className="flex-center list__selected-chapter"
-                           >
-                              <li
-                                 className="flex-center chapter-guide"
-                                 style={{
-                                    fontSize: "1.6rem",
-                                    color: "#777",
-                                    paddingLeft: "20px",
-                                 }}
-                              >
-                                 Vui lòng chọn chương
-                              </li>
-                              {chapters.map((chapter) => (
-                                 <li
-                                    className=" flex-center chapter"
-                                    name="chapter"
-                                    id={chapter}
-                                    style={{
-                                       width: "90px",
-                                       color: "var(--primary-color)",
-                                       borderColor: "var(--primary-color)",
-                                    }}
-                                    onClick={(e) => {
-                                       e.stopPropagation();
-                                       handleRemoveChapter(chapter);
-                                    }}
-                                 >
-                                    <span>Chương {chapter}</span>
-                                 </li>
-                              ))}
-                           </ul>
-                           <div
-                              id="select-chapter"
-                              style={{
-                                 color: "##444444",
-                                 fontSize: "1.4rem",
-                                 fontWeight: "600",
-                                 width: "40px",
-                                 textAlign: "right",
-                              }}
-                           >
-                              <i className="fa-solid fa-chevron-down"></i>
-                           </div>
-                           <ul
-                              className="chapter-menu"
-                              onClick={(e) => e.stopPropagation()}
-                           >
-                              {examChapter.map((chapter, index) => {
-                                 if (chapter.name !== "Chương chung") {
-                                    return (
-                                       <li
-                                          className="chapter flex-center"
-                                          onClick={() => {
-                                             if (
-                                                chapters.find(
-                                                   (item) => item === index
-                                                ) === undefined
-                                             )
-                                                setChapters((prev) => [
-                                                   ...prev,
-                                                   index,
-                                                ]);
-                                          }}
-                                       >
-                                          <span>Chương {index}</span>
-                                       </li>
-                                    );
-                                 }
-                              })}
-                           </ul>
-                        </div>
-
                         <ul
                            className="flex-center flex-direction-col question-list position-relative"
                            style={{
-                              // flex: "1",
                               height: "100%",
                               overflowY: "scroll",
                               width: "100%",
-                              paddingTop: "45px",
+                              paddingTop: "5px",
                               justifyContent: "flex-start",
                            }}
-                           // onClick={getQuestionList}
                         >
                            {examQuestions.map((item) => (
                               <Question questionObject={item} />

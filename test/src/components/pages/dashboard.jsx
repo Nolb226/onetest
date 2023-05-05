@@ -210,7 +210,8 @@ function Dashboard() {
          });
    }, []);
 
-   const menuElement = document.querySelector("#left-menu");
+   const menuElement = document.getElementById("left-menu");
+   console.log(menuElement);
 
    const handleCloseSideMenu = () => {
       if (window.innerWidth < 740) {

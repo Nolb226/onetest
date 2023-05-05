@@ -309,7 +309,7 @@ a {
 
 .radio {
    padding-top: 4px;
-   width: 40px;
+   width: 40px !important;
    height: 30px;
 }
 
@@ -619,6 +619,11 @@ a {
    .joinclass-button {
       width: 110px !important;
       height: 30px !important;
+      font-size: 1.4rem;
+   }
+
+   .question-item-content,
+   .content-suggest {
       font-size: 1.4rem;
    }
 }
@@ -1390,6 +1395,10 @@ header .navigation {
       color: var(--white-color);
       font-size: 1.5rem;
       font-weight: 600;
+   }
+   .question-item-content,
+   .content-suggest {
+      font-size: 1.3rem;
    }
 }
 

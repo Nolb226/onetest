@@ -742,6 +742,7 @@ button:hover {
 
 @media (max-width: 1028px) {
    #form--create-exam,
+   #addNewQuestion,
    #bank {
       grid-template-columns: none !important;
    }

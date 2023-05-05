@@ -174,7 +174,7 @@ function AddNewQuestion({ classList }) {
             <form
                action=""
                method="POST"
-               id="form--create-exam"
+               id="addNewQuestion"
                name="formcreateexam"
                style={{
                   width: "100%",
@@ -195,7 +195,7 @@ function AddNewQuestion({ classList }) {
                            width: "160px",
                         }}
                      >
-                        Mã đề
+                        Mã môn
                      </label>
 
                      <input
@@ -204,7 +204,7 @@ function AddNewQuestion({ classList }) {
                         type="text"
                         name="examId"
                         id="examId"
-                        placeholder="Nhập mã đề"
+                        placeholder="Nhập mã môn học"
                         style={{
                            fontSize: "1.4rem",
                            paddingLeft: "10px",
@@ -233,16 +233,13 @@ function AddNewQuestion({ classList }) {
                            width: "160px",
                         }}
                      >
-                        Tên bài thi
+                        Chương
                      </label>
 
-                     <input
-                        rules="require"
+                     <select
+                        name="chapter"
+                        id="chapter"
                         className="form-control"
-                        type="text"
-                        name="name"
-                        id="name"
-                        placeholder="Nhập tên bài thi"
                         style={{
                            fontSize: "1.4rem",
                            paddingLeft: "10px",
@@ -252,121 +249,9 @@ function AddNewQuestion({ classList }) {
                            border: "solid 2px #BFBFBF",
                            width: "100%",
                         }}
-                     />
+                     ></select>
                      <label
                         htmlFor="name"
-                        className="form-message"
-                        style={{ height: "16px" }}
-                     ></label>
-                  </div>
-
-                  <div className="info-item form-group">
-                     <label
-                        className="form-label"
-                        htmlFor="timeStart"
-                        style={{
-                           color: "#222",
-                           fontSize: "1.3rem",
-                           fontWeight: "600",
-                           width: "160px",
-                        }}
-                     >
-                        Thời gian bắt đầu
-                     </label>
-
-                     <input
-                        rules="require"
-                        className="form-control"
-                        type="datetime-local"
-                        name="timeStart"
-                        id="timeStart"
-                        style={{
-                           fontSize: "1.4rem",
-                           paddingLeft: "10px",
-                           height: "30px",
-                           outline: "none",
-                           borderRadius: "5px",
-                           border: "solid 2px #BFBFBF",
-                           width: "100%",
-                        }}
-                     />
-                     <label
-                        htmlFor="timeStart"
-                        className="form-message"
-                        style={{ height: "16px" }}
-                     ></label>
-                  </div>
-
-                  <div className="info-item form-group">
-                     <label
-                        className="form-label"
-                        htmlFor="timeEnd"
-                        style={{
-                           color: "#222",
-                           fontSize: "1.3rem",
-                           fontWeight: "600",
-                           width: "160px",
-                        }}
-                     >
-                        Thời gian kết thúc
-                     </label>
-
-                     <input
-                        rules="require"
-                        className="form-control"
-                        type="datetime-local"
-                        name="timeEnd"
-                        id="timeEnd"
-                        style={{
-                           fontSize: "1.4rem",
-                           paddingLeft: "10px",
-                           height: "30px",
-                           outline: "none",
-                           borderRadius: "5px",
-                           border: "solid 2px #BFBFBF",
-                           width: "100%",
-                        }}
-                     />
-                     <label
-                        htmlFor="timeEnd"
-                        className="form-message"
-                        style={{ height: "16px" }}
-                     ></label>
-                  </div>
-
-                  <div className="info-item form-group">
-                     <label
-                        className="form-label"
-                        htmlFor="duration"
-                        style={{
-                           color: "#222",
-                           fontSize: "1.3rem",
-                           fontWeight: "600",
-                           width: "160px",
-                        }}
-                     >
-                        Thời gian làm bài
-                     </label>
-
-                     <input
-                        rules="require"
-                        className="form-control"
-                        type="text"
-                        name="duration"
-                        id="duration"
-                        placeholder="Nhập số phút"
-                        style={{
-                           fontSize: "1.4rem",
-                           paddingLeft: "10px",
-                           height: "30px",
-                           outline: "none",
-                           borderRadius: "5px",
-                           border: "solid 2px #BFBFBF",
-                           width: "100%",
-                        }}
-                     />
-                     <label
-                        htmlFor="duration"
                         className="form-message"
                         style={{ height: "16px" }}
                      ></label>

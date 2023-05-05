@@ -1,0 +1,13 @@
+.statistic-menu {
+   height: 30px;
+   margin-bottom: 3px;
+}
+
+.statistic-menu > button {
+   height: 100%;
+   width: 80px;
+   border: none;
+   margin: 0 2px;
+   background-color: #fff;
+   border-radius: 5px 5px 0 0;
+}
