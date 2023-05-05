@@ -652,6 +652,84 @@ button:hover {
    display: none;
 }
 
+#bank {
+   display: grid;
+   grid-template-columns: 40% 60%;
+   column-gap: 10px;
+   width: 100%;
+   height: 100%;
+   position: relative;
+}
+
+#bank .question-list_container {
+   width: 100%;
+   min-height: 50vh;
+   max-height: 85vh;
+   background-color: var(--white-color);
+   border-radius: 10px;
+   position: relative;
+   overflow: hidden;
+}
+
+#bank button {
+   width: 125px;
+   height: 35px;
+   margin-left: auto;
+   margin-right: auto;
+   background-color: var(--white-color);
+   color: var(--primary-color);
+   border: solid 2px var(--primary-color);
+   border-radius: 20px;
+   left: calc((450px - 25px - 125px) / 2);
+   text-transform: uppercase;
+   font-weight: 600;
+   font-size: 1.5rem;
+   letter-spacing: 1px;
+   box-shadow: rgba(0, 0, 0, 0.25) 0px 1px 4px;
+   transition: all 0.2s linear;
+}
+.bank-menu {
+   height: 35px;
+   margin-bottom: 5px;
+   display: flex;
+   align-items: center;
+   justify-content: flex-end;
+}
+
+.bank-menu button {
+   height: 100%;
+   border-radius: 15px;
+   margin: 0 2px;
+   background-color: #fff;
+   cursor: pointer;
+   transition: all 0.2s linear;
+}
+
+.bank-menu .remove-question {
+   width: 150px;
+   border: solid 2px #cc2424;
+   color: #cc2424;
+}
+
+.bank-menu .add-new-question {
+   width: 120px;
+   border: solid 2px var(--primary-color);
+   color: var(--primary-color);
+}
+
+.bank-menu .remove-question:hover {
+   border: solid 2px #cc2424;
+   background-color: #cc2424;
+
+   color: #fff;
+}
+
+.bank-menu .add-new-question:hover {
+   border: solid 2px var(--primary-color);
+   background-color: var(--primary-color);
+   color: #fff;
+}
+
 @media (max-width: 1220px) {
    .info-box__select-from-bank .form-group > .form-label {
       width: 130px !important;
@@ -663,7 +741,9 @@ button:hover {
 }
 
 @media (max-width: 1028px) {
-   #form--create-exam {
+   #form--create-exam,
+   #addNewQuestion,
+   #bank {
       grid-template-columns: none !important;
    }
 
@@ -751,7 +831,8 @@ button:hover {
       padding: 3px 0 0;
    }
 
-   #form--create-exam__selectFromBank {
+   #form--create-exam__selectFromBank,
+   #bank {
       grid-template-columns: none;
       grid-template-rows: auto auto;
       row-gap: 10px;

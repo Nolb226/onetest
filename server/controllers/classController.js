@@ -9,7 +9,7 @@ const Excel = require('exceljs');
 const Classes = require('../models/class');
 const bycrypt = require('bcryptjs');
 
-// const pdfmake = require('pdfmake');
+const pdfmake = require('pdfmake');
 
 const classDetails = require('../models/classdetail');
 const Chapter = require('../models/chapter');
@@ -141,7 +141,7 @@ exports.getManageClasses = async (req, res, _) => {
 		const page = req.query.page || 1;
 		const pageSize = 10;
 
-		const { account } = req 	;
+		const { account } = req;
 
 		const classes = await sequelize.query(
 			`
@@ -259,10 +259,12 @@ exports.getAllStudent = async (req, res, _) => {
 				{
 					model: Student_Result,
 					attributes: ['grade'],
-					include :[{
-						model: Exam,
-						where:{classId}
-					}]
+					include: [
+						{
+							model: Exam,
+							where: { classId },
+						},
+					],
 				},
 			],
 			order: ['firstName', 'account_id'],
@@ -295,7 +297,7 @@ exports.getAllStudent = async (req, res, _) => {
 		// 	// nest: true,
 		// 	offset: (page - 1) * perPage,
 		// 	limit: perPage,
-					
+
 		// 		});
 
 		// 		return result;
@@ -462,17 +464,18 @@ exports.getClassExam = async (req, res, _) => {
 		const { classId, examId } = req.params;
 		const { sort } = req.query;
 
-		const user = await Student.findOne({
+		const user = await Account.findOne({
 			where: {
-				accountId: req.account.id,
+				id: req.account.id,
 			},
 		});
+
+		console.log(user);
 
 		const [result] = await sequelize.query(
 			`
 				SELECT	lectures.name as lecture_name,
-						firstName,
-						lastName,
+				CONCAT(accounts.lastName," ",accounts.firstName) AS fullname,
 						exams.name as exam_name,
 						exams.examId as exam_id,
 						exams.duration,
@@ -734,10 +737,10 @@ exports.postClass = async (req, res, _) => {
 
 exports.postClassExam = async (req, res) => {
 	try {
-		const errors = validationResult(req.body);
-		if (!errors.isEmpty()) {
-			throwError(errors.array(), 409);
-		}
+		// const errors = validationResult(req.body);
+		// if (!errors.isEmpty()) {
+		//    throwError(errors.array(), 409);
+		// }
 		const { classId } = req.params;
 		const classroom = await Class.findByPk(classId);
 		const {
@@ -826,15 +829,23 @@ exports.postClassExam = async (req, res) => {
 				});
 				const result = await Promise.all(
 					students.map(async (student) => {
-						console.log('sd');
+						console.log(student);
 						return await student.addExam(exam, {
-							through: { content: newQuestions },
+							through: {
+								duration: `00:${duration}:00`,
+
+								content: newQuestions,
+							},
 						});
 					})
 				);
 				await student.addExam(exam, {
-					through: { content: newQuestions },
+					through: {
+						duration: `00:${duration}:00`,
+						content: newQuestions,
+					},
 				});
+				// getIO().emit("create-exam", exam.id);
 				successResponse(res, 200, result);
 			} catch (error) {
 				console.log(error);
