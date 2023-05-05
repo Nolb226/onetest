@@ -30,6 +30,7 @@ function App() {
 					<Route path="student" element={<Student />}>
 						{/* <Route path="./dashboard/student" element={<Navigate to="/viewclass" replace relative="path"/>}/> */}
 						{/* student/classes/ */}
+						<Route path="" element={<Navigate to="viewclass" replace relative="path"/>}/>
 						<Route path="viewclass" element={<ViewClass />} />
 						<Route path="studentpage/:classId" element={<StudentPage />} />
 						<Route path="joinclass" element={<JoinClass />} />

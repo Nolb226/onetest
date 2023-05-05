@@ -4,13 +4,15 @@ import SideMenu from "../dashboard/SideMenu";
 import Student from "../dashboard/student/component-student/Student";
 import Teacher from "../dashboard/teacher/Teacher";
 import "./dashboard.css";
-import { Outlet, useParams } from "react-router";
+import { Outlet, useNavigate, useParams } from "react-router";
 import logo from "../../image/logo-no-background.png";
+import React from "react";
 import { Link } from "react-router-dom";
 
 function Dashboard() {
   const [info, setInfo] = useState([]);
-  const { studentId, studentName, classId, examId } = useParams();
+  const { classId, examId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const currentUser = localStorage.getItem("currentUser");
@@ -66,11 +68,11 @@ function Dashboard() {
                   color: "#999",
                   fontSize: "1.4rem",
                   fontWeight: "500",
-                  whiteSpace: "nowrap"
+                  whiteSpace: "nowrap",
                 }}
+                onClick={() => navigate("./")}
               >
-               
-                <Link to="../../" relative="path">{"<<"} Quay lại</Link>.
+                {"<<"} Quay lại
               </div>
               <div className="code inf-children">
                 <p>Mã cá nhân: {info.id || ""}</p>
