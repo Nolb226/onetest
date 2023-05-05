@@ -3,6 +3,7 @@ import AnswerSelectItem from './AnswerSelectItem';
 import { Link } from 'react-router-dom';
 import QuestionItem from './QuestionItem';
 import api from '../../../../../config/config';
+import socket from '../../../../../util/socket';
 
 function QuestionsRender({
 	questions,
@@ -19,59 +20,6 @@ function QuestionsRender({
 	setAnswer,
 }) {
 	// console.log(answer);
-
-	useEffect(() => {
-		let timer = null;
-		// window.addEventListener('blur', handleBlur);
-		const startTimer = (duration) => {
-			const countDownDuration = () => {
-				// -
-				// Math.round((new Date().getTime() - startTime) / 1000);
-
-				if (time < 0) {
-					// clearInterval(timer);
-					setDuration({ hours: '00', minutes: '00', seconds: '00' });
-					return;
-				}
-				const hours = String(parseInt(time / 3600, 10)).padStart(2, '0');
-				const others = String(parseInt(time % 3600, 10)).padStart(2, '0');
-				const minutes = String(parseInt(others / 60, 10)).padStart(2, '0');
-				const seconds = String(parseInt(others % 60, 10)).padStart(2, '0');
-				setDuration((prev) => ({ ...prev, hours, minutes, seconds }));
-				time--;
-				console.log(duration);
-				console.log(time);
-			};
-			let time = parseInt(duration, 10);
-			timer = setInterval(countDownDuration, 1000);
-
-			// countDownDuration();
-		};
-		startTimer(apiDuration);
-		return () => {
-			clearInterval(timer);
-		};
-	}, [apiDuration]);
-
-	useEffect(() => {
-		const handleBeforeUnload1 = (e) => {
-			e.preventDefault();
-			e.returnValue = '';
-			setIsOpen(true);
-		};
-		const test = document.querySelector('.content-table.doing-test');
-
-		// test.addEventListener('beforeunload', handleBeforeUnload1);
-		test.addEventListener('unload', handleBeforeUnload1);
-		test.addEventListener('popstate', handleBeforeUnload1);
-		// test.addEventListener('load', handleBeforeUnload1, false);
-		return () => {
-			// test.removeEventListener('blur', handleOnBlur);
-			// test.removeEventListener('beforeunload', handleBeforeUnload1);
-			test.removeEventListener('unload', handleBeforeUnload1);
-			test.removeEventListener('popstate', handleBeforeUnload1);
-		};
-	}, []);
 
 	const handleAnswerQuestion = (question, value) => {
 		const list = [
