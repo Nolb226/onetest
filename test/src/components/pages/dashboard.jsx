@@ -61,6 +61,8 @@ const UserMenu = ({ info, setIsOpenProfile, setType }) => {
 
 const UserModel = ({ setIsOpenProfile, info, type, handleUpdate }) => {
   const [user, setUser] = useState({ ...info });
+  const [oldPass, setOldPass] = useState('')
+  const [password, setPassword] = useState('')
   const vietNamFomatter = new Intl.DateTimeFormat("vi-VN", {
     year: "numeric",
     month: "long",
@@ -74,13 +76,30 @@ const UserModel = ({ setIsOpenProfile, info, type, handleUpdate }) => {
   };
 
   const submit = (e) => {
-	if(!isPasswordForm){
-		e.preventDefault()
-		handleUpdate(user)
-	}else{
-		
-	}
-  }
+    e.preventDefault();
+    if (!isPasswordForm) {
+      handleUpdate(user);
+    } else {
+      const currentUser = localStorage.getItem("currentUser");
+    fetch(`${api}/accounts/${user.account_id}/pass/edit`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        oldPass,
+        password
+      }),
+      headers: {
+        Authorization: "Bearer " + currentUser,
+        "Content-type": "application/json",
+      },
+    }).then((response) => {
+      if (response.ok) {
+        alert("Cập nhật mat khau thành công");
+      } else {
+        alert("Cập nhật mat khau thất bại");
+      }
+    });
+    }
+  };
 
   return (
     <>
@@ -88,7 +107,11 @@ const UserModel = ({ setIsOpenProfile, info, type, handleUpdate }) => {
         className="flex-center overlay"
         // onClick={() => setIsOpenProfile(false)}
       >
-        <form id="profile-form" className="user-form " onSubmit={(e) => submit(e)}>
+        <form
+          id="profile-form"
+          className="user-form "
+          onSubmit={(e) => submit(e)}
+        >
           <header className="user-form__header">
             <div className="header__icon-box">
               <i class="fa-regular fa-user"></i>
@@ -109,7 +132,7 @@ const UserModel = ({ setIsOpenProfile, info, type, handleUpdate }) => {
               {!isPasswordForm ? (
                 <button className="btn btn-edit-profile">
                   {/* <i class="fa-regular fa-pen-to-square"></i> */}
-				  <h1>Lưu</h1>
+                  <h1>Lưu</h1>
                 </button>
               ) : (
                 <div className="green-dot" title="Online"></div>
@@ -152,11 +175,11 @@ const UserModel = ({ setIsOpenProfile, info, type, handleUpdate }) => {
               <>
                 <label className="body__row">
                   <span className="row-text">Mật khẩu cũ :</span>
-                  <input type="password" />
+                  <input type="password" onChange={(e) => setOldPass(e.target.value)}/>
                 </label>
                 <label className="body__row">
                   <span className="row-text">Mật khẩu mới :</span>
-                  <input type="password" />
+                  <input type="password" onChange={(e) => setPassword(e.target.value)} />
                 </label>
               </>
             )}
@@ -240,27 +263,23 @@ function Dashboard() {
   }, []);
 
   const handleUpdate = (newInfo) => {
-	console.log(newInfo);
+    console.log(newInfo);
     const currentUser = localStorage.getItem("currentUser");
     fetch(`${api}/accounts/${info.account_id}/edit`, {
       method: "PUT",
       body: JSON.stringify(newInfo),
       headers: {
         Authorization: "Bearer " + currentUser,
-		"Content-type": "application/json",
+        "Content-type": "application/json",
       },
-    })
-      .then((response) =>{ if (response.ok) {
-		alert("Cập nhật thông tin thành công")
-		setInfo(newInfo)
-	}else{
-		alert("Cập nhật thông tin thất bại")
-	}
-
-	  return response.json()})
-
-	
-	
+    }).then((response) => {
+      if (response.ok) {
+        alert("Cập nhật thông tin thành công");
+        setInfo(newInfo);
+      } else {
+        alert("Cập nhật thông tin thất bại");
+      }
+    });
   };
   //   console.log(info);
   return (
@@ -352,7 +371,7 @@ function Dashboard() {
                 info={info}
                 type={type}
                 setIsOpenProfile={setIsOpenProfile}
-				handleUpdate={handleUpdate}
+                handleUpdate={handleUpdate}
               />
             )}
             <Outlet />

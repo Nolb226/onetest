@@ -108,32 +108,67 @@ exports.getClasses = async (req, res, _) => {
 
 exports.getManageClasses = async (req, res, _) => {
 	try {
-		const { account } = req;
-		const classrooms = await sequelize.query(
+		const search = req.query.search;
+		if (search && search !== '') {
+			const page = req.query.page || 1;
+			const pageSize = 10;
+			// console.log(req.query.search);
+			const classrooms = await req.account.getClasses({
+				where: {
+					[Op.or]: [
+						{
+							id: {
+								[Op.like]: search + '%',
+							},
+						},
+						{
+							name: {
+								[Op.like]: search + ' %',
+							},
+						},
+					],
+				},
+				include: [
+					{ model: Account, attributes: ['id', 'firstName', 'lastName'] },
+					{ model: Lecture, attributes: ['id', 'name'] },
+				],
+				attributes: ['id', 'name', 'isLock'],
+				offset: pageSize * (page - 1),
+				limit: pageSize,
+			});
+			successResponse(res, 200, classrooms);
+		}
+		const page = req.query.page || 1;
+		const pageSize = 10;
+
+		const { account } = req 	;
+
+		const classes = await sequelize.query(
 			`
 			SELECT	classes.id,
 					classes.name,
+					classes.isLock,
 					totalStudent,
-					isLock,
-					lectures.id 		as lecture_id,
-					lectures.name 		as lecture_name
+					lectures.id 									AS lecture_id,
+					lectures.name 									AS lecture_name
+
 			FROM	classes
-			JOIN	lectures
-			ON		lectures.id 		= classes.lectureId
-			WHERE	classes.accountId 	= "${account.id}"
-			`,
+			JOIN 	lectures ON lectures.id 						= classes.lectureId
+			WHERE	classes.accountId			 						= "${account.id}"
+			LIMIT ${(page - 1) * pageSize} ,${pageSize}`,
 			{
 				type: QueryTypes.SELECT,
 			}
 		);
+		// const teacher = await Account.findByPk(class {});
 		const result = {
-			data: classrooms,
-			total: classrooms.length,
+			data: classes,
+			total: classes.length,
 		};
 		successResponse(res, 200, result);
 	} catch (error) {
 		console.log(error);
-		errorResponse(res, error);
+		errorResponse(res, error, [{}]);
 	}
 };
 
@@ -239,11 +274,35 @@ exports.getAllStudent = async (req, res, _) => {
 		const exam_name = await classroom.getExams({
 			attributes: ['id', 'examId', 'name'],
 		});
+		// const students = await Promise.all(
+		// 	exam_name.map(async (exam) => {
+		// 		const result = await exam.getAccounts({
+		// 		attributes: ['account_id', 'id', 'firstName', 'lastName'],
+		// 		include: [
+		// 		{
+		// 			model: Student_Result,
+		// 			attributes: ['grade'],
+		// 		},
+		// 	],
+		// 	order: ['account_id'],
+
+		// 	joinTableAttributes: [],
+		// 	// raw: true,
+		// 	// nest: true,
+		// 	offset: (page - 1) * perPage,
+		// 	limit: perPage,
+					
+		// 		});
+
+		// 		return result;
+		// 	})
+		// );
+		console.log(students);
 		const results = await Promise.all(
 			exam_name.map(async (exam) => {
 				const result = await exam.getStudentresults({});
 				// delete exam.toJSON().id;
-				console.log(result);
+				// console.log(result);
 				return result;
 			})
 		);

@@ -73,15 +73,7 @@ exports.login = async (req, res, next) => {
 		const token = jwt.sign({ id: account.id }, 'group5', {
 			expiresIn: '3d',
 		});
-		getIO().on('connection', (socket) => {
-			socket.on('login', async () => {
-				const classrooms = await account.getClasses();
-				classrooms.forEach((classroom) => {
-					socket.join(`${classroom.id}`);
-					console.log(`join ${classroom.id}`);
-				});
-			});
-		});
+		
 		res.status(200).json({ token, type: account.type });
 		// res.status(200).json(token);
 	} catch (error) {
