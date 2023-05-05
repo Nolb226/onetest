@@ -12,6 +12,7 @@ import QuestionItem from './QuestionItem';
 import Info from '../Info';
 import api from '../../../../../config/config';
 import QuestionsRender from './QuestionsRender';
+import socket from '../../../../../util/socket';
 // import socket from '../../../../../utils/socket';
 
 function Test() {
@@ -35,6 +36,14 @@ function Test() {
 	// const []
 
 	useEffect(() => {
+		const handleBeforeUnload1 = (e) => {
+			console.log('|||||||||||||||||||||||||||');
+			// socket.on('exam:start', () => {
+			socket.emit('exam:leave');
+			// });
+			// e.returnValue = '';
+		};
+
 		const currentUser = localStorage.getItem('currentUser');
 
 		fetch(`${api}/classes/${state?.classId}/exams/${examId}/details`, {
@@ -49,8 +58,23 @@ function Test() {
 					...submitted,
 					status: questionsAPI.data.isDone,
 				});
+
+				socket.emit(
+					'exam:start',
+					{
+						id: questionsAPI.data.id,
+						// examId: questionsAPI.data.examId,
+					},
+
+					setDuration
+				);
+
+				window.addEventListener('beforeunload', handleBeforeUnload1);
+				window.addEventListener('unload', handleBeforeUnload1);
+				window.addEventListener('popstate', handleBeforeUnload1);
+				window.addEventListener('load', handleBeforeUnload1);
 				// clearInterval(intervalId);
-				setApiDuration(questionsAPI.data.duration);
+				// setDuration(questionsAPI.data.duration);
 				// startTimer(questionsAPI.data.duration);
 			})
 
@@ -58,10 +82,28 @@ function Test() {
 			.catch((error) => {
 				console.log(error);
 			});
+
+		socket.on('test', (data) => {
+			setDuration(data);
+		});
+
+		return () => {
+			socket.off('test');
+			// window.removeEventListener('blur', handleOnBlur);
+			window.removeEventListener('beforeunload', handleBeforeUnload1);
+			window.removeEventListener('unload', handleBeforeUnload1);
+			window.removeEventListener('load', handleBeforeUnload1);
+			window.removeEventListener('popstate', handleBeforeUnload1);
+		};
+
 		return () => {
 			// clearInterval(a);
 			// window.removxeEventListener('blur', handleBlur);
 		};
+	}, []);
+
+	useEffect(() => {
+		// const test = document.querySelector('.content-table.doing-test');
 	}, []);
 
 	// const handleBeforeUnload = (e) => {
@@ -74,27 +116,27 @@ function Test() {
 	// 	//
 	// };
 
-	useEffect(() => {
-		const handleOnBlur = (e) => {
-			setClickedOutside((prev) => prev + 1);
-		};
+	// useEffect(() => {
+	// 	const handleOnBlur = (e) => {
+	// 		setClickedOutside((prev) => prev + 1);
+	// 	};
 
-		const handleBeforeUnload = (e) => {
-			e.preventDefault();
-			e.returnValue = '';
-			setIsOpen(true);
-			return '';
-		};
+	// 	const handleBeforeUnload = (e) => {
+	// 		e.preventDefault();
+	// 		e.returnValue = '';
+	// 		setIsOpen(true);
+	// 		return '';
+	// 	};
 
-		window.addEventListener('blur', handleOnBlur);
-		window.addEventListener('beforeunload', handleBeforeUnload);
-		window.addEventListener('popstate', handleBeforeUnload);
-		return () => {
-			window.removeEventListener('blur', handleOnBlur);
-			window.removeEventListener('beforeunload', handleBeforeUnload);
-			window.removeEventListener('popstate', handleBeforeUnload);
-		};
-	}, []);
+	// 	window.addEventListener('blur', handleOnBlur);
+	// 	window.addEventListener('beforeunload', handleBeforeUnload);
+	// 	window.addEventListener('popstate', handleBeforeUnload);
+	// 	return () => {
+	// 		window.removeEventListener('blur', handleOnBlur);
+	// 		window.removeEventListener('beforeunload', handleBeforeUnload);
+	// 		window.removeEventListener('popstate', handleBeforeUnload);
+	// 	};
+	// }, []);
 	console.log(clickedOutside);
 	const handleSubmit = () => {
 		setSubmitted({
