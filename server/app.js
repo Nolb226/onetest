@@ -12,7 +12,7 @@ const { v4: uuidv4 } = require('uuid');
 //Utils
 const sequelize = require('./util/database');
 const app = express();
-const http = require('http').createServer(app);
+// const http = require('http').createServer(app);
 
 require('dotenv').config();
 
@@ -227,14 +227,8 @@ sequelize
 	.sync()
 
 	.then(() => {
-		const io = require('./util/socket').init(http);
-
-		http.listen(port, '0.0.0.0', function () {
-			console.log(
-				'Express server listening on port %d in %s mode',
-				this.address().port,
-				app.settings.env
-			);
-		});
+		app.listen(port, '0.0.0.0', () =>
+			console.log('> Server is up and running on port : ' + port)
+		);
 	})
 	.catch((err) => console.log('Fail to connect to the database ' + err));

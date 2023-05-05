@@ -11,7 +11,11 @@ function ConfirmModel({ setIsOpen, isOpen, result, handleSubmit }) {
 	};
 
 	return (
-		<div className="modal flex-center" onClick={() => setIsOpen(!isOpen)}>
+		<div
+			className="modal flex-center"
+			style={{ zIndex: '9999' }}
+			onClick={() => setIsOpen(!isOpen)}
+		>
 			<div className="main-form" onClick={(e) => e.stopPropagation()}>
 				<div className="header-form">
 					<div

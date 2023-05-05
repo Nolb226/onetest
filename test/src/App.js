@@ -30,7 +30,6 @@ import Admin from './components/dashboard/admin/Admin';
 import ManageAccount from './components/dashboard/admin/ManageAccount';
 import Permission from './components/dashboard/admin/Permission';
 import ExamDetail from './components/dashboard/teacher/exam/ExamDetail';
-import socket from './utils/socket';
 import { useEffect, useState } from 'react';
 import Bank from './components/dashboard/teacher/bank/Bank';
 
@@ -40,6 +39,8 @@ function App() {
 	{
 		/* <Route path="*" element={<Home />}></Route> */
 	}
+
+	// socket.connect();
 
 	const [Components, setComponents] = useState([]);
 

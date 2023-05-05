@@ -12,12 +12,13 @@ import QuestionItem from './QuestionItem';
 import Info from '../Info';
 import api from '../../../../../config/config';
 import QuestionsRender from './QuestionsRender';
-import socket from '../../../../../utils/socket';
+// import socket from '../../../../../utils/socket';
 
 function Test() {
 	const [questions, setQuestions] = useState([]); //Chứa mảng câu hỏi
 	const [isOpen, setIsOpen] = useState(false); //Bật tắt modal confirm
 	const [answer, setAnswer] = useState([]);
+	const [clickedOutside, setClickedOutside] = useState(0);
 	const [intervalId, setIntervalId] = useState(null);
 	const navigator = useNavigate();
 	const [submitted, setSubmitted] = useState({
@@ -36,7 +37,6 @@ function Test() {
 
 	const startTimer = (duration) => {
 		const countDownDuration = () => {
-			const time = parseInt(duration, 10);
 			// -
 			// Math.round((new Date().getTime() - startTime) / 1000);
 
@@ -45,47 +45,24 @@ function Test() {
 				setDuration({ hours: '00', minutes: '00', seconds: '00' });
 				return;
 			}
-
+			console.log(time);
 			const hours = String(parseInt(time / 3600, 10)).padStart(2, '0');
 			const others = String(parseInt(time % 3600, 10)).padStart(2, '0');
 			const minutes = String(parseInt(others / 60, 10)).padStart(2, '0');
 			const seconds = String(parseInt(others % 60, 10)).padStart(2, '0');
 			setDuration((prev) => ({ ...prev, hours, minutes, seconds }));
+			time--;
 		};
+		let time = parseInt(duration, 10);
 
-		if (!timer) {
-			countDownDuration();
-			timer = setInterval(countDownDuration, 1000);
-		}
+		countDownDuration();
+		setIntervalId(setInterval(countDownDuration, 1000));
 
 		return timer;
 	};
 
 	useEffect(() => {
-		const handlePopState = () => {
-			console.log(duration);
-			const test = {
-				...duration,
-			};
-			socket.emit('exam:end', test);
-		};
-
-		const handleBlur = () => {
-			if (!document.hasFocus()) {
-				socket.emit('exam:click');
-			}
-		};
-
-		const handleBeforeUnload = () => {
-			console.log(duration);
-
-			const test = {
-				...duration,
-			};
-			socket.emit('exam:end', test);
-		};
-
-		window.addEventListener('blur', handleBlur);
+		// window.addEventListener('blur', handleBlur);
 
 		const currentUser = localStorage.getItem('currentUser');
 
@@ -101,51 +78,50 @@ function Test() {
 					...submitted,
 					status: questionsAPI.data.isDone,
 				});
-				socket.emit('exam:start', {
-					id: questionsAPI.data.id,
-					timeEnd: questionsAPI.data.timeEnd,
-				});
-				clearInterval(timer);
+				clearInterval(intervalId);
+
 				startTimer(questionsAPI.data.duration);
 			})
 
-			.then(() => {
-				window.addEventListener('popstate', handlePopState);
-				window.addEventListener('beforeunload', handleBeforeUnload);
-			})
+			.then(() => {})
 			.catch((error) => {
 				console.log(error);
 			});
 
-		socket.on('exam:clear', () => {
-			clearInterval(timer);
-		});
-		console.log(timer);
-
 		return () => {
-			// console.log(`Before ${test}`);
-			clearInterval(timer);
-			// console.log(clearInterval(test));
-			console.log(`After ${timer}`);
-			window.removeEventListener('popstate', handlePopState);
-			window.removeEventListener('beforeunload', handleBeforeUnload);
-			window.removeEventListener('blur', handleBlur);
+			clearInterval(intervalId);
+
+			// window.removxeEventListener('blur', handleBlur);
 		};
 	}, []);
 
-	useEffect(() => {}, []);
+	const handleBeforeUnload = (e) => {
+		e.preventDefault();
+		setIsOpen(true);
+		console.log(1);
+		clearInterval(intervalId);
+		e.returnValue = '';
+		return '';
+		//
+	};
 
-	socket.on('test', (response) => {
-		setDuration(response);
-	});
-	socket.on('exam:expired', (response) => {
-		navigator('../');
-	});
+	useEffect(() => {
+		const handleOnBlur = (e) => {
+			setClickedOutside((prev) => prev + 1);
+		};
 
-	if (!state?.classId || submitted.status) {
-		navigator(`./result`);
-	}
-
+		window.addEventListener('blur', handleOnBlur);
+		window.addEventListener('beforeunload', handleBeforeUnload);
+		window.addEventListener('unload', handleBeforeUnload);
+		window.addEventListener('popstate', handleBeforeUnload);
+		return () => {
+			window.removeEventListener('blur', handleOnBlur);
+			window.removeEventListener('beforeunload', handleBeforeUnload);
+			window.removeEventListener('unload', handleBeforeUnload);
+			window.removeEventListener('popstate', handleBeforeUnload);
+		};
+	}, []);
+	console.log(clickedOutside);
 	const handleSubmit = () => {
 		setSubmitted({
 			text: 'Xem điểm',
