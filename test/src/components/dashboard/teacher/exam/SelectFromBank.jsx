@@ -23,7 +23,7 @@ const label = {
 
 const question = {
    width: "690px",
-   height: "40px",
+   minHeight: "40px",
    border: "none",
    flex: "1",
    background: "#F0F0F0",
@@ -42,7 +42,7 @@ const question = {
 const answer = {
    flex: "1",
    height: "32px",
-   lineHeight: "1.5rem",
+   lineHeight: "3.2rem",
    border: "none",
    background: "#fff",
    padding: "0 10px",
@@ -50,8 +50,12 @@ const answer = {
    outline: "none",
    color: "#444",
    marginLeft: "15px",
-   display: "flex",
+   display: "inline-block",
    alignItems: "center",
+   textOverflow: "ellipsis",
+   whiteSpace: "nowrap",
+   overflow: "hidden",
+   cursor: "default",
 };
 
 function Question({ questionObject }) {
@@ -118,7 +122,9 @@ function Question({ questionObject }) {
                         height: "15px",
                      }}
                   />
-                  <p style={answer}>{questionObject.answerA}</p>
+                  <p style={answer} title={questionObject.answerA}>
+                     {questionObject.answerA}
+                  </p>
                </div>
                <div
                   className="flex-center"
@@ -136,7 +142,9 @@ function Question({ questionObject }) {
                         height: "15px",
                      }}
                   />
-                  <p style={answer}>{questionObject.answerB}</p>
+                  <p style={answer} title={questionObject.answerB}>
+                     {questionObject.answerB}
+                  </p>
                </div>
                <div
                   className="flex-center"
@@ -154,7 +162,9 @@ function Question({ questionObject }) {
                         height: "15px",
                      }}
                   />
-                  <p style={answer}>{questionObject.answerC}</p>
+                  <p style={answer} title={questionObject.answerC}>
+                     {questionObject.answerC}
+                  </p>
                </div>
                <div
                   className="flex-center"
@@ -172,7 +182,9 @@ function Question({ questionObject }) {
                         height: "15px",
                      }}
                   />
-                  <p style={answer}>{questionObject.answerD}</p>
+                  <p style={answer} title={questionObject.answerD}>
+                     {questionObject.answerD}
+                  </p>
                </div>
             </div>
          </div>
@@ -325,6 +337,7 @@ function validator(formSelector, setIsLoading, classId) {
                const totalQuestions =
                   parseInt(formElement.querySelector("#easy").value) +
                   parseInt(formElement.querySelector("#hard").value);
+
                // Get data from exam information
                inputs.forEach((input) => {
                   formData.append(input.name, input.value);
