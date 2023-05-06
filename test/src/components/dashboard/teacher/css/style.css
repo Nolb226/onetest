@@ -162,7 +162,7 @@ button:hover {
 .create-handicraft .question-box {
    display: grid;
    grid-template-columns: 85% 15%;
-   height: 280px;
+   height: 290px;
    width: 100%;
    margin-top: 15px;
 }
@@ -518,7 +518,7 @@ button:hover {
    box-sizing: border-box;
 }
 
-#form--create-exam__selectFromBank {
+#selectFromBank {
    display: grid;
    grid-template-columns: 30% 70%;
 }
@@ -531,7 +531,7 @@ button:hover {
    background-color: var(--white-color);
 }
 
-#form--create-exam__selectFromBank button {
+#selectFromBank button {
    width: 125px;
    height: 35px;
    margin-left: auto;
@@ -549,7 +549,7 @@ button:hover {
    transition: all 0.2s linear;
 }
 
-#form--create-exam__selectFromBank button:hover {
+#selectFromBank button:hover {
    cursor: pointer;
    color: var(--white-color) !important;
    background-color: var(--primary-color) !important;
@@ -629,7 +629,7 @@ button:hover {
    display: none;
 }
 
-#form--create-exam__selectFromBank {
+#selectFromBank {
    display: grid;
    grid-template-columns: 40% 60%;
    column-gap: 10px;
@@ -638,7 +638,7 @@ button:hover {
    position: relative;
 }
 
-#form--create-exam__selectFromBank .question-list_container {
+#selectFromBank .question-list_container {
    width: 100%;
    min-height: 50vh;
    max-height: 85vh;
@@ -741,7 +741,7 @@ button:hover {
 }
 
 @media (max-width: 1028px) {
-   #form--create-exam,
+   #handicraft,
    #addNewQuestion,
    #bank {
       grid-template-columns: none !important;
@@ -831,7 +831,7 @@ button:hover {
       padding: 3px 0 0;
    }
 
-   #form--create-exam__selectFromBank,
+   #selectFromBank,
    #bank {
       grid-template-columns: none;
       grid-template-rows: auto auto;

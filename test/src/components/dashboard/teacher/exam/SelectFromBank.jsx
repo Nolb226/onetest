@@ -198,7 +198,161 @@ function clearErrorMessage(selector) {
    parentElement.classList.remove("invalid");
 }
 
+function validator(formSelector) {
+   let formElement = document.querySelector(formSelector);
+
+   let formRules = {};
+
+   const getParentElement = (childElement, parentSelector) => {
+      while (childElement.parentElement) {
+         if (childElement.parentElement.matches(parentSelector)) {
+            return childElement.parentElement;
+         }
+         childElement = childElement.parentElement;
+      }
+   };
+
+   var validatorRules = {
+      require: (value) => {
+         return value ? undefined : "Vui lòng nhập thông tin";
+      },
+   };
+
+   if (formElement) {
+      var inputs = formElement.querySelectorAll("[name][rules]");
+
+      const clearErrorMessage = (event) => {
+         let parentElement = getParentElement(event.target, ".form-group");
+         parentElement.classList.remove("invalid");
+         parentElement.querySelector(".form-message").innerText = "";
+      };
+
+      // Lắng nghe sự kiện trên từng thẻ input
+      const handelValidate = (event) => {
+         var rules = formRules[event.target.name];
+         var errorMessage;
+
+         rules.find(function (rule) {
+            errorMessage = rule(event.target.value);
+            return errorMessage;
+         });
+
+         let parentElement = getParentElement(event.target, ".form-group");
+
+         if (errorMessage) {
+            parentElement.classList.add("invalid");
+            parentElement.querySelector(
+               ".form-message"
+            ).innerText = `* ${errorMessage}`;
+         }
+
+         return !errorMessage;
+      };
+
+      // Lặp và gán function validator cho từng thẻ input
+      inputs.forEach((input) => {
+         var rules = input.getAttribute("rules").split("|");
+
+         rules.forEach((rule) => {
+            var ruleFunction;
+            ruleFunction = validatorRules[rule];
+
+            if (Array.isArray(formRules[input.name]))
+               formRules[input.name].push(ruleFunction);
+            else formRules[input.name] = [ruleFunction];
+         });
+
+         input.onblur = handelValidate;
+         input.oninput = clearErrorMessage;
+      });
+
+      // Create handicraft exam
+
+      // Create select from bank exam
+      if (formSelector === "#selectFromBank") {
+         formElement.onsubmit = (event) => {
+            event.preventDefault();
+            var isValid = true;
+            let questionArray = [];
+            let formData = new FormData();
+            const type = formElement.querySelector("select[name=type]");
+            const questionList = formElement.querySelector(".question-list");
+            const chapterList =
+               formElement.querySelectorAll("li[name=chapter]");
+            const chapters = [];
+            chapterList.forEach((chapter) => {
+               console.log(chapter.id);
+               chapters.push(chapter.id);
+            });
+            console.log(chapters);
+
+            if (type.value === "1" || type.value === 1) {
+               if (
+                  questionList.querySelectorAll(
+                     `input[type="checkbox"]:checked`
+                  ).length === 0
+               )
+                  isValid = false;
+               else {
+                  questionList
+                     .querySelectorAll(`input[type="checkbox"]:checked`)
+                     .forEach((checkbox) => {
+                        let question = {};
+                        question["id"] = checkbox.id;
+                        questionArray.push(question);
+                     });
+               }
+            }
+            // console.log(questionArray);
+
+            inputs.forEach((input) => {
+               if (!handelValidate({ target: input })) {
+                  isValid = false;
+               }
+            });
+            const currentUser = localStorage.getItem("currentUser");
+
+            if (isValid) {
+               // Get data from exam information
+               inputs.forEach((input) => {
+                  formData.append(input.name, input.value);
+               });
+
+               // Get data from every question box
+
+               console.log(formElement.querySelector("#easy").value);
+
+               formData.append("type", type.value);
+               formData.append("questions", JSON.stringify(questionArray));
+            }
+
+            fetch(`${api}/test`, {
+               body: formData,
+               method: "POST",
+               headers: {
+                  Authorization: "Bearer " + currentUser,
+               },
+            });
+
+            // fetch(
+            //    `${api}/classes/841109222-12/exams?chapters=${chapters.join(
+            //       ","
+            //    )}`,
+            //    {
+            //       body: formData,
+            //       method: "POST",
+            //       headers: {
+            //          Authorization: "Bearer " + currentUser,
+            //       },
+            //    }
+            // );
+         };
+      }
+   }
+}
+
 function SelectFromBank() {
+   validator("#selectFromBank");
    const currentUser = localStorage.getItem("currentUser");
 
    const [examChapter, setExamChapter] = useState([]);
@@ -337,7 +491,7 @@ function SelectFromBank() {
                .classList.remove("display-flex");
          }}
       >
-         <form action="" method="POST" id="form--create-exam__selectFromBank">
+         <form action="" method="POST" id="selectFromBank">
             <div className="flex-center flex-direction-col info-box__select-from-bank">
                <ul className="flex-center flex-direction-col" style={inputList}>
                   <li

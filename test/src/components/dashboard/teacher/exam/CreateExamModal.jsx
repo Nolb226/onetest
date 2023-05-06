@@ -8,7 +8,7 @@ export default function CreateExamModal({ type, selectedClass }) {
    console.log(selectedClass);
    useEffect(() => {
       let formElement = document.querySelector("form");
-      validator("#" + formElement.id);
+      // validator("#" + formElement.id);
    }, [type]);
 
    return (
