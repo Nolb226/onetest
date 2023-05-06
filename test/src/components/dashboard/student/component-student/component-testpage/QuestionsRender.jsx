@@ -12,10 +12,8 @@ function QuestionsRender({
 	submitted,
 	isOpen,
 	setIsOpen,
+	handleSubmitAnswer,
 	duration,
-	setDuration,
-	apiDuration,
-	history,
 	answer,
 	setAnswer,
 }) {
@@ -36,23 +34,23 @@ function QuestionsRender({
 		setAnswer(list);
 	};
 
-	const handleSubmitAnswer = (e) => {
-		e.preventDefault();
+	// const handleSubmitAnswer = (e) => {
+	// 	e.preventDefault();
 
-		const accesToken = localStorage.getItem('currentUser');
-		fetch(`${api}/classes/${classId}/exams/${examId}`, {
-			method: 'POST',
-			headers: {
-				Authorization: 'Bearer ' + accesToken,
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ questions: answer, duration }),
-		})
-			.then(() => navigator('../'))
-			.catch((error) => console.log(error));
+	// 	const accesToken = localStorage.getItem('currentUser');
+	// 	fetch(`${api}/classes/${classId}/exams/${examId}`, {
+	// 		method: 'POST',
+	// 		headers: {
+	// 			Authorization: 'Bearer ' + accesToken,
+	// 			'Content-Type': 'application/json',
+	// 		},
+	// 		body: JSON.stringify({ questions: answer, duration }),
+	// 	})
+	// 		.then(() => navigator('../'))
+	// 		.catch((error) => console.log(error));
 
-		// history.push('/class');
-	};
+	// 	// history.push('/class');
+	// };
 
 	const handleOpenAnswerList = () => {
 		document
@@ -117,7 +115,7 @@ function QuestionsRender({
 				</div>
 				<div className="test-submit flex-center">
 					{submitted.status ? (
-						<Link to={`../result/${examId}`}>
+						<Link to={`../result/${examId}`} state={{ classId }}>
 							<button
 								className="test-submit-btn to-submit"
 								style={{

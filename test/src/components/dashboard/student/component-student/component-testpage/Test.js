@@ -19,9 +19,7 @@ function Test() {
 	const [questions, setQuestions] = useState([]); //Chứa mảng câu hỏi
 	const [isOpen, setIsOpen] = useState(false); //Bật tắt modal confirm
 	const [answer, setAnswer] = useState([]);
-	const [clickedOutside, setClickedOutside] = useState(0);
-	const [intervalId, setIntervalId] = useState(null);
-	const navigator = useNavigate();
+
 	const [submitted, setSubmitted] = useState({
 		text: 'Nộp bài',
 		status: false,
@@ -29,32 +27,41 @@ function Test() {
 	// const [isDone, setIsDone] = useState(false);
 
 	const [duration, setDuration] = useState();
-	const [apiDuration, setApiDuration] = useState();
+
+	const [modalType, setModalType] = useState('submit');
+
 	const params = useParams();
 	const { examId } = params;
 	const { state } = useLocation();
 	// const []
 
+	const handleSubmitAnswer = (e) => {
+		e.preventDefault();
+
+		const accesToken = localStorage.getItem('currentUser');
+		fetch(`${api}/classes/${state?.classId}/exams/${examId}`, {
+			method: 'POST',
+			headers: {
+				Authorization: 'Bearer ' + accesToken,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ questions: answer, duration }),
+		})
+			.then(() => navigator('../'))
+			.catch((error) => console.log(error));
+
+		// history.push('/class');
+	};
+
 	useEffect(() => {
 		const handleBeforeUnload1 = (e) => {
 			console.log('|||||||||||||||||||||||||||');
 			// socket.on('exam:start', () => {
-			socket.emit('exam:leave');
+			socket.emit('exam:leave', answer);
+
 			// });
 			// e.returnValue = '';
 		};
-		const elem = document.getElementById('dashboard-container');
-		function openFullscreen() {
-			if (elem.requestFullscreen) {
-				elem.requestFullscreen();
-			} else if (elem.webkitRequestFullscreen) {
-				/* Safari */
-				elem.webkitRequestFullscreen();
-			} else if (elem.msRequestFullscreen) {
-				/* IE11 */
-				elem.msRequestFullscreen();
-			}
-		}
 
 		const currentUser = localStorage.getItem('currentUser');
 
@@ -77,10 +84,8 @@ function Test() {
 				});
 				// socket.disconnect();
 
-				openFullscreen();
-
-				window.addEventListener('beforeunload', handleBeforeUnload1, false);
-				// window.addEventListener('unload', handleBeforeUnload1);
+				window.addEventListener('beforeunload', handleBeforeUnload1);
+				window.addEventListener('unload', handleBeforeUnload1);
 				window.addEventListener('popstate', handleBeforeUnload1, false);
 				// window.addEventListener('load', handleBeforeUnload1);
 				// clearInterval(intervalId);
@@ -121,24 +126,91 @@ function Test() {
 
 		window.addEventListener('contextmenu', handleRightClickContext);
 		// window.addEventListener('keydown', handleKeyPress, false);
-		socket.on('exam:expired', () => {});
+		socket.on('exam:expired', (e) => {
+			const accesToken = localStorage.getItem('currentUser');
+			fetch(`${api}/classes/${state?.classId}/exams/${examId}`, {
+				method: 'POST',
+				headers: {
+					Authorization: 'Bearer ' + accesToken,
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ questions: answer, duration }),
+			})
+				// .then(() => navigator('../'))
+				.catch((error) => console.log(error));
+			document.getElementById('answerform');
+			setModalType('expired');
+			setIsOpen(true);
+		});
 
 		return () => {
+			socket.off('exam:expired');
 			socket.off('test');
 			window.removeEventListener('contextmenu', handleRightClickContext);
 			// window.removeEventListener('keydown', handleKeyPress, false);
 			window.removeEventListener('blur', handleOnBlur);
-			window.removeEventListener('beforeunload', handleBeforeUnload1, false);
-			// window.removeEventListener('unload', handleBeforeUnload1);
+			window.removeEventListener('beforeunload', handleBeforeUnload1);
+			window.removeEventListener('unload', handleBeforeUnload1);
 			// window.removeEventListener('load', handleBeforeUnload1);
 			window.removeEventListener('popstate', handleBeforeUnload1, false);
+			socket.disconnect();
 		};
 	}, []);
 
 	useEffect(() => {
-		// const test = document.querySelector('.content-table.doing-test');
-	}, []);
+		if (!state?.isDone) {
+			const elem = document.getElementById('dashboard-container');
+			function openFullscreen(elem) {
+				if (elem.requestFullscreen) {
+					elem.requestFullscreen();
+				} else if (elem.webkitRequestFullscreen) {
+					/* Safari */
+					elem.webkitRequestFullscreen();
+				} else if (elem.msRequestFullscreen) {
+					/* IE11 */
+					elem.msRequestFullscreen();
+				}
+			}
 
+			const exitFullscreenHandler = () => {
+				if (
+					!document.fullscreenElement &&
+					!document.mozFullScreenElement &&
+					!document.webkitFullscreenElement &&
+					!document.msFullscreenElement
+				) {
+					setModalType('out-screen');
+					setIsOpen(true);
+				}
+			};
+
+			openFullscreen(elem);
+
+			document.addEventListener('fullscreenchange', exitFullscreenHandler);
+			document.addEventListener(
+				'webkitfullscreenchange',
+				exitFullscreenHandler
+			);
+			document.addEventListener('mozfullscreenchange', exitFullscreenHandler);
+			document.addEventListener('MSFullscreenChange', exitFullscreenHandler);
+
+			return () => {
+				document.removeEventListener('fullscreenchange', exitFullscreenHandler);
+				document.removeEventListener(
+					'webkitfullscreenchange',
+					exitFullscreenHandler
+				);
+				document.removeEventListener(
+					'mozfullscreenchange',
+					exitFullscreenHandler
+				);
+				document.removeEventListener(
+					'MSFullscreenChange',
+					exitFullscreenHandler
+				);
+			};
+		}
+	}, []);
 	// const handleBeforeUnload = (e) => {
 	// 	e.preventDefault();
 	// 	setIsOpen(true);
@@ -170,7 +242,6 @@ function Test() {
 	// 		window.removeEventListener('popstate', handleBeforeUnload);
 	// 	};
 	// }, []);
-	console.log(clickedOutside);
 	const handleSubmit = () => {
 		setSubmitted({
 			text: 'Xem điểm',
@@ -191,12 +262,14 @@ function Test() {
 					setIsOpen={setIsOpen}
 					submitted={submitted}
 					duration={duration}
-					apiDuration={apiDuration}
 					setDuration={setDuration}
+					handleSubmitAnswer={handleSubmitAnswer}
 				/>
 			</div>
 			{isOpen && !submitted.status && (
 				<ConfirmModel
+					type={modalType}
+					setType={setModalType}
 					isOpen
 					setIsOpen={setIsOpen}
 					result={answer}
