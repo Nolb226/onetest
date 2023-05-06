@@ -30,6 +30,7 @@ const sequelize = require('../util/database');
 const { Op, QueryTypes } = require('sequelize');
 const Question = require('../models/question');
 const Account = require('../models/account');
+const { getIO } = require('../util/socket');
 const deleteExcel = function (filePath) {
 	const file = path.join(__dirname, '..', filePath);
 	fs.unlink(file, (err) => console.log(err));
@@ -193,6 +194,8 @@ exports.getClass = async (req, res, _) => {
 	}
 };
 
+exports.getClassesNotifications = async (req, res, _) => {};
+
 exports.getClassJoin = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
@@ -227,21 +230,21 @@ exports.getClassJoin = async (req, res, _) => {
 	}
 };
 
-// exports.getClassEdit = async (req, res, _) => {
-// 	try {
-// 		const { classId } = req.params;
-// 		const foundedClass = await Classes.findByPk(classId, {
-// 			attributes: ['id', 'name', 'semester', 'password'],
-// 		});
-// 		// console.log(foundedClass);
-// 		if (!foundedClass) {
-// 			return throwError('Class not found', 404);
-// 		}
-// 		return successResponse(res, 200, foundedClass);
-// 	} catch (error) {
-// 		errorResponse(res, error);
-// 	}
-// };
+exports.getClassEdit = async (req, res, _) => {
+	try {
+		const { classId } = req.params;
+		const foundedClass = await Classes.findByPk(classId, {
+			attributes: ['id', 'name', 'semester', 'password'],
+		});
+		// console.log(foundedClass);
+		if (!foundedClass) {
+			return throwError('Class not found', 404);
+		}
+		return successResponse(res, 200, foundedClass);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
 
 exports.getAllStudent = async (req, res, _) => {
 	try {
@@ -847,6 +850,7 @@ exports.postClassExam = async (req, res) => {
 						content: newQuestions,
 					},
 				});
+				getIO().to(`${classId}`).emit('exam:created', exam);
 				// getIO().emit("create-exam", exam.id);
 				successResponse(res, 200, result);
 			} catch (error) {

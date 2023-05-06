@@ -4,6 +4,7 @@ import handleType1 from "./HandleType1";
 import handleType2_3 from "./HandleType2_3";
 import Loading from "../../../loadingAnimation/Loading";
 import LoadingData from "../../../loadingAnimation/LoadingData";
+import { useSearchParams } from "react-router-dom";
 
 const inputList = {
    width: "100%",
@@ -352,6 +353,7 @@ function validator(formSelector) {
 }
 
 function SelectFromBank() {
+
    validator("#selectFromBank");
    const currentUser = localStorage.getItem("currentUser");
 
@@ -362,6 +364,8 @@ function SelectFromBank() {
    const [questionArray, setQuestionArray] = useState([]);
    const [isLoading, setIsLoading] = useState(false);
    const [isLoadingData, setIsLoadingData] = useState(false);
+   const [searchParams] = useSearchParams();
+	const classId = searchParams.get('id');
 
    const easyElement = document.getElementById("easy");
    const hardElement = document.getElementById("hard");
@@ -398,7 +402,7 @@ function SelectFromBank() {
 
    const getExamChapter = async () => {
       // setIsLoadingData(true);
-      await fetch(`${api}/classes/841109222-12/chapters`, {
+      await fetch(`${api}/classes/${classId}/chapters`, {
          headers: {
             Authorization: "Bearer " + currentUser,
          },
