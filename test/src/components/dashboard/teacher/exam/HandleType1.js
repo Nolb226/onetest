@@ -1,9 +1,7 @@
-function handleType1(totalQuestion, easyQuestion, hardQuestion) {
-   totalQuestion.disabled = true;
+function handleType1(easyQuestion, hardQuestion) {
    easyQuestion.disabled = true;
    hardQuestion.disabled = true;
 
-   totalQuestion.value = 0;
    easyQuestion.value = 0;
    hardQuestion.value = 0;
 
