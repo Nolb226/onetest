@@ -23,14 +23,14 @@ module.exports = {
 				console.log(response);
 				const test = await Student_Result.findByPk(response.id);
 				const exam = await Exam.findByPk(test.examId);
-				const timeEnd = new Date(response.timeEnd).getTime();
+				const timeEnd = new Date(response.timeEnd);
 
 				const { duration } = test;
 				let timer;
-				let click = 0;
-				const currentTime = new Date().getTime();
+				let click = test.clickedOutside;
+				const currentTime = new Date();
 				const countDownDuration = () => {
-					const timeLeft = timeEnd - currentTime;
+					const timeLeft = timeEnd > currentTime;
 
 					const hours = String(parseInt(time / 3600, 10)).padStart(2, '0');
 					const others = String(parseInt(time % 3600, 10)).padStart(2, '0');
@@ -45,12 +45,13 @@ module.exports = {
 					}
 					// duration--;
 					time--;
+					console.log(time);
 				};
 				// let time = duration * 60;
 				let time = duration;
 				// countDownDuration();
 				timer = setInterval(countDownDuration, 1000);
-				socket.on('exam:click', () => {
+				socket.on('exam:clickOutside', () => {
 					click += 1;
 				});
 
@@ -58,14 +59,15 @@ module.exports = {
 
 				const handleTest = async () => {
 					console.log('||||||||||||||||||||||||||||||||');
-					clearInterval(timer);
 					await test.update({
 						duration: time,
+						clickedOutside: click,
 					});
 				};
 
 				socket.on('exam:leave', async () => {
-					handleTest();
+					await handleTest();
+					clearInterval(timer);
 				});
 			});
 		});

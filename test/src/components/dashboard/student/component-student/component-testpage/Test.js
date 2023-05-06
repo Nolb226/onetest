@@ -43,6 +43,18 @@ function Test() {
 			// });
 			// e.returnValue = '';
 		};
+		const elem = document.getElementById('dashboard-container');
+		function openFullscreen() {
+			if (elem.requestFullscreen) {
+				elem.requestFullscreen();
+			} else if (elem.webkitRequestFullscreen) {
+				/* Safari */
+				elem.webkitRequestFullscreen();
+			} else if (elem.msRequestFullscreen) {
+				/* IE11 */
+				elem.msRequestFullscreen();
+			}
+		}
 
 		const currentUser = localStorage.getItem('currentUser');
 
@@ -65,10 +77,12 @@ function Test() {
 				});
 				// socket.disconnect();
 
-				window.addEventListener('beforeunload', handleBeforeUnload1);
-				window.addEventListener('unload', handleBeforeUnload1);
-				window.addEventListener('popstate', handleBeforeUnload1);
-				window.addEventListener('load', handleBeforeUnload1);
+				openFullscreen();
+
+				window.addEventListener('beforeunload', handleBeforeUnload1, false);
+				// window.addEventListener('unload', handleBeforeUnload1);
+				window.addEventListener('popstate', handleBeforeUnload1, false);
+				// window.addEventListener('load', handleBeforeUnload1);
 				// clearInterval(intervalId);
 				setDuration(questionsAPI.data.duration);
 				// startTimer(questionsAPI.data.duration);
@@ -83,15 +97,41 @@ function Test() {
 			setDuration(data);
 		});
 
+		const handleOnBlur = () => {
+			if (!document.hasFocus()) {
+				socket.emit('exam:clickOutside');
+			}
+		};
+
+		window.addEventListener('blur', handleOnBlur);
+
+		const handleRightClickContext = (e) => {
+			e.preventDefault();
+			return false;
+		};
+
+		// const handleKeyPress = (e) => {
+		// 	console.log('||||||||||||||||||||||||||||||||||');
+		// 	const code = e.keyCode || e.which;
+		// 	alert('1');
+		// 	if (code == 122) {
+		// 		openFullscreen();
+		// 	}
+		// };
+
+		window.addEventListener('contextmenu', handleRightClickContext);
+		// window.addEventListener('keydown', handleKeyPress, false);
 		socket.on('exam:expired', () => {});
 
 		return () => {
 			socket.off('test');
-			// window.removeEventListener('blur', handleOnBlur);
-			window.removeEventListener('beforeunload', handleBeforeUnload1);
-			window.removeEventListener('unload', handleBeforeUnload1);
-			window.removeEventListener('load', handleBeforeUnload1);
-			window.removeEventListener('popstate', handleBeforeUnload1);
+			window.removeEventListener('contextmenu', handleRightClickContext);
+			// window.removeEventListener('keydown', handleKeyPress, false);
+			window.removeEventListener('blur', handleOnBlur);
+			window.removeEventListener('beforeunload', handleBeforeUnload1, false);
+			// window.removeEventListener('unload', handleBeforeUnload1);
+			// window.removeEventListener('load', handleBeforeUnload1);
+			window.removeEventListener('popstate', handleBeforeUnload1, false);
 		};
 	}, []);
 

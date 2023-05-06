@@ -392,19 +392,19 @@ function Dashboard() {
 								</ul>
 							</div>
 						</header>
-						<div className="content">
-							{isOpenProfile && (
-								<UserModel
-									info={info}
-									type={type}
-									setIsOpenProfile={setIsOpenProfile}
-									handleUpdate={handleUpdate}
-								/>
-							)}
-							<Outlet />
-							{/* <Teacher /> */}
-							{/* <Student idStudent={info.id} nameStudent={info.fullname} /> */}
-						</div>
+					</div>
+					<div className="content">
+						{isOpenProfile && (
+							<UserModel
+								info={info}
+								type={type}
+								setIsOpenProfile={setIsOpenProfile}
+								handleUpdate={handleUpdate}
+							/>
+						)}
+						<Outlet />
+						{/* <Teacher /> */}
+						{/* <Student idStudent={info.id} nameStudent={info.fullname} /> */}
 					</div>
 				</div>
 			</div>
