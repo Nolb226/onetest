@@ -30,30 +30,34 @@ function DetailInformation(prop) {
 
   const handleAccount = (e) => {
     // console.log(e.target.value);
-    setAccount({ ...account, [e.target.name]: e.target.value });
+    setAccount({ ...account, [e.target.name]: e.target.value});
     console.log(account);
   };
 
   const handleUpdate = (e) => {
     // e.preventDefault();
     const formData = new FormData();
-    let lastName =''
-    for (let index = 0; index < account.fullname.split(" ").length-1; index++) {
-      if (index == account.fullname.split(" ").length-2) {
-        lastName+=account.fullname.split(" ")[index]
-      }
-      else{
-        lastName+=account.fullname.split(" ")[index] + " "
+    let lastName = "";
+    for (
+      let index = 0;
+      index < account.fullname.split(" ").length - 1;
+      index++
+    ) {
+      if (index == account.fullname.split(" ").length - 2) {
+        lastName += account.fullname.split(" ")[index];
+      } else {
+        lastName += account.fullname.split(" ")[index] + " ";
       }
     }
+    console.log(account.department_id);
     formData.append("account_id", account.account_id);
     formData.append("firstName", account.fullname.split(" ").at(-1));
-    formData.append("lastName", lastName );
+    formData.append("lastName", lastName);
     formData.append("dob", account.dob);
-    formData.append("departmentId", account.department_id);
-    formData.append("majorId", account.major_id);
+    formData.append("departmentId", account.department_id||"NULL");
+    formData.append("majorId", account.department_id =="NULL" ? "NULL":account.major_id||"NULL");
     formData.append("isActive", account.isActive);
-    formData.append("type", account.type);
+    formData.append("type", account.type||"NULL");
 
     const currentUser = localStorage.getItem(`currentUser`);
     fetch(`${api}/admin/accounts/${oldAccountId}`, {
@@ -62,11 +66,42 @@ function DetailInformation(prop) {
       headers: {
         Authorization: "Bearer " + currentUser,
       },
+    }).then((response) => {
+        if (response.ok) {
+            alert('Cập nhật thông tin thành công');
+        } else {
+            alert('Cập nhật thông tin thất bại');
+        }
     });
-    let newAccout = {account_id:account.account_id,fullname: account.fullname,type: account.type, isActive: account.isActive}
-    prop.updateAccounts(oldAccountId,newAccout)
-    handleOpen()
+    let newAccout = {
+      account_id: account.account_id,
+      fullname: account.fullname,
+      type: account.type,
+      isActive: account.isActive,
+    };
+    prop.updateAccounts(oldAccountId, newAccout);
+    handleOpen();
   };
+
+  const handleDelete = () =>{
+    const currentUser = localStorage.getItem(`currentUser`);
+    fetch(`${api}/admin/accounts/${oldAccountId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + currentUser,
+      },
+    }).then((response) => {
+        if (response.ok) {
+            alert('Xóa tài khoản thành công');
+            prop.deleteAccount()
+            handleOpen();
+        } else {
+            alert('Xóa tài khoản thất bại');
+        }
+    });
+
+
+  }
 
   // if (document.getElementById("detail-information")) handleOpen();
   return (
@@ -97,23 +132,45 @@ function DetailInformation(prop) {
             </li>
             <li className="input-item">
               <label htmlFor="">Họ và tên</label>
-              <input type="text" name="fullname" id="" value={account?.fullname} onChange={(e) => handleAccount(e)} />
+              <input
+                type="text"
+                name="fullname"
+                id=""
+                value={account?.fullname}
+                onChange={(e) => handleAccount(e)}
+              />
             </li>
             <li className="input-item">
               <label htmlFor="">Ngày sinh</label>
-              <input type="date" name="dob" id="" value={account.dob} onChange={(e) => handleAccount(e)} />
+              <input
+                type="date"
+                name="dob"
+                id=""
+                value={account.dob}
+                onChange={(e) => handleAccount(e)}
+              />
             </li>
             <li className="input-item">
               <label htmlFor="">Khoa</label>
-              <Department departmentId={account?.department_id} handleAccount={handleAccount} />
+              <Department
+                departmentId={account?.department_id}
+                handleAccount={handleAccount}
+              />
             </li>
             <li className="input-item">
               <label htmlFor="">Ngành</label>
-              <Majors departmentId={account?.department_id} majorId={account.major_id} handleAccount={handleAccount} />
+              <Majors
+                departmentId={account?.department_id}
+                majorId={account.major_id}
+                handleAccount={handleAccount}
+              />
             </li>
             <li className="input-item">
               <label htmlFor="">Loại tài khoản</label>
-              <PermissionGroup permissionId={account?.type} handleAccount={handleAccount} />
+              <PermissionGroup
+                permissionId={account?.type}
+                handleAccount={handleAccount}
+              />
             </li>
             <li className="input-item">
               <label htmlFor="">Kích hoạt</label>
@@ -122,7 +179,9 @@ function DetailInformation(prop) {
                 name=""
                 id=""
                 checked={account?.isActive}
-                onClick={(e) =>  {setAccount({...account, isActive:!account.isActive})}}
+                onClick={(e) => {
+                  setAccount({ ...account, isActive: !account.isActive });
+                }}
               />
             </li>
             <li className="input-item">
@@ -137,8 +196,10 @@ function DetailInformation(prop) {
           </ul>
           <div className="button-list flex-center">
             {/* Thao tác thay đổi sẽ được POST lên API */}
-            <button className="save-btn__info" onClick={() =>handleUpdate()}>lưu</button>
-            <button className="delete-btn__info">
+            <button className="save-btn__info" onClick={() => handleUpdate()}>
+              lưu
+            </button>
+            <button className="delete-btn__info" onClick={() => handleDelete()}>
               <span>xóa</span>
               <i class="fa-regular fa-trash-can"></i>
             </button>

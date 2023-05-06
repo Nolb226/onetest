@@ -56,7 +56,7 @@ require('dotenv').config();
 	Chapter.hasMany(Question);
 	Question.belongsTo(Chapter);
 
-	Account.belongsTo(Major);
+	Account.belongsTo(Major,{isNull: true});
 	Major.hasMany(Account);
 
 	// Major.belongsTo(Teacher, { foreignKey: 'headOfMajor' });
@@ -126,6 +126,7 @@ require('dotenv').config();
 		timestamps: false,
 		// as: 'permissions',
 		foreignKey: 'type',
+		isNull: true
 	});
 	Permission_Group.hasMany(Account, {
 		timestamps: false,

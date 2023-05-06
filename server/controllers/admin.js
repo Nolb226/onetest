@@ -213,7 +213,10 @@ exports.getFuntionOfPermission = async (req, res, _) => {
 		if (!permission) {
 			throwError(`Could not find permissions`, 404);
 		}
-		const functions = await permission.getFunctions();
+		const functions = await permission.getFunctions({
+			attributes:["id"],
+			raw: true
+		});
 		// console.log(functions.toJSON());
 
 		successResponse(res, 200, functions, req.method);
@@ -249,18 +252,23 @@ exports.putAcount = async (req, res, _) => {
 		if (!accountFounded) {
 			throwError('Account not found', 404);
 		}
-		await accountFounded.update({
-			account_id,
-			firstName,
-			lastName,
-			dob,
-			departmentId,
-			majorId,
-			isActive,
-			type,
-		});
+		console.log(departmentId);
+		const account = await sequelize.query(
+			`UPDATE accounts SET account_id="${account_id}",firstName="${firstName}",lastName="${lastName}", dob="${dob}",departmentId=${departmentId=="NULL"?"NULL":"'"+departmentId+"'"},majorId=${majorId=="NULL"?"NULL":"'"+majorId+"'"},isActive="${isActive}",type=${type=="NULL"?"NULL":"'"+type+"'"} WHERE account_id = "${accountId}"`,
+			{ type: sequelize.QueryTypes.UPDATE }
+		);
+		// await accountFounded.update({
+		// 	account_id,
+		// 	firstName,
+		// 	lastName,
+		// 	dob,
+		// 	departmentId,
+		// 	majorId,
+		// 	isActive,
+		// 	type,
+		// });
 
-		successResponse(res, 201, accountFounded, 'PUT');
+		successResponse(res, 201, account, 'PUT');
 	} catch (error) {
 		errorResponse(res, error);
 	}
@@ -294,27 +302,6 @@ exports.patchAccount = async (req, res, _) => {
 	}
 };
 
-exports.postPermission = async (req, res, _) => {
-	try {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			throwError();
-		}
-		const { id, name, functions } = req.body;
-		const permission = await Permission_Group.create({
-			id,
-			name,
-		});
-		const inFunc = await Promise.all(
-			functions.map(async (x) => await Functions.findByPk(x.id))
-		);
-		await permission.addFunctions(inFunc);
-		successResponse(res, 201, permission, 'POST');
-	} catch (error) {
-		errorResponse(res, error, {});
-	}
-};
-
 exports.putFuntionOfPermission = async (req, res, _) => {
 	try {
 		const { permissionId } = req.params;
@@ -332,8 +319,8 @@ exports.putFuntionOfPermission = async (req, res, _) => {
 		if (!errors.isEmpty()) {
 			throwError(errors.array(), 409);
 		}
-
 		const { functions } = req.body;
+		// console.log(functions);
 		const inFunc = await Promise.all(
 			functions.map(async (x) => await Functions.findByPk(x.id))
 		);
@@ -344,3 +331,43 @@ exports.putFuntionOfPermission = async (req, res, _) => {
 		errorResponse(res, error);
 	}
 };
+
+exports.postPermission = async (req, res, _) => {
+	try {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			throwError();
+		}
+		const { id, name } = req.body;
+		console.log(req.body);
+		const permission = await Permission_Group.create({
+			id,
+			name,
+		});
+		// const inFunc = await Promise.all(
+		// 	functions.map(async (x) => await Functions.findByPk(x.id))
+		// );
+		// await permission.addFunctions(inFunc);
+		successResponse(res, 201, permission, 'POST');
+	} catch (error) {
+		errorResponse(res, error, {});
+	}
+};
+
+exports.deleteAccount = async (req, res, _) => {
+	try {
+		const { accountId } = req.params;
+		const accountFounded = await Account.findOne({
+			where: {
+				account_id: accountId,
+			},
+		});
+		if (!accountFounded) {
+			throwError('Account not found', 404);
+		}
+		await accountFounded.destroy()
+		successResponse(res, 201, {}, 'DELETE');
+	} catch (error) {
+		errorResponse(res, error);
+	}
+}

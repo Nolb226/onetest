@@ -20,7 +20,7 @@ function PermissionGroup(prop) {
             style={{width: "60%",padding:"1px 2px"}}
             onChange={(e) => prop.handleAccount(e)}
          >
-            <option value="null" disabled>loai</option>
+            <option value="NULL"> Loại</option>
             {permissions.map((permission) => {
                return (
                   <option value={permission.id} key={permission.id}  selected={permission.id == prop.permissionId}>
