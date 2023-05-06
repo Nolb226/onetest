@@ -110,7 +110,9 @@ function QuestionsRender({
 				</form>
 				<div className="time-test flex-center">
 					{!submitted.status
-						? `${duration?.hours} ${duration?.minutes} : ${duration?.seconds}`
+						? `${duration?.hours || ' ... '} : ${
+								duration?.minutes || ' ... '
+						  } : ${duration?.seconds || ' ... '}`
 						: ''}
 				</div>
 				<div className="test-submit flex-center">

@@ -7,7 +7,7 @@ module.exports = {
 	init: (httpSever) => {
 		io = require('socket.io')(httpSever, {
 			cors: {
-				origin: 'http://192.168.100.40:3000',
+				origin: ['http://192.168.100.40:3000', 'http://localhost:3000'],
 				allowedHeaders: ['Authorization', 'Content-Type'],
 				methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
 			},
