@@ -59,22 +59,17 @@ function Test() {
 					status: questionsAPI.data.isDone,
 				});
 
-				socket.emit(
-					'exam:start',
-					{
-						id: questionsAPI.data.id,
-						// examId: questionsAPI.data.examId,
-					},
-
-					setDuration
-				);
+				socket.emit('exam:start', {
+					id: questionsAPI.data.id,
+					// examId: questionsAPI.data.examId,
+				});
 
 				window.addEventListener('beforeunload', handleBeforeUnload1);
 				window.addEventListener('unload', handleBeforeUnload1);
 				window.addEventListener('popstate', handleBeforeUnload1);
 				window.addEventListener('load', handleBeforeUnload1);
 				// clearInterval(intervalId);
-				// setDuration(questionsAPI.data.duration);
+				setDuration(questionsAPI.data.duration);
 				// startTimer(questionsAPI.data.duration);
 			})
 
@@ -94,11 +89,6 @@ function Test() {
 			window.removeEventListener('unload', handleBeforeUnload1);
 			window.removeEventListener('load', handleBeforeUnload1);
 			window.removeEventListener('popstate', handleBeforeUnload1);
-		};
-
-		return () => {
-			// clearInterval(a);
-			// window.removxeEventListener('blur', handleBlur);
 		};
 	}, []);
 

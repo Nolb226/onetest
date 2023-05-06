@@ -145,7 +145,9 @@ function QuestionsRender({
 
 				<div className="time-test flex-center">
 					{!submitted.status
-						? `${duration?.hours} ${duration?.minutes} : ${duration?.seconds}`
+						? `${duration?.hours || '00'} : ${duration?.minutes || '00'} : ${
+								duration?.seconds || '00'
+						  }`
 						: ''}
 				</div>
 
