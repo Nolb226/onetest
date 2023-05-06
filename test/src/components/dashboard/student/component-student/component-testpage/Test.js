@@ -63,6 +63,7 @@ function Test() {
 					id: questionsAPI.data.id,
 					// examId: questionsAPI.data.examId,
 				});
+				// socket.disconnect();
 
 				window.addEventListener('beforeunload', handleBeforeUnload1);
 				window.addEventListener('unload', handleBeforeUnload1);
@@ -81,6 +82,8 @@ function Test() {
 		socket.on('test', (data) => {
 			setDuration(data);
 		});
+
+		socket.on('exam:expired', () => {});
 
 		return () => {
 			socket.off('test');

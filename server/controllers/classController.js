@@ -679,7 +679,9 @@ exports.postClass = async (req, res, _) => {
 			semester,
 			year,
 			lectureId,
+			accountId: account.id,
 		});
+		console.log(newClass.toJSON());
 
 		// sequelize.query(`INSERT INTO classes VALUES ()`)
 
@@ -708,7 +710,7 @@ exports.postClass = async (req, res, _) => {
 					await newClass.createAccount({
 						password: await bycrypt.hash(accountpassword, 10),
 						account_id: student['MSSV'] || student['Mã sinh viên'],
-						dob: new Date(year, month, day),
+						dob: new Date(year, month, day) || new Date(),
 						firstName: student['Tên'],
 						lastName: student['Họ lót'],
 						type: 'SV',

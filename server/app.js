@@ -236,5 +236,6 @@ sequelize
 			);
 		});
 		const io = require('./util/socket').init(http);
+		io.listen(3001);
 	})
 	.catch((err) => console.log('Fail to connect to the database ' + err));
