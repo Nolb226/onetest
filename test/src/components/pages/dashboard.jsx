@@ -309,12 +309,10 @@ function Dashboard() {
          });
    }, []);
 
-   const menuElement = document.querySelector("#left-menu");
-
    const handleCloseSideMenu = () => {
       if (window.innerWidth < 740) {
-         menuElement.classList.remove("openMenu");
-         menuElement.classList.add("closeMenu");
+         document.querySelector("#left-menu").classList.remove("openMenu");
+         document.querySelector("#left-menu").classList.add("closeMenu");
          document.querySelector(".menu-layer").style.display = "none";
       }
    };
@@ -339,7 +337,6 @@ function Dashboard() {
       });
    };
 
-   //   console.log(info);
    return (
       <div
          id="main-layout"
@@ -360,8 +357,12 @@ function Dashboard() {
                            style={{ marginRight: "20px" }}
                            onClick={(e) => {
                               e.stopPropagation();
-                              menuElement.classList.remove("closeMenu");
-                              menuElement.classList.add("openMenu");
+                              document
+                                 .querySelector("#left-menu")
+                                 .classList.remove("closeMenu");
+                              document
+                                 .querySelector("#left-menu")
+                                 .classList.add("openMenu");
                               document.querySelector(
                                  ".menu-layer"
                               ).style.display = "block";
