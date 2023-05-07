@@ -242,6 +242,21 @@ exports.getClassEdit = async (req, res, _) => {
 		errorResponse(res, error);
 	}
 };
+exports.getClassEdit = async (req, res, _) => {
+	try {
+		const { classId } = req.params;
+		const foundedClass = await Classes.findByPk(classId, {
+			attributes: ['id', 'name', 'semester', 'password'],
+		});
+		// console.log(foundedClass);
+		if (!foundedClass) {
+			return throwError('Class not found', 404);
+		}
+		return successResponse(res, 200, foundedClass, 'GET');
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
 
 exports.getAllStudent = async (req, res, _) => {
 	try {
@@ -264,11 +279,11 @@ exports.getAllStudent = async (req, res, _) => {
 					// 	{
 					// 		model: Exam,
 					// 		where: { classId : `${classId}`},
-					// 	},
+					// 	: `${classId}`},
 					// ],
 				},
 			],
-			// order: ['firstName', 'account_id'],
+			// // order: ['firstName', 'account_id'],
 
 			joinTableAttributes: [],
 			// raw: true,

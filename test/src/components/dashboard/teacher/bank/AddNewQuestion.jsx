@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import validator from "../../../home/modal/validator";
+import api from "../../../../config/config";
 
 const layout = {
    width: "100%",
@@ -18,6 +18,175 @@ const questionInput = {
    outline: "none",
    color: "#333",
 };
+
+function validator(formSelector, setIsLoading, chapters, lectureId) {
+   let formElement = document.querySelector(formSelector);
+
+   let formRules = {};
+
+   const getParentElement = (childElement, parentSelector) => {
+      while (childElement.parentElement) {
+         if (childElement.parentElement.matches(parentSelector)) {
+            return childElement.parentElement;
+         }
+         childElement = childElement.parentElement;
+      }
+   };
+
+   var validatorRules = {
+      require: (value) => {
+         return value ? undefined : "Vui lòng nhập thông tin";
+      },
+   };
+
+   if (formElement) {
+      var inputs = formElement.querySelectorAll("[name][rules]");
+
+      const clearErrorMessage = (event) => {
+         let parentElement = getParentElement(event.target, ".form-group");
+         parentElement.classList.remove("invalid");
+         parentElement.querySelector(".form-message").innerText = "";
+      };
+
+      // Lắng nghe sự kiện trên từng thẻ input
+      const handelValidate = (event) => {
+         var rules = formRules[event.target.name];
+         var errorMessage;
+
+         rules.find(function (rule) {
+            errorMessage = rule(event.target.value);
+            return errorMessage;
+         });
+
+         let parentElement = getParentElement(event.target, ".form-group");
+
+         if (errorMessage) {
+            parentElement.classList.add("invalid");
+            parentElement.querySelector(
+               ".form-message"
+            ).innerText = `* ${errorMessage}`;
+         }
+
+         return !errorMessage;
+      };
+
+      // Lặp và gán function validator cho từng thẻ input
+      inputs.forEach((input) => {
+         var rules = input.getAttribute("rules").split("|");
+
+         rules.forEach((rule) => {
+            var ruleFunction;
+            ruleFunction = validatorRules[rule];
+
+            if (Array.isArray(formRules[input.name]))
+               formRules[input.name].push(ruleFunction);
+            else formRules[input.name] = [ruleFunction];
+         });
+
+         input.onblur = handelValidate;
+         input.oninput = clearErrorMessage;
+      });
+
+      formElement.onsubmit = (event) => {
+         event.preventDefault();
+         const currentUser = localStorage.getItem("currentUser");
+         var isValid = true;
+         let questionArray = [];
+         let formData = new FormData();
+         const questionList = formElement.querySelector(".question-list");
+         let questionBoxes = questionList.querySelectorAll(".question-box");
+
+         inputs.forEach((input) => {
+            if (!handelValidate({ target: input })) {
+               isValid = false;
+            }
+         });
+
+         Array.from(questionBoxes).every((questionBox) => {
+            if (
+               questionBox.querySelector(
+                  `.form-group > input[type="radio"]:checked`
+               ) === null
+            ) {
+               isValid = false;
+               const boxContent = questionBox.querySelector(
+                  ".question-box__content"
+               );
+               boxContent.style.borderColor = "red";
+
+               alert("Vui lòng chọn đáp án đúng cho câu hỏi được tô đỏ !");
+               return false;
+            } else {
+               isValid = true;
+               const boxContent = questionBox.querySelector(
+                  ".question-box__content"
+               );
+               boxContent.style.borderColor = "#1f2ec9";
+
+               return true;
+            }
+         });
+
+         if (isValid) {
+            var easy = 0;
+            var hard = 0;
+            // Get data from exam information
+            inputs.forEach((input) => {
+               if (input.closest(".exam-information")) {
+                  formData.append(input.name, input.value);
+               }
+            });
+
+            // Get data from every question box
+            questionBoxes.forEach((box) => {
+               let question = {};
+
+               // correct answer
+               question["correctAns"] = box.querySelector(
+                  `input[type="radio"]:checked`
+               ).value;
+
+               // level of question
+               const level = box.querySelector("#level").value;
+               question["level"] = level;
+
+               level === "0" ? (easy += 1) : (hard += 1);
+
+               // answers
+               box.querySelectorAll("input[type=text]").forEach((item) => {
+                  question[`${item.name}`] = item.value;
+               });
+
+               questionArray.push(question);
+            });
+
+            formData.append("questions", JSON.stringify(questionArray));
+
+            setIsLoading(true);
+
+            fetch(
+               `${api}/lectures/${lectureId}/chapters/${chapters}/questions`,
+               {
+                  body: formData,
+                  method: "POST",
+                  headers: {
+                     Authorization: "Bearer " + currentUser,
+                  },
+               }
+            ).then((res) => {
+               if (!res.ok) {
+                  setIsLoading(false);
+                  alert("Tạo đề không thành công! Vui lòng thử lại.");
+               } else if (res.ok) {
+                  console.log("nav");
+                  alert("Tạo đề thành công! Click để quay lại trang chính.");
+                  setIsLoading(false);
+               }
+            });
+         }
+      };
+   }
+}
 
 function AnswerListInput({ answerArray, questionId }) {
    console.log(questionId);
@@ -148,7 +317,31 @@ function QuestionBox({ question, questionListArray, setQuestionListArray }) {
 }
 
 function AddNewQuestion({ classList }) {
-   console.log(classList);
+   const [lectureId, setLectureId] = useState("");
+   const currentUser = localStorage.getItem("currentUser");
+   const [examChapter, setExamChapter] = useState([]);
+   const [isLoadingData, setIsLoadingData] = useState(false);
+   const [isLoading, setIsLoading] = useState(false);
+   const [chapters, setChapters] = useState([]);
+
+   const getExamChapter = async () => {
+      setIsLoadingData(true);
+      await fetch(`${api}/lectures/${lectureId}/chapters`, {
+         headers: {
+            Authorization: "Bearer " + currentUser,
+         },
+      })
+         .then((data) => data.json())
+         .then((data) => {
+            setExamChapter(data.data);
+            setIsLoadingData(false);
+         });
+   };
+
+   useEffect(() => {
+      getExamChapter();
+   }, [lectureId]);
+
    const [questionListArray, setQuestionListArray] = useState([
       {
          questionId: 0,
@@ -162,7 +355,7 @@ function AddNewQuestion({ classList }) {
    ]);
 
    useEffect(() => {
-      validator("#form--create-exam");
+      validator("#addNewQuestion", setIsLoading, chapters, lectureId);
    }, [questionListArray]);
 
    return (
@@ -184,7 +377,14 @@ function AddNewQuestion({ classList }) {
                }}
             >
                <div className="position-relative exam-information info-box__handicraft">
-                  <div className="info-item form-group">
+                  <div
+                     className="info-item form-group"
+                     style={{
+                        flexDirection: "row",
+                        height: "35px",
+                        alignItems: "center",
+                     }}
+                  >
                      <label
                         className="form-label"
                         htmlFor="examId"
@@ -199,7 +399,6 @@ function AddNewQuestion({ classList }) {
                      </label>
 
                      <input
-                        rules="require"
                         className="form-control"
                         type="text"
                         name="examId"
@@ -208,24 +407,31 @@ function AddNewQuestion({ classList }) {
                         style={{
                            fontSize: "1.4rem",
                            paddingLeft: "10px",
+                           flex: "1",
                            height: "30px",
+                           maxWidth: "70%",
                            outline: "none",
                            borderRadius: "4px",
                            border: "solid 2px #BFBFBF",
-                           width: "100%",
                         }}
+                        onChange={(e) => setLectureId(e.target.value)}
                      />
-                     <label
-                        htmlFor="examId"
-                        className="form-message"
-                        style={{ height: "16px" }}
-                     ></label>
+                     <label htmlFor="examId" className="form-message"></label>
                   </div>
 
-                  <div className="info-item form-group">
+                  <li
+                     className="flex-center form-group"
+                     style={{
+                        width: "100%",
+                        margin: "5px 0",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        height: "40px",
+                     }}
+                  >
                      <label
+                        htmlFor="examId"
                         className="form-label"
-                        htmlFor="name"
                         style={{
                            color: "#222",
                            fontSize: "1.3rem",
@@ -235,27 +441,54 @@ function AddNewQuestion({ classList }) {
                      >
                         Chương
                      </label>
-
-                     <select
-                        name="chapter"
-                        id="chapter"
-                        className="form-control"
+                     <div
                         style={{
-                           fontSize: "1.4rem",
-                           paddingLeft: "10px",
-                           height: "30px",
-                           outline: "none",
-                           borderRadius: "5px",
-                           border: "solid 2px #BFBFBF",
-                           width: "100%",
+                           flex: "1",
+                           display: "flex",
+                           flexDirection: "column",
+                           justifyContent: "flex-start",
                         }}
-                     ></select>
-                     <label
-                        htmlFor="name"
-                        className="form-message"
-                        style={{ height: "16px" }}
-                     ></label>
-                  </div>
+                     >
+                        <select
+                           className="form-control"
+                           type="text"
+                           name="chapter"
+                           id="chapter"
+                           style={{
+                              fontSize: "1.4rem",
+                              paddingLeft: "10px",
+                              maxWidth: "150px",
+                              flex: "1",
+                              height: "30px",
+                              outline: "none",
+                              borderRadius: "4px",
+                              border: "solid 2px #BFBFBF",
+                           }}
+                           onChange={(e) => {
+                              setChapters(e.target.value.split(" ")[1]);
+                           }}
+                        >
+                           <option className="chapter flex-center">
+                              <span>Chọn chương</span>
+                           </option>
+                           {examChapter?.map((chapter, index) => {
+                              if (chapter.name !== "Chương chung") {
+                                 return (
+                                    <option
+                                       className="chapter flex-center"
+                                       key={index}
+                                    >
+                                       <span>Chương {index}</span>
+                                    </option>
+                                 );
+                              }
+                           })}
+                           <option className="chapter flex-center">
+                              <span>Chương mới</span>
+                           </option>
+                        </select>
+                     </div>
+                  </li>
 
                   <button>tạo</button>
                </div>

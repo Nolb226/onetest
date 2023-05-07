@@ -58,7 +58,7 @@ function ClassList() {
 
    const getClassData = async () => {
       setIsLoadingData(true);
-      await fetch(`${api}/classes`, {
+      await fetch(`${api}/classes/manage`, {
          headers: {
             Authorization: "Bearer " + currentUser,
          },

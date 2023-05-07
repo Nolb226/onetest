@@ -3,13 +3,13 @@ import api from '../../../../config/config';
 import { useNavigate } from 'react-router';
 import LoadingData from '../../../loadingAnimation/LoadingData';
 import { Link } from 'react-router-dom';
+import socket from '../../../../util/socket';
 
 function ExamList() {
 	const currentUser = localStorage.getItem('currentUser');
 	const navigator = useNavigate();
 	const [examData, setExamData] = useState([]);
 	const [isLoadingData, setIsLoadingData] = useState(false);
-
 	const [errorLoadingData, setErrorLoadingData] = useState('');
 
 	const getExamData = async () => {
@@ -149,6 +149,12 @@ function ExamList() {
 										className="flex-center column-text view-result"
 										onClick={() => {
 											console.log(exam.isLock);
+											socket.emit(
+												'class:exam-lock',
+												exam.class_id,
+												exam.id,
+												!exam.isLock
+											);
 											handleLock(exam.class_id, exam);
 										}}
 									>
