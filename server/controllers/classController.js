@@ -227,29 +227,30 @@ exports.getClassJoin = async (req, res, _) => {
 	}
 };
 
-// exports.getClassEdit = async (req, res, _) => {
-// 	try {
-// 		const { classId } = req.params;
-// 		const foundedClass = await Classes.findByPk(classId, {
-// 			attributes: ['id', 'name', 'semester', 'password'],
-// 		});
-// 		// console.log(foundedClass);
-// 		if (!foundedClass) {
-// 			return throwError('Class not found', 404);
-// 		}
-// 		return successResponse(res, 200, foundedClass);
-// 	} catch (error) {
-// 		errorResponse(res, error);
-// 	}
-// };
+exports.getClassEdit = async (req, res, _) => {
+	try {
+		const { classId } = req.params;
+		const foundedClass = await Classes.findByPk(classId, {
+			attributes: ['id', 'name', 'semester', 'password'],
+		});
+		// console.log(foundedClass);
+		if (!foundedClass) {
+			return throwError('Class not found', 404);
+		}
+		return successResponse(res, 200, foundedClass, 'GET');
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
 
 exports.getAllStudent = async (req, res, _) => {
 	try {
 		const page = req.query.page || 1;
 		const perPage = 10;
 		const { classId } = req.params;
-
+		// console.log(classId);
 		const classroom = await Classes.findByPk(classId);
+		// console.log(classroom);
 		if (!classroom) {
 			throwError(`Could not find class`, 404);
 		}
@@ -259,15 +260,15 @@ exports.getAllStudent = async (req, res, _) => {
 				{
 					model: Student_Result,
 					attributes: ['grade'],
-					include: [
-						{
-							model: Exam,
-							where: { classId },
-						},
-					],
+					// include: [
+					// 	{
+					// 		model: Exam,
+					// 		where: { classId : `${classId}`},
+					// 	},
+					// ],
 				},
 			],
-			order: ['firstName', 'account_id'],
+			// order: ['firstName', 'account_id'],
 
 			joinTableAttributes: [],
 			// raw: true,

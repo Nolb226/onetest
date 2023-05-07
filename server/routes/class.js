@@ -59,11 +59,11 @@ router.get(
 	classController.getClass
 );
 
-// router.get(
-// 	'/:classId/edit',
-// 	// checkPermission.bind({ path: 'class' }),
-// 	classController.getClassEdit
-// );
+router.get(
+	'/:classId/edit',
+	// checkPermission.bind({ path: 'class' }),
+	classController.getClassEdit
+);
 
 /*
 *teacher
