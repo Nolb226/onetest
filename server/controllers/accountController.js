@@ -55,6 +55,21 @@ exports.getNotify = async (req, res, _) => {
   }
 };
 
+exports.getAccount = async (req, res, _) => {
+  try {
+    const { accountId } = req.params;
+    const accountFounded = await Account.findOne({
+      where: {
+        id: accountId,
+      },
+    });
+
+    successResponse(res, 200,accountFounded, "GET");
+  } catch (error) {
+    errorResponse(res, error);
+  }
+};
+
 exports.putAccount = async (req, res, _) => {
   try {
     const { accountId } = req.params;
