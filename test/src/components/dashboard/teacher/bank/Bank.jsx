@@ -455,11 +455,10 @@ function Bank() {
                // tempQuestion.push(`${input.name}: ${input.value}`);
             });
 
-         questionBox.querySelectorAll("select").forEach((input) => {
-            console.log(input.name, input.value);
-            tempQuestion[input.name] = input.value;
-            // tempQuestion.push(`${input.name}: ${input.value}`);
-         });
+         const levelSelect = questionBox.querySelector("select");
+         console.log(levelSelect.name, levelSelect.value);
+         tempQuestion[levelSelect.name] = levelSelect.value;
+         // tempQuestion.push(`${input.name}: ${input.value}`)
 
          editedQuestion.push(tempQuestion);
       });

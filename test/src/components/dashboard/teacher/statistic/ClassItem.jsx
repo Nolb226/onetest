@@ -1,12 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function ClassItem(Class) {
+   const navigator = useNavigate();
+
    return (
       <ul
          class="flex-center table__content--item"
          style={{
             display: "grid",
-            gridTemplateColumns: "12% 22% 30% 7% 17% 12%",
+            gridTemplateColumns: "17% 28% 33% 10% 12%",
          }}
       >
          <li class="flex-center column-text class-id">
@@ -20,23 +22,17 @@ function ClassItem(Class) {
          <li class="flex-center column-text">
             <h3>{Class.Class.lecture_name}</h3>
          </li>
-         <li class="flex-center column-text">{Class.Class.totals}</li>
+         <li class="flex-center column-text">{Class.Class.totalStudent}</li>
 
-         <li className="flex-center column-text">
-            <button className="view-btn">
+         <li class="flex-center column-text">
+            <button className="view-btn" style={{ backgroundColor: "#b30b00" }}>
                <Link
-                  to={`./${Class.Class.id}`}
+                  to={`./${Class.Class.id}/detail-statistic`}
                   relative="path"
                   style={{ color: "#fff" }}
                >
                   Xem
                </Link>
-            </button>
-         </li>
-
-         <li class="flex-center column-text">
-            <button className="view-btn" style={{ backgroundColor: "#b30b00" }}>
-               Xem
             </button>
          </li>
       </ul>

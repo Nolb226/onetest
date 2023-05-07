@@ -32,6 +32,9 @@ import Permission from "./components/dashboard/admin/Permission";
 import ExamDetail from "./components/dashboard/teacher/exam/ExamDetail";
 import Bank from "./components/dashboard/teacher/bank/Bank";
 import AddNewQuestion from "./components/dashboard/teacher/bank/AddNewQuestion";
+import StatisticClasses from "./components/dashboard/teacher/statistic/StatisticClasses";
+import StatisticExamList from "./components/dashboard/teacher/statistic/ExamList";
+import DetailStatistic from "./components/dashboard/teacher/statistic/DetailStatistic";
 
 function App() {
    const currentUser = localStorage.getItem("currentUser");
@@ -172,7 +175,26 @@ function App() {
                         />
                      }
 
-                     <Route path="statistics" element={<Statistics />}></Route>
+                     <Route path="statistics" element={<Statistics />}>
+                        <Route path="" element={<StatisticClasses />} />
+                        <Route
+                           path="classList"
+                           element={<StatisticClasses />}
+                        />
+
+                        <Route
+                           path="classList/:classId/detail-statistic"
+                           element={<DetailStatistic />}
+                        />
+                        <Route
+                           path="examList"
+                           element={<StatisticExamList />}
+                        />
+                        <Route
+                           path="examList/:examId/detail-statistic"
+                           element={<DetailStatistic />}
+                        />
+                     </Route>
 
                      <Route path="bank" element={<Bank />}>
                         {/* <Route path="" element={<Bank />} /> */}
