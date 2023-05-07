@@ -191,7 +191,7 @@ function App() {
                            element={<StatisticExamList />}
                         />
                         <Route
-                           path="examList/:examId/detail-statistic"
+                           path="examList/:classId/:examId/detail-statistic"
                            element={<DetailStatistic />}
                         />
                      </Route>

@@ -76,6 +76,10 @@ router.get(
 	classController.getAllStudent
 );
 
+router.get("/:classId/dashboard", classController.getClassStudentResults);
+router.get("/:classId/:examId/dashboard", classController.getExamStudentResults);
+
+
 // router.get('/notifications', classController.getClassesNotifications);
 
 // /*
