@@ -34,6 +34,9 @@ router.use(isAuth);
 // GET /classes/
 // get all classes
 // */
+
+router.get('/notifications', classController.getClassesNotifications);
+
 router.get(
 	'/',
 	// checkPermission,
@@ -75,8 +78,6 @@ router.get(
 	// checkPermission,
 	classController.getAllStudent
 );
-
-router.get('/notifications', classController.getClassesNotifications);
 
 // /*
 // *teacher

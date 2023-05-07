@@ -50,9 +50,22 @@ function StudentPage() {
 			console.log(list);
 			setExams(list);
 		});
+
+		socket.on('exam:created', (exam, lecture_name) => {
+			console.log(lecture_name);
+
+			// if (exams.length < 10) {
+			const list = [
+				...exams,
+				{ ...exam, lecture_name, exam_id: exam.examId, exam_name: exam.name },
+			];
+			setExams(list);
+			// }
+		});
 		return () => {
+			socket.off('exam:created');
 			socket.off('exam:lock');
-			// socket.disconnect();
+			socket.disconnect();
 		};
 	}, [exams]);
 

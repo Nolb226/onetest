@@ -12,17 +12,19 @@ const { Server } = require('socket.io');
 const { instrument } = require('@socket.io/admin-ui');
 const sequelize = require('./database');
 const { QueryTypes } = require('sequelize');
+const Notifications = require('../models/notification');
 module.exports = {
 	init: (httpSever) => {
 		io = new Server(httpSever, {
 			cors: {
-				origin: [
-					// `${port}:3000`,
-					// 'https://admin.socket.io',
-					'http://192.168.1.3:3000',
-					'http://localhost:3000',
-					'http://127.0.0.1:3000',
-				],
+				// origin: [
+				// 	// `${port}:3000`,
+				// 	// 'https://admin.socket.io',
+				// 	'http://192.168.1.3:3000',
+				// 	'http://localhost:3000',
+				// 	'http://127.0.0.1:3000',
+				// ],
+				origin: '*',
 				allowedHeaders: ['Authorization', 'Content-Type'],
 				methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
 				transports: ['websocket', 'polling'],
@@ -87,62 +89,66 @@ module.exports = {
 				socket.join(classId.toString());
 			});
 			socket.on('exam:start', async (response) => {
-				console.log(socket.request.account);
-				console.log(response);
-				const test = await Student_Result.findByPk(response.id);
-				const exam = await Exam.findByPk(test.examId);
-				const timeEnd = new Date(exam.timeEnd);
-				const { duration } = test;
-				// const
-				let timer;
-				let click = test.clickedOutside;
-				const currentTime = new Date();
-				const countDownDuration = () => {
-					const timeLeft = timeEnd - currentTime;
-					console.log(timeLeft);
+				try {
+					console.log(socket.request.account);
+					console.log(response);
+					const test = await Student_Result.findByPk(response.id);
+					const exam = await Exam.findByPk(test.examId);
+					const timeEnd = new Date(exam.timeEnd);
+					const { duration } = test;
+					// const
+					let timer;
+					let click = test.clickedOutside;
+					const currentTime = new Date();
+					const countDownDuration = () => {
+						const timeLeft = timeEnd - currentTime;
+						console.log(timeLeft);
 
-					const hours = String(parseInt(time / 3600, 10)).padStart(2, '0');
-					const others = String(parseInt(time % 3600, 10)).padStart(2, '0');
-					const minutes = String(parseInt(others / 60, 10)).padStart(2, '0');
-					const seconds = String(parseInt(others % 60, 10)).padStart(2, '0');
+						const hours = String(parseInt(time / 3600, 10)).padStart(2, '0');
+						const others = String(parseInt(time % 3600, 10)).padStart(2, '0');
+						const minutes = String(parseInt(others / 60, 10)).padStart(2, '0');
+						const seconds = String(parseInt(others % 60, 10)).padStart(2, '0');
 
-					socket.emit('test', { hours, seconds, minutes });
-					if (time === 0) {
-						socket.emit('exam:expired');
-						clearInterval(timer);
-						return;
-					}
-					if (timeLeft <= 0) {
-						socket.emit('exam:expired');
-						clearInterval(timer);
-						return;
-					}
-					// duration--;
-					time--;
-					console.log(time);
-				};
-				// let time = duration * 60;
-				let time = duration;
-				// countDownDuration();
-				timer = setInterval(countDownDuration, 1000);
-				socket.on('exam:clickOutside', () => {
-					click += 1;
-				});
-
-				// startTimer(test.duration);
-
-				const handleTest = async () => {
-					console.log('||||||||||||||||||||||||||||||||');
-					await test.update({
-						duration: time,
-						clickedOutside: click,
+						socket.emit('test', { hours, seconds, minutes });
+						if (time === 0) {
+							socket.emit('exam:expired');
+							clearInterval(timer);
+							return;
+						}
+						if (timeLeft <= 0) {
+							socket.emit('exam:expired');
+							clearInterval(timer);
+							return;
+						}
+						// duration--;
+						time--;
+						console.log(time);
+					};
+					// let time = duration * 60;
+					let time = duration;
+					// countDownDuration();
+					timer = setInterval(countDownDuration, 1000);
+					socket.on('exam:clickOutside', () => {
+						click += 1;
 					});
-				};
 
-				socket.on('exam:leave', async () => {
-					await handleTest();
-					clearInterval(timer);
-				});
+					// startTimer(test.duration);
+
+					const handleTest = async () => {
+						console.log('||||||||||||||||||||||||||||||||');
+						await test.update({
+							duration: time,
+							clickedOutside: click,
+						});
+					};
+
+					socket.on('exam:leave', async () => {
+						await handleTest();
+						clearInterval(timer);
+					});
+				} catch (error) {
+					throwError(error, 500);
+				}
 			});
 
 			socket.on('class:exam-lock', (classId, examId, lockState) => {

@@ -194,7 +194,38 @@ exports.getClass = async (req, res, _) => {
 	}
 };
 
-exports.getClassesNotifications = async (req, res, _) => {};
+exports.getClassesNotifications = async (req, res, _) => {
+	try {
+		console.log(req.account);
+		const notifies = await sequelize.query(
+			`
+			SELECT
+			notifications.id,
+			notifications.description,
+			notifications.createdAt,
+			classes.name as class_name
+		FROM
+			classes
+		JOIN classdetail ON classdetail.classId = classes.id
+		JOIN accounts AS student
+		ON
+			student.id = classdetail.accountId
+		JOIN notifications ON notifications.classId = classes.id
+		WHERE
+			student.id = "${req.account.id}"
+
+			`,
+			{
+				type: QueryTypes.SELECT,
+			}
+		);
+
+		successResponse(res, 200, notifies, req.method);
+	} catch (error) {
+		console.log(error);
+		errorResponse(res, error);
+	}
+};
 
 exports.getClassJoin = async (req, res, _) => {
 	try {
@@ -850,7 +881,22 @@ exports.postClassExam = async (req, res) => {
 						content: newQuestions,
 					},
 				});
-				getIO().to(`${classId}`).emit('exam:created', exam);
+
+				const noti = await classroom.createNotification({
+					description: `bạn có bài thi ở lớp ${classroom.name}`,
+				});
+
+				const [lecture_name] = await sequelize.query(
+					`SELECT name FROM lectures WHERE id ="${classroom.lectureId}"`,
+					{
+						type: QueryTypes.SELECT,
+					}
+				);
+
+				getIO()
+					.to(`${classId}`)
+					.emit('exam:created', exam.toJSON(), lecture_name.name);
+				getIO().to(`${classId}`).emit('exam:notify', noti.toJSON());
 				// getIO().emit("create-exam", exam.id);
 				successResponse(res, 200, result);
 			} catch (error) {
@@ -895,6 +941,21 @@ exports.postClassExam = async (req, res) => {
 					through: { content: examContent },
 				});
 				successResponse(res, 200, result);
+				const noti = await classroom.createNotification({
+					description: `bạn có bài thi ở lớp ${classroom.name}`,
+				});
+
+				const [lecture_name] = await sequelize.query(
+					`SELECT name FROM lectures WHERE id ="${classroom.lectureId}"`,
+					{
+						type: QueryTypes.SELECT,
+					}
+				);
+
+				getIO()
+					.to(`${classId}`)
+					.emit('exam:created', exam.toJSON(), lecture_name.name);
+				getIO().to(`${classId}`).emit('exam:notify', noti.toJSON());
 			} catch (error) {
 				console.log(error);
 				errorResponse(res, error);
@@ -975,6 +1036,22 @@ exports.postClassExam = async (req, res) => {
 				through: { content },
 			});
 
+			const noti = await classroom.createNotification({
+				description: `bạn có bài thi ở lớp ${classroom.name}`,
+			});
+
+			const [lecture_name] = await sequelize.query(
+				`SELECT name FROM lectures WHERE id ="${classroom.lectureId}"`,
+				{
+					type: QueryTypes.SELECT,
+				}
+			);
+
+			getIO()
+				.to(`${classId}`)
+				.emit('exam:created', exam.toJSON(), lecture_name.name);
+			getIO().to(`${classId}`).emit('exam:notify', noti.toJSON());
+
 			successResponse(res, 200, result);
 			return;
 		}
@@ -1053,6 +1130,22 @@ exports.postClassExam = async (req, res) => {
 					await student.addExam(exam, {
 						through: { content },
 					});
+
+					const noti = await classroom.createNotification({
+						description: `bạn có bài thi ở lớp ${classroom.name}`,
+					});
+
+					const [lecture_name] = await sequelize.query(
+						`SELECT name FROM lectures WHERE id ="${classroom.lectureId}"`,
+						{
+							type: QueryTypes.SELECT,
+						}
+					);
+
+					getIO()
+						.to(`${classId}`)
+						.emit('exam:created', exam.toJSON(), lecture_name.name);
+					getIO().to(`${classId}`).emit('exam:notify', noti.toJSON());
 					successResponse(res, 200, _, req.method);
 					return;
 				})

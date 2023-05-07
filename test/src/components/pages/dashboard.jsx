@@ -9,6 +9,7 @@ import '../../css/dashboard/dashboard.css';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router';
 import logo from '../../image/logo-no-background.png';
 import { Link } from 'react-router-dom';
+import socket from '../../util/socket.js';
 
 const UserMenu = ({ info, setIsOpenProfile, setType }) => {
 	return (
@@ -203,7 +204,15 @@ const UserModel = ({ setIsOpenProfile, info, type, handleUpdate }) => {
 	);
 };
 
-const Notification = () => {
+const Notification = ({ notifies }) => {
+	const vietNamFomatter = new Intl.DateTimeFormat('vi-VN', {
+		year: 'numeric',
+		month: 'numeric',
+		day: 'numeric',
+	});
+
+	const today = new Date();
+
 	return (
 		<>
 			<div className="notification-panel">
@@ -212,7 +221,43 @@ const Notification = () => {
 				</header>
 				<body className="panel__body">
 					<ul className="notification-list">
-						<li className="notification-item">
+						{notifies?.map((notify) => {
+							const dayPast = -Math.abs(
+								new Date().getDate() - new Date(notify.createdAt).getDate()
+							);
+							{
+								/* let rtf  */
+							}
+							console.log(
+								-Math.abs(dayPast),
+								new Date(notify.createdAt).getDate()
+							);
+							let result;
+							if (dayPast < -1) {
+								result = new Intl.RelativeTimeFormat('vi-VN', {
+									style: 'short',
+									timeZone: 'Asia/Ho_Chi_Minh',
+								}).format(dayPast, 'day');
+							} else {
+								result = new Intl.RelativeTimeFormat('vi-VN', {
+									numeric: 'auto',
+									timeZone: 'Asia/Ho_Chi_Minh',
+								}).format(dayPast, 'day');
+							}
+							return (
+								<li key={notify.id} className="notification-item">
+									<p className='info-box__text info-box__text--main  "'>
+										{notify.description}
+									</p>
+									<p className="info-box__text info-box__text--sub">
+										{/* {notify.class_name} */}
+										{result}
+									</p>
+								</li>
+							);
+						})}
+
+						{/* <li className="notification-item">
 							<p>Bạn có 1 bài tập mới từ lớp ABC123</p>
 						</li>
 						<li className="notification-item">
@@ -232,10 +277,7 @@ const Notification = () => {
 						</li>
 						<li className="notification-item">
 							<p>Bạn có 1 bài tập mới từ lớp ABC123</p>
-						</li>
-						<li className="notification-item">
-							<p>Bạn có 1 bài tập mới từ lớp ABC123</p>
-						</li>
+						</li> */}
 					</ul>
 				</body>
 			</div>
@@ -277,36 +319,13 @@ function Dashboard() {
 			});
 
 			setNotifies(notifyInDB.data);
-		} catch (error) {}
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	useEffect(() => {
-		const currentUser = localStorage.getItem('currentUser');
-		Promise.all([
-			fetch(`${api}/accounts`, {
-				headers: {
-					Authorization: 'Bearer ' + currentUser,
-				},
-			}),
-			fetch(`${api}/classes/notifications`, {
-				headers: {
-					Authorization: 'Bearer ' + currentUser,
-				},
-			}),
-		])
-			.then((response) => {
-				return response.json();
-			})
-			.then((infoAPI) => {
-				console.log(infoAPI);
-				setInfo({
-					...infoAPI.data,
-					fullName: infoAPI.data?.lastName + ' ' + infoAPI.data?.firstName,
-				});
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+		fetchData();
 	}, []);
 
 	const menuElement = document.querySelector('#left-menu');
@@ -318,6 +337,17 @@ function Dashboard() {
 			document.querySelector('.menu-layer').style.display = 'none';
 		}
 	};
+
+	useEffect(() => {
+		socket.connect();
+		socket.on('exam:notify', (noti) => {
+			setNotifies([...notifies, noti]);
+		});
+		return () => {
+			socket.off('exam:notify');
+			// socket.disconnect();
+		};
+	}, [notifies]);
 
 	const handleUpdate = (newInfo) => {
 		console.log(newInfo);
@@ -395,6 +425,7 @@ function Dashboard() {
 											<Notification
 												setIsOpenProfile={setIsOpenProfile}
 												setIsOpenNotifications={setIsOpenNotifications}
+												notifies={notifies}
 											/>
 										)}
 									</li>
