@@ -76,7 +76,7 @@ router.get(
 	classController.getAllStudent
 );
 
-router.get('/notifications', classController.getClassesNotifications);
+// router.get('/notifications', classController.getClassesNotifications);
 
 // /*
 // *teacher
