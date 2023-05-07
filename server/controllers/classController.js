@@ -717,7 +717,7 @@ exports.postClass = async (req, res, _) => {
 		});
 		console.log(newClass.toJSON());
 
-		// sequelize.query(`INSERT INTO classes VALUES ()`)
+		// sequelize.query(`INSERT INTO classes VALUES (${},${})`)
 
 		// await user.addClass(newClass);
 

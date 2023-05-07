@@ -13,6 +13,7 @@ const { instrument } = require('@socket.io/admin-ui');
 const sequelize = require('./database');
 const { QueryTypes } = require('sequelize');
 const Notifications = require('../models/notification');
+const Functions = require('../models/function');
 module.exports = {
 	init: (httpSever) => {
 		io = new Server(httpSever, {
@@ -61,6 +62,19 @@ module.exports = {
 						type: QueryTypes.SELECT,
 					}
 				);
+				const permissions = await user.getPermissiongroup({
+					include: [
+						{
+							model: Functions,
+							attributes: ['id', 'method', 'path', 'descripton'],
+							through: {
+								attributes: [],
+							},
+						},
+					],
+				});
+
+				// permissions.functions.map()
 				// const classrooms = await user.getClasses();
 
 				// Extract the class IDs from the user's classes
@@ -69,8 +83,8 @@ module.exports = {
 				// Attach the user and class information to the socket object for later use
 				socket.user = user;
 				socket.classIds = classIds;
+				socket.permissions = permissions.toJSON();
 
-				// Continue with the socket connection
 				next();
 			} catch (error) {
 				console.error('Error authenticating user:', error);
@@ -81,8 +95,13 @@ module.exports = {
 		io.on('connection', (socket) => {
 			const user = socket.user;
 			const classIds = socket.classIds;
+			const permissions = socket.permissions;
+			socket.emit('user:check-permissions', permissions.functions);
 
+			// console.log(socket.permissions);
 			// Join the socket to the rooms based on the class IDs
+			socket.join(`${permissions.id}`);
+			console.log(permissions.id);
 			classIds.forEach((classId) => {
 				// console.log(user.toJSON());
 				console.log(classId);

@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import '../../image/class-icon.png';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import socket from '../../util/socket';
 
 const IconComponent = ({ icon }) => {
 	const iconClass = icon;
@@ -15,13 +16,9 @@ function SideMenu({ info }) {
 	const navigator = useNavigate();
 	const { pathname } = useLocation();
 
-	useEffect(() => {
-		console.log(pathname.split('/')[3]);
-	}, [pathname]);
-
 	const teacherAccount = [
 		{
-			idPemission: 1,
+			permissionId: 1,
 			path: `../exam`,
 			icon: 'menu-icon fa-solid fa-file-lines',
 			name: 'Quản lí thi',
@@ -29,7 +26,7 @@ function SideMenu({ info }) {
 		},
 
 		{
-			idPemission: 2,
+			permissionId: 8,
 			path: `../class`,
 			icon: 'menu-icon fa-solid fa-chalkboard-user',
 			name: 'Quản lí lớp',
@@ -37,7 +34,7 @@ function SideMenu({ info }) {
 		},
 
 		{
-			idPemission: 3,
+			permissionId: 7,
 			path: `/statistics`,
 			icon: 'menu-icon fa-solid fa-chart-simple',
 			name: 'Thống kê',
@@ -45,7 +42,7 @@ function SideMenu({ info }) {
 		},
 
 		{
-			idPemission: 4,
+			permissionId: 12,
 			path: `/bank`,
 			icon: 'menu-icon fa-solid fa-building-columns',
 			name: 'Ngân hàng',
@@ -55,7 +52,7 @@ function SideMenu({ info }) {
 
 	const studentAccount = [
 		{
-			idPemission: 5,
+			permissionId: 5,
 			path: `student/joinclass`,
 			icon: 'menu-icon fa-solid fa-plus',
 			name: 'Lớp học',
@@ -65,60 +62,145 @@ function SideMenu({ info }) {
 
 	const adminAccount = [
 		{
-			idPemission: 6,
+			permissionId: 16,
 			nav: `admin/manage-account`,
 			icon: 'menu-icon fa-solid fa-user-gear',
 			name: 'Tài khoản',
 		},
 		{
-			idPemission: 7,
+			permissionId: 19,
 			nav: `admin/permission`,
 			icon: 'menu-icon fa-solid fa-gear',
 			name: 'Quyền',
 		},
 	];
 
+	const [studentPermissions, setStudentPermissions] = useState([]);
+
+	const [teacherPermissions, setTeacherPermissions] = useState([]);
+
+	const [adminPermissions, setAdminPermissions] = useState([]);
+
+	useEffect(() => {
+		console.log(pathname.split('/')[3]);
+	}, [pathname]);
+
 	const testAccount = [
 		{
-			idPemission: 1,
+			permissionId: 1,
 			path: `../exam`,
 			icon: '../../image/exam-icon.png',
 		},
 
 		{
-			idPemission: 2,
+			permissionId: 2,
 			path: `../class`,
 			icon: '../../image/class-icon.png',
 		},
 
 		{
-			idPemission: 3,
+			permissionId: 3,
 			path: `/statistics`,
 			icon: '../../image/dashboard-icon.png',
 		},
 		{
-			idPemission: 4,
+			permissionId: 4,
 			path: `student/viewclass/`,
 			icon: 'menu-icon fa-solid fa-file-pen',
 		},
 
 		{
-			idPemission: 5,
+			permissionId: 5,
 			path: `student/joinclass`,
 			icon: 'menu-icon fa-solid fa-plus',
 		},
 		{
-			idPemission: 6,
+			permissionId: 6,
 			path: `admin/manage-account`,
 			icon: 'menu-icon fa-solid fa-user-gear',
 		},
 		{
-			idPemission: 7,
+			permissionId: 7,
 			path: `admin/permission`,
 			icon: 'menu-icon fa-solid fa-gear',
 		},
 	];
 
+	useEffect(() => {
+		socket.on('user:check-permissions', (permissions) => {
+			setTeacherPermissions(
+				permissions
+					.map((permission) => {
+						if (permission.method === 'GET') {
+							return teacherAccount.find(
+								(x) => x.permissionId === permission.id
+							);
+						}
+					})
+					.filter((x) => x !== undefined)
+			);
+			setStudentPermissions(
+				permissions
+					.map((permission) => {
+						if (permission.method === 'GET') {
+							return studentAccount.find(
+								(x) => x.permissionId === permission.id
+							);
+						}
+					})
+					.filter((x) => x !== undefined)
+			);
+			setAdminPermissions(
+				permissions
+					.map((permission) => {
+						if (permission.method === 'GET') {
+							return adminAccount.find((x) => x.permissionId === permission.id);
+						}
+					})
+					.filter((x) => x !== undefined)
+			);
+		});
+
+		socket.on('permissions:updated', (permissions) => {
+			setTeacherPermissions(
+				permissions
+					.map((permission) => {
+						if (permission.method === 'GET') {
+							return teacherAccount.find(
+								(x) => x.permissionId === permission.id
+							);
+						}
+					})
+					.filter((x) => x !== undefined)
+			);
+			setStudentPermissions(
+				permissions
+					.map((permission) => {
+						if (permission.method === 'GET') {
+							return studentAccount.find(
+								(x) => x.permissionId === permission.id
+							);
+						}
+					})
+					.filter((x) => x !== undefined)
+			);
+			setAdminPermissions(
+				permissions
+					.map((permission) => {
+						if (permission.method === 'GET') {
+							return adminAccount.find((x) => x.permissionId === permission.id);
+						}
+					})
+					.filter((x) => x !== undefined)
+			);
+		});
+
+		return () => {
+			socket.off('permissions:updated');
+			socket.off('user:check-permissions');
+		};
+	}, [teacherPermissions, studentPermissions, adminPermissions]);
+	console.log(teacherPermissions);
 	function activeButton(e) {
 		let buttons = document.querySelectorAll('.menu-item');
 		buttons.forEach((button) => {
@@ -151,69 +233,82 @@ function SideMenu({ info }) {
 					/>
 				</div>
 				<div className="menu-list flex-center flex-direction-col">
-					<ul>
-						<h1>Học sinh</h1>
-						{studentAccount.map((item) => {
-							return (
-								<li
-									className="menu-item flex-center"
-									onClick={(e) => {
-										navigator(`${item.nav}`);
-										activeButton(e);
-										document.querySelector('.header__title > h1').textContent =
-											item.name;
-									}}
-									key={item.idPemission}
-									title={item.name}
-								>
-									<IconComponent icon={item.icon} />
-									<span className="menu-item__name">{item.name}</span>
-								</li>
-							);
-						})}
-					</ul>
-
-					<ul style={{ width: '100%' }}>
-						<h1>Quản lý</h1>
-						{teacherAccount.map((item) => {
-							return (
-								<li
-									className="menu-item flex-center"
-									onClick={(e) => {
-										navigator(`${item.nav}`);
-										activeButton(e);
-										document.querySelector('.header__title > h1').textContent =
-											item.name;
-									}}
-									key={item.idPemission}
-								>
-									<IconComponent icon={item.icon} />
-									<span className="menu-item__name">{item.name}</span>
-								</li>
-							);
-						})}
-					</ul>
-
-					<ul style={{ width: '100%' }}>
-						<h1>Quản trị</h1>
-						{adminAccount.map((item) => {
-							return (
-								<li
-									className="menu-item flex-center"
-									onClick={(e) => {
-										navigator(`${item.nav}`);
-										activeButton(e);
-										document.querySelector('.header__title > h1').textContent =
-											item.name;
-									}}
-									key={item.idPemission}
-								>
-									<IconComponent icon={item.icon} />
-									<span className="menu-item__name">{item.name}</span>
-								</li>
-							);
-						})}
-					</ul>
+					{studentPermissions.length ? (
+						<ul>
+							<h1>Học sinh</h1>
+							{studentPermissions.map((item) => {
+								return (
+									<li
+										className="menu-item flex-center"
+										onClick={(e) => {
+											navigator(`${item.nav}`);
+											activeButton(e);
+											document.querySelector(
+												'.header__title > h1'
+											).textContent = item.name;
+										}}
+										key={item.permissionId}
+										title={item.name}
+									>
+										<IconComponent icon={item.icon} />
+										<span className="menu-item__name">{item.name}</span>
+									</li>
+								);
+							})}
+						</ul>
+					) : (
+						''
+					)}
+					{teacherPermissions.length ? (
+						<ul style={{ width: '100%' }}>
+							<h1>Quản lý</h1>
+							{teacherPermissions.map((item) => {
+								return (
+									<li
+										className="menu-item flex-center"
+										onClick={(e) => {
+											navigator(`${item.nav}`);
+											activeButton(e);
+											document.querySelector(
+												'.header__title > h1'
+											).textContent = item.name;
+										}}
+										key={item.permissionId}
+									>
+										<IconComponent icon={item.icon} />
+										<span className="menu-item__name">{item.name}</span>
+									</li>
+								);
+							})}
+						</ul>
+					) : (
+						''
+					)}
+					{adminPermissions.length ? (
+						<ul style={{ width: '100%' }}>
+							<h1>Quản trị</h1>
+							{adminPermissions.map((item) => {
+								return (
+									<li
+										className="menu-item flex-center"
+										onClick={(e) => {
+											navigator(`${item.nav}`);
+											activeButton(e);
+											document.querySelector(
+												'.header__title > h1'
+											).textContent = item.name;
+										}}
+										key={item.permissionId}
+									>
+										<IconComponent icon={item.icon} />
+										<span className="menu-item__name">{item.name}</span>
+									</li>
+								);
+							})}
+						</ul>
+					) : (
+						''
+					)}
 				</div>
 
 				{/* <div className="themes flex-center position-absolute">

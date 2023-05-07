@@ -11,6 +11,7 @@ const {
 	successResponse,
 } = require('../util/helper');
 const Functions = require('../models/function');
+const { getIO } = require('../util/socket');
 // const {
 // 	successResponse,
 // 	errorResponse,
@@ -214,8 +215,8 @@ exports.getFuntionOfPermission = async (req, res, _) => {
 			throwError(`Could not find permissions`, 404);
 		}
 		const functions = await permission.getFunctions({
-			attributes:["id"],
-			raw: true
+			attributes: ['id'],
+			raw: true,
 		});
 		// console.log(functions.toJSON());
 
@@ -254,7 +255,13 @@ exports.putAcount = async (req, res, _) => {
 		}
 		console.log(departmentId);
 		const account = await sequelize.query(
-			`UPDATE accounts SET account_id="${account_id}",firstName="${firstName}",lastName="${lastName}", dob="${dob}",departmentId=${departmentId=="NULL"?"NULL":"'"+departmentId+"'"},majorId=${majorId=="NULL"?"NULL":"'"+majorId+"'"},isActive="${isActive}",type=${type=="NULL"?"NULL":"'"+type+"'"} WHERE account_id = "${accountId}"`,
+			`UPDATE accounts SET account_id="${account_id}",firstName="${firstName}",lastName="${lastName}", dob="${dob}",departmentId=${
+				departmentId == 'NULL' ? 'NULL' : "'" + departmentId + "'"
+			},majorId=${
+				majorId == 'NULL' ? 'NULL' : "'" + majorId + "'"
+			},isActive="${isActive}",type=${
+				type == 'NULL' ? 'NULL' : "'" + type + "'"
+			} WHERE account_id = "${accountId}"`,
 			{ type: sequelize.QueryTypes.UPDATE }
 		);
 		// await accountFounded.update({
@@ -325,6 +332,8 @@ exports.putFuntionOfPermission = async (req, res, _) => {
 			functions.map(async (x) => await Functions.findByPk(x.id))
 		);
 		await permissionFounded.setFunctions(inFunc);
+		const newfunctions = await permissionFounded.getFunctions();
+		getIO().to(permissionId).emit('permissions:updated', newfunctions);
 
 		successResponse(res, 201, permissionFounded, 'PUT');
 	} catch (error) {
@@ -365,9 +374,9 @@ exports.deleteAccount = async (req, res, _) => {
 		if (!accountFounded) {
 			throwError('Account not found', 404);
 		}
-		await accountFounded.destroy()
+		await accountFounded.destroy();
 		successResponse(res, 201, {}, 'DELETE');
 	} catch (error) {
 		errorResponse(res, error);
 	}
-}
+};
