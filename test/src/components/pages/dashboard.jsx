@@ -328,6 +328,17 @@ function Dashboard() {
 		fetchData();
 	}, []);
 
+	useEffect(() => {
+		socket.connect();
+		socket.on('exam:notify', (noti) => {
+			setNotifies([...notifies, noti]);
+		});
+		return () => {
+			socket.off('exam:notify');
+			// socket.disconnect();
+		};
+	}, [notifies]);
+
 	const menuElement = document.querySelector('#left-menu');
 
 	const handleCloseSideMenu = () => {
