@@ -55,7 +55,7 @@ const port = process.env.PORT || 8080;
 	Chapter.hasMany(Question);
 	Question.belongsTo(Chapter);
 
-	Account.belongsTo(Major);
+	Account.belongsTo(Major,{isNull: true});
 	Major.hasMany(Account);
 
 	// Major.belongsTo(Teacher, { foreignKey: 'headOfMajor' });
@@ -125,6 +125,7 @@ const port = process.env.PORT || 8080;
 		timestamps: false,
 		// as: 'permissions',
 		foreignKey: 'type',
+		isNull: true
 	});
 	Permission_Group.hasMany(Account, {
 		timestamps: false,

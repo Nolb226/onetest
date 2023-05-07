@@ -338,17 +338,6 @@ function Dashboard() {
 		}
 	};
 
-	useEffect(() => {
-		socket.connect();
-		socket.on('exam:notify', (noti) => {
-			setNotifies([...notifies, noti]);
-		});
-		return () => {
-			socket.off('exam:notify');
-			// socket.disconnect();
-		};
-	}, [notifies]);
-
 	const handleUpdate = (newInfo) => {
 		console.log(newInfo);
 		const currentUser = localStorage.getItem('currentUser');
@@ -374,7 +363,7 @@ function Dashboard() {
 		<div
 			id="main-layout"
 			className="grid wide"
-			// onClick={() => setIsOpen(false)}
+			onClick={() => handleCloseSideMenu()}
 		>
 			<div className="layout--body">
 				<SideMenu info={info} />
@@ -464,19 +453,19 @@ function Dashboard() {
 								</ul>
 							</div>
 						</header>
-					</div>
-					<div className="content">
-						{isOpenProfile && (
-							<UserModel
-								info={info}
-								type={type}
-								setIsOpenProfile={setIsOpenProfile}
-								handleUpdate={handleUpdate}
-							/>
-						)}
-						<Outlet />
-						{/* <Teacher /> */}
-						{/* <Student idStudent={info.id} nameStudent={info.fullname} /> */}
+						<div className="content">
+							{isOpenProfile && (
+								<UserModel
+									info={info}
+									type={type}
+									setIsOpenProfile={setIsOpenProfile}
+									handleUpdate={handleUpdate}
+								/>
+							)}
+							<Outlet />
+							{/* <Teacher /> */}
+							{/* <Student idStudent={info.id} nameStudent={info.fullname} /> */}
+						</div>
 					</div>
 				</div>
 			</div>
