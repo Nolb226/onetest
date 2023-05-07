@@ -30,7 +30,6 @@ const sequelize = require('../util/database');
 const { Op, QueryTypes } = require('sequelize');
 const Question = require('../models/question');
 const Account = require('../models/account');
-const { getIO } = require('../util/socket');
 const deleteExcel = function (filePath) {
 	const file = path.join(__dirname, '..', filePath);
 	fs.unlink(file, (err) => console.log(err));
@@ -194,8 +193,6 @@ exports.getClass = async (req, res, _) => {
 	}
 };
 
-exports.getClassesNotifications = async (req, res, _) => {};
-
 exports.getClassJoin = async (req, res, _) => {
 	try {
 		const { classId } = req.params;
@@ -240,7 +237,7 @@ exports.getClassEdit = async (req, res, _) => {
 		if (!foundedClass) {
 			return throwError('Class not found', 404);
 		}
-		return successResponse(res, 200, foundedClass);
+		return successResponse(res, 200, foundedClass, 'GET');
 	} catch (error) {
 		errorResponse(res, error);
 	}
@@ -251,8 +248,9 @@ exports.getAllStudent = async (req, res, _) => {
 		const page = req.query.page || 1;
 		const perPage = 10;
 		const { classId } = req.params;
-
+		// console.log(classId);
 		const classroom = await Classes.findByPk(classId);
+		// console.log(classroom);
 		if (!classroom) {
 			throwError(`Could not find class`, 404);
 		}
@@ -265,12 +263,12 @@ exports.getAllStudent = async (req, res, _) => {
 					include: [
 						{
 							model: Exam,
-							where: { classId },
+							where: { classId : `${classId}`},
 						},
 					],
 				},
 			],
-			order: ['firstName', 'account_id'],
+			// order: ['firstName', 'account_id'],
 
 			joinTableAttributes: [],
 			// raw: true,
@@ -682,9 +680,7 @@ exports.postClass = async (req, res, _) => {
 			semester,
 			year,
 			lectureId,
-			accountId: account.id,
 		});
-		console.log(newClass.toJSON());
 
 		// sequelize.query(`INSERT INTO classes VALUES ()`)
 
@@ -713,7 +709,7 @@ exports.postClass = async (req, res, _) => {
 					await newClass.createAccount({
 						password: await bycrypt.hash(accountpassword, 10),
 						account_id: student['MSSV'] || student['Mã sinh viên'],
-						dob: new Date(year, month, day) || new Date(),
+						dob: new Date(year, month, day),
 						firstName: student['Tên'],
 						lastName: student['Họ lót'],
 						type: 'SV',
@@ -850,7 +846,6 @@ exports.postClassExam = async (req, res) => {
 						content: newQuestions,
 					},
 				});
-				getIO().to(`${classId}`).emit('exam:created', exam);
 				// getIO().emit("create-exam", exam.id);
 				successResponse(res, 200, result);
 			} catch (error) {
@@ -1930,7 +1925,7 @@ exports.deleteClassStudent = async (req, res, _) => {
 		if (!student) {
 			throwError(`Student not found:`, 404);
 		}
-		await classroom.removeStudent(student);
+		await classroom.removeAccount(student);
 		successResponse(res, 200, _, req.method);
 	} catch (error) {
 		errorResponse(res, error);
