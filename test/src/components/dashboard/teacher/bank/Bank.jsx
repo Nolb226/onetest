@@ -736,7 +736,14 @@ function Bank() {
                            </li>
                         </ul>
 
-                        <button className="create-exam-btn-pc">Lưu</button>
+                        <button
+                           className="create-exam-btn-pc"
+                           onClick={() => {
+                              saveChange(editQuestionArray, editedQuestion);
+                           }}
+                        >
+                           Lưu
+                        </button>
                      </div>
 
                      <div className="question-list_container">
@@ -757,6 +764,7 @@ function Bank() {
                      </div>
 
                      <button
+                        className="create-exam-btn-tablet"
                         style={{ marginTop: "10px" }}
                         onClick={() => {
                            saveChange(editQuestionArray, editedQuestion);
