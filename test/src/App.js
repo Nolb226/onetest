@@ -40,26 +40,6 @@ function App() {
       /* <Route path="*" element={<Home />}></Route> */
    }
 
-   // socket.connect();
-
-   // const Components = [
-   // 	{
-   // 		classes: ViewClass,
-   // 		path: 'classes',
-   // 		childrens: [
-   // 			{
-   // 				// index: true,
-   // 				join: JoinClass,
-   // 				path: 'join',
-   // 			},
-   // 		],
-   // 	},
-   // 	{
-   // 		exams: StudentPage,
-   // 		path: 'exams',
-   // 	},
-   // ];
-
    return (
       <div id="app" className="position-relative">
          <Routes></Routes>
@@ -158,11 +138,11 @@ function App() {
                         </Route>
                      </Route>
                      <Route path="exam/:examId" element={<Test />} />
-                     <Route path="result/" element={<Result />} />
-                     <Route
+                     <Route path="result/:examId" element={<Result />} />
+                     {/* <Route
                         path="exams/:classId/:examId"
                         element={<Result />}
-                     />
+                     /> */}
                      {<Route path="*" element={<Student />} />}
                   </Route>
                   <Route path="teacher" element={<Teacher />}>
@@ -196,11 +176,8 @@ function App() {
 
                      <Route path="bank" element={<Bank />}>
                         {/* <Route path="" element={<Bank />} /> */}
-                        <Route
-                           path="addQuestion"
-                           element={<AddNewQuestion />}
-                        />
                      </Route>
+                     <Route path="addQuestion" element={<AddNewQuestion />} />
                   </Route>
 
                   <Route path="admin" element={<Admin />}>

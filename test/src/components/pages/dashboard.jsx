@@ -244,20 +244,61 @@ const Notification = () => {
 };
 
 function Dashboard() {
-   const [info, setInfo] = useState([]);
+   const [info, setInfo] = useState({});
+   const [notifies, setNotifies] = useState([]);
    const [isOpen, setIsOpen] = useState(false);
    const [type, setType] = useState("");
    const [isOpenProfile, setIsOpenProfile] = useState(false);
    const [isOpenNotifications, setIsOpenNotifications] = useState(false);
+
+   const fetchData = async () => {
+      try {
+         const currentUser = localStorage.getItem("currentUser");
+
+         const [info, notify] = await Promise.all([
+            fetch(`${api}/accounts`, {
+               headers: {
+                  Authorization: "Bearer " + currentUser,
+               },
+            }),
+            fetch(`${api}/classes/notifications`, {
+               headers: {
+                  Authorization: "Bearer " + currentUser,
+               },
+            }),
+         ]);
+
+         const infoInDB = await info.json();
+         const notifyInDB = await notify.json();
+
+         setInfo({
+            ...infoInDB.data,
+            fullName: infoInDB.data?.lastName + " " + infoInDB.data?.firstName,
+         });
+
+         setNotifies(notifyInDB.data);
+      } catch (error) {}
+   };
+
    useEffect(() => {
       const currentUser = localStorage.getItem("currentUser");
-      fetch(`${api}/accounts`, {
-         headers: {
-            Authorization: "Bearer " + currentUser,
-         },
-      })
-         .then((response) => response.json())
+      Promise.all([
+         fetch(`${api}/accounts`, {
+            headers: {
+               Authorization: "Bearer " + currentUser,
+            },
+         }),
+         fetch(`${api}/classes/notifications`, {
+            headers: {
+               Authorization: "Bearer " + currentUser,
+            },
+         }),
+      ])
+         .then((response) => {
+            return response.json();
+         })
          .then((infoAPI) => {
+            console.log(infoAPI);
             setInfo({
                ...infoAPI.data,
                fullName: infoAPI.data?.lastName + " " + infoAPI.data?.firstName,
@@ -303,7 +344,7 @@ function Dashboard() {
       <div
          id="main-layout"
          className="grid wide"
-         // onClick={() => setIsOpen(false)}
+         onClick={() => handleCloseSideMenu()}
       >
          <div className="layout--body">
             <SideMenu info={info} />

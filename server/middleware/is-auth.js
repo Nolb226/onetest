@@ -3,6 +3,7 @@ const Account = require('../models/account');
 const Functions = require('../models/function');
 const Permission_Group = require('../models/permission_group');
 const { throwError, errorResponse } = require('../util/helper');
+const socket = require('../util/socket');
 module.exports.isAuth = async (req, res, next) => {
 	try {
 		const token = req.get('Authorization')?.split(' ')[1];
@@ -36,7 +37,6 @@ module.exports.isAuth = async (req, res, next) => {
 		}
 		// req.user = JSON.stringify(user);
 		req.account = user;
-
 		req.permissions = JSON.stringify(user.permissions);
 		next();
 	} catch (error) {

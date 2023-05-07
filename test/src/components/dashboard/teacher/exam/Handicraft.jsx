@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 // import validator from '../../../home/modal/validator';
 import api from "../../../../config/config";
 import Loading from "../../../loadingAnimation/Loading";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const layout = {
    width: "100%",
@@ -21,8 +22,7 @@ const questionInput = {
    color: "#333",
 };
 
-function validator(formSelector, setIsLoading) {
-   console.log("validate");
+function validator(formSelector, setIsLoading, classId, navigate) {
    let formElement = document.querySelector(formSelector);
 
    let formRules = {};
@@ -100,6 +100,8 @@ function validator(formSelector, setIsLoading) {
       });
 
       // Create handicraft exam
+
+      console.log("validate for handily exam");
       formElement.onsubmit = (event) => {
          event.preventDefault();
          const currentUser = localStorage.getItem("currentUser");
@@ -108,9 +110,6 @@ function validator(formSelector, setIsLoading) {
          let formData = new FormData();
          const questionList = formElement.querySelector(".question-list");
          let questionBoxes = questionList.querySelectorAll(".question-box");
-
-         console.log(questionList);
-         console.log(questionBoxes);
 
          inputs.forEach((input) => {
             if (!handelValidate({ target: input })) {
@@ -184,7 +183,7 @@ function validator(formSelector, setIsLoading) {
 
             setIsLoading(true);
 
-            fetch(`${api}/test`, {
+            fetch(`${api}/classes/${classId}/exams?type`, {
                body: formData,
                method: "POST",
                headers: {
@@ -193,13 +192,17 @@ function validator(formSelector, setIsLoading) {
             }).then((res) => {
                if (!res.ok) {
                   setIsLoading(false);
-
-                  alert("Tạo bài thi thất bại!");
+                  alert("Tạo đề không thành công! Vui lòng thử lại.");
+               } else if (res.ok) {
+                  console.log("nav");
+                  alert("Tạo đề thành công! Click để quay lại trang chính.");
+                  setIsLoading(false);
+                  navigate(-1);
                }
             });
          }
 
-         // fetch(`${api}/classes/841109221-2/exams?type`, {
+         // fetch(`${api}/classes/${classId}/exams?type`, {
          //    body: formData,
          //    method: "POST",
          //    headers: {
@@ -283,11 +286,6 @@ function QuestionBox({ question, questionListArray, setQuestionListArray }) {
                   answerArray={question.answers}
                />
             </div>
-
-            <label
-               htmlFor="question-box__content"
-               className="form-message"
-            ></label>
          </div>
          <ul className="flex-center flex-direction-col question-side-menu ">
             <li className="flex-center tool-btn">
@@ -343,9 +341,11 @@ function QuestionBox({ question, questionListArray, setQuestionListArray }) {
    );
 }
 
-function Handicraft({ classList }) {
-   console.log(classList);
+function Handicraft() {
+   const [searchParams] = useSearchParams();
+   const classId = searchParams.get("id");
    const [isLoading, setIsLoading] = useState(false);
+   const navigate = useNavigate();
 
    const [questionListArray, setQuestionListArray] = useState([
       {
@@ -360,7 +360,7 @@ function Handicraft({ classList }) {
    ]);
 
    useEffect(() => {
-      validator("#handicraft", setIsLoading);
+      validator("#handicraft", setIsLoading, classId, navigate);
    }, [questionListArray]);
 
    return (
@@ -462,44 +462,6 @@ function Handicraft({ classList }) {
                   <div className="info-item form-group">
                      <label
                         className="form-label"
-                        htmlFor="duration"
-                        style={{
-                           color: "#222",
-                           fontSize: "1.3rem",
-                           fontWeight: "600",
-                           width: "160px",
-                        }}
-                     >
-                        Thời gian làm bài
-                     </label>
-
-                     <input
-                        rules="require"
-                        className="form-control"
-                        type="text"
-                        name="duration"
-                        id="duration"
-                        placeholder="Nhập số phút"
-                        style={{
-                           fontSize: "1.4rem",
-                           paddingLeft: "10px",
-                           height: "30px",
-                           outline: "none",
-                           borderRadius: "5px",
-                           border: "solid 2px #BFBFBF",
-                           width: "100%",
-                        }}
-                     />
-                     <label
-                        htmlFor="duration"
-                        className="form-message"
-                        style={{ height: "16px" }}
-                     ></label>
-                  </div>
-
-                  <div className="info-item form-group">
-                     <label
-                        className="form-label"
                         htmlFor="timeStart"
                         style={{
                            color: "#222",
@@ -566,6 +528,44 @@ function Handicraft({ classList }) {
                      />
                      <label
                         htmlFor="timeEnd"
+                        className="form-message"
+                        style={{ height: "16px" }}
+                     ></label>
+                  </div>
+
+                  <div className="info-item form-group">
+                     <label
+                        className="form-label"
+                        htmlFor="duration"
+                        style={{
+                           color: "#222",
+                           fontSize: "1.3rem",
+                           fontWeight: "600",
+                           width: "160px",
+                        }}
+                     >
+                        Thời gian làm bài
+                     </label>
+
+                     <input
+                        rules="require"
+                        className="form-control"
+                        type="text"
+                        name="duration"
+                        id="duration"
+                        placeholder="Nhập số phút"
+                        style={{
+                           fontSize: "1.4rem",
+                           paddingLeft: "10px",
+                           height: "30px",
+                           outline: "none",
+                           borderRadius: "5px",
+                           border: "solid 2px #BFBFBF",
+                           width: "100%",
+                        }}
+                     />
+                     <label
+                        htmlFor="duration"
                         className="form-message"
                         style={{ height: "16px" }}
                      ></label>

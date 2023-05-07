@@ -15,6 +15,7 @@
 #Home .header__logo {
    height: 100%;
    position: absolute;
+   padding: 3px 0;
    left: 0;
 }
 
@@ -130,4 +131,22 @@
 
 /* Mobile */
 @media (max-width: 739px) {
+   #header {
+      padding: 0 15px;
+      box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
+   }
+   .header__logo > img {
+      padding: 15px 0;
+   }
+
+   .header__btn {
+      width: auto;
+   }
+
+   .header__btn > button {
+      width: 90px;
+      height: 30px;
+      margin: 0 3px;
+      font-size: 1.4rem;
+   }
 }

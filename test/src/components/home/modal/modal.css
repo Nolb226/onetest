@@ -275,3 +275,56 @@
    flex-direction: row;
    align-items: flex-start;
 }
+
+.layer-modal {
+   position: absolute;
+   left: 0;
+   right: 0;
+   top: 0;
+   bottom: 0;
+   z-index: 100;
+   background-color: rgba(0, 0, 0, 0.3);
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
+.modal-notification {
+   background-color: #fff;
+   height: 140px;
+   width: 300px;
+   border-radius: 10px;
+   margin-bottom: 20px;
+   display: flex;
+   justify-content: flex-start;
+   align-items: center;
+   flex-direction: column;
+}
+
+.modal-notification-icon {
+   height: 50px;
+   width: 50px;
+   border-radius: 50%;
+   margin-top: -25px;
+   background-color: #1dbfaf;
+   font-size: 2.4rem;
+   border: solid 2px #fff;
+   z-index: 100;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   color: #fff;
+   box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+.modal-notification-heading {
+   font-size: 1.5rem;
+   font-weight: 600;
+   color: #333;
+   margin: 20px 0 10px 0;
+}
+.modal-notification-message {
+   font-size: 1.3rem;
+   font-weight: 500;
+   color: #555;
+   margin-bottom: 20px;
+}

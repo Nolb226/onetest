@@ -4,7 +4,9 @@ import handleType1 from "./HandleType1";
 import handleType2_3 from "./HandleType2_3";
 import Loading from "../../../loadingAnimation/Loading";
 import LoadingData from "../../../loadingAnimation/LoadingData";
-import { useParams } from "react-router";
+import { useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router";
+import ModalNotification from "../../../home/modal/modalNotification";
 
 const inputList = {
    width: "100%",
@@ -211,7 +213,7 @@ function clearErrorMessage(selector) {
    parentElement.classList.remove("invalid");
 }
 
-function validator(formSelector, setIsLoading, classId) {
+function validator(formSelector, setIsLoading, classId, navigate) {
    let formElement = document.querySelector(formSelector);
 
    let formRules = {};
@@ -229,14 +231,6 @@ function validator(formSelector, setIsLoading, classId) {
             ? undefined
             : "Thời gian kết thúc không hợp lệ";
       },
-
-      // checkTotalEasy: (value) => {
-      //    return value <= easy ? undefined : "Số câu không được lớn hơn có sẵn ";
-      // },
-
-      // checkTotalHard: (value) => {
-      //    return value <= hard ? undefined : "Số câu không được lớn hơn có sẵn ";
-      // },
    };
 
    if (formElement) {
@@ -287,9 +281,6 @@ function validator(formSelector, setIsLoading, classId) {
          input.oninput = clearErrorMessage;
       });
 
-      // Create handicraft exam
-
-      // Create select from bank exam
       if (formSelector === "#selectFromBank") {
          formElement.onsubmit = (event) => {
             event.preventDefault();
@@ -314,7 +305,11 @@ function validator(formSelector, setIsLoading, classId) {
                   ).length === 0
                ) {
                   isValid = false;
-                  alert("Vui lòng chọn câu hỏi cho đề thi !");
+                  // <ModalNotification
+                  //    headingMessage="Tạo thành công !"
+                  //    message="Click bất kì để quay lại trang chính"
+                  //    handleClickModal
+                  // />;
                } else {
                   questionList
                      .querySelectorAll(`input[type="checkbox"]:checked`)
@@ -325,7 +320,6 @@ function validator(formSelector, setIsLoading, classId) {
                      });
                }
             }
-            // console.log(questionArray);
 
             inputs.forEach((input) => {
                if (!handelValidate({ target: input })) {
@@ -358,10 +352,10 @@ function validator(formSelector, setIsLoading, classId) {
             //    },
             // });
 
+            setIsLoading(true);
+
             fetch(
-               `${api}/classes/841109222-12/exams?chapters=${chapters.join(
-                  ","
-               )}`,
+               `${api}/classes/${classId}/exams?chapters=${chapters.join(",")}`,
                {
                   body: formData,
                   method: "POST",
@@ -369,22 +363,35 @@ function validator(formSelector, setIsLoading, classId) {
                      Authorization: "Bearer " + currentUser,
                   },
                }
-            );
+            ).then((res) => {
+               if (!res.ok) {
+                  setIsLoading(false);
+                  alert("Tạo đề không thành công! Vui lòng thử lại.");
+               } else if (res.ok) {
+                  console.log("nav");
+                  alert("Tạo đề thành công! Click để quay lại trang chính.");
+                  setIsLoading(false);
+                  navigate(-1);
+               }
+            });
          };
       }
    }
 }
 
 function SelectFromBank() {
-   const { classId } = useParams();
    const currentUser = localStorage.getItem("currentUser");
    const [isLoading, setIsLoading] = useState(false);
+   const navigate = useNavigate();
 
    const [examChapter, setExamChapter] = useState([]);
    const [examQuestions, setExamQuestions] = useState([]);
    const [chapters, setChapters] = useState([]);
    const [type, setType] = useState(1);
    const [isLoadingData, setIsLoadingData] = useState(false);
+   const [searchParams] = useSearchParams();
+   const classId = searchParams.get("id");
+   validator("#selectFromBank", setIsLoading, classId, navigate);
 
    const easyElement = document.getElementById("easy");
    const hardElement = document.getElementById("hard");
@@ -419,7 +426,7 @@ function SelectFromBank() {
 
    const getExamChapter = async () => {
       // setIsLoadingData(true);
-      await fetch(`${api}/classes/841109222-12/chapters`, {
+      await fetch(`${api}/classes/${classId}/chapters`, {
          headers: {
             Authorization: "Bearer " + currentUser,
          },
@@ -532,6 +539,20 @@ function SelectFromBank() {
 
    return (
       <>
+         {/* {modal === "successful" && (
+            <ModalNotification
+               headingMessage="Tạo thành công !"
+               message="Click bất kì để quay lại trang chính"
+               handleClickModal={setModal("")}
+            />
+         )}
+         {modal === "fail" && (
+            <ModalNotification
+               headingMessage="Tạo không thành công !"
+               message="Click bất kì để quay lại trang chính"
+               handleClickModal={setModal("")}
+            />
+         )} */}
          {isLoading && <Loading />}
          <div
             className="create-select-from-bank__layout"
