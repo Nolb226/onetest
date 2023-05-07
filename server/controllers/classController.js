@@ -2044,7 +2044,7 @@ exports.deleteClassStudent = async (req, res, _) => {
 		if (!student) {
 			throwError(`Student not found:`, 404);
 		}
-		await classroom.removeStudent(student);
+		await classroom.removeAccount(student);
 		successResponse(res, 200, _, req.method);
 	} catch (error) {
 		errorResponse(res, error);

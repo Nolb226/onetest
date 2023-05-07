@@ -13,6 +13,7 @@ router.get('/another-route', (req, res) => {
 	// router code here
 });
 
+router.get('/:accountId/edit',accountController.getAccount) 
 router.put('/:accountId/edit',accountController.putAccount) 
 router.patch('/:accountId/pass/edit',accountController.patchPass )
 
