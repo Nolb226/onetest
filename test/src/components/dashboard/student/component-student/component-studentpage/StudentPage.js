@@ -37,7 +37,7 @@ function StudentPage() {
 	console.log(searchParams);
 
 	useEffect(() => {
-		socket.connect();
+		// socket.connect();
 		socket.on('exam:lock', (examId, lockState) => {
 			console.log(exams, examId, lockState);
 			const list = exams.map((exam) => {
@@ -65,7 +65,7 @@ function StudentPage() {
 		return () => {
 			socket.off('exam:created');
 			socket.off('exam:lock');
-			socket.disconnect();
+			// socket.disconnect();
 		};
 	}, [exams]);
 

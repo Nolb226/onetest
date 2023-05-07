@@ -90,8 +90,6 @@ module.exports = {
 			});
 			socket.on('exam:start', async (response) => {
 				try {
-					console.log(socket.request.account);
-					console.log(response);
 					const test = await Student_Result.findByPk(response.id);
 					const exam = await Exam.findByPk(test.examId);
 					const timeEnd = new Date(exam.timeEnd);
@@ -143,8 +141,8 @@ module.exports = {
 					};
 
 					socket.on('exam:leave', async () => {
-						await handleTest();
 						clearInterval(timer);
+						await handleTest();
 					});
 				} catch (error) {
 					throwError(error, 500);

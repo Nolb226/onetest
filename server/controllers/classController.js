@@ -940,7 +940,6 @@ exports.postClassExam = async (req, res) => {
 				await student.addExam(exam, {
 					through: { content: examContent },
 				});
-				successResponse(res, 200, result);
 				const noti = await classroom.createNotification({
 					description: `bạn có bài thi ở lớp ${classroom.name}`,
 				});
@@ -956,6 +955,7 @@ exports.postClassExam = async (req, res) => {
 					.to(`${classId}`)
 					.emit('exam:created', exam.toJSON(), lecture_name.name);
 				getIO().to(`${classId}`).emit('exam:notify', noti.toJSON());
+				successResponse(res, 200, result);
 			} catch (error) {
 				console.log(error);
 				errorResponse(res, error);
@@ -978,7 +978,7 @@ exports.postClassExam = async (req, res) => {
 							answerB,
 							answerC,
 							answerD,
-							difficulty
+							level
 
 					FROM	exams
 					JOIN	classes
@@ -1003,7 +1003,8 @@ exports.postClassExam = async (req, res) => {
 							answerB,
 							answerC,
 							answerD,
-							difficulty
+							level
+
 
 					FROM	exams
 					JOIN	classes
@@ -1028,12 +1029,20 @@ exports.postClassExam = async (req, res) => {
 			const result = await Promise.all(
 				students.map(async (student) => {
 					return await student.addExam(exam, {
-						through: { content },
+						through: {
+							duration: duration * 60,
+
+							content,
+						},
 					});
 				})
 			);
 			await student.addExam(exam, {
-				through: { content },
+				through: {
+					duration: duration * 60,
+
+					content: content,
+				},
 			});
 
 			const noti = await classroom.createNotification({
@@ -1045,6 +1054,14 @@ exports.postClassExam = async (req, res) => {
 				{
 					type: QueryTypes.SELECT,
 				}
+			);
+
+			await Promise.all(
+				chapters
+					.split(',')
+					.map(async (chapterNumber) =>
+						exam.addChapters(await Chapter.findByPk(chapterNumber))
+					)
 			);
 
 			getIO()
@@ -1072,7 +1089,7 @@ exports.postClassExam = async (req, res) => {
 									answerB,
 									answerC,
 									answerD,
-									difficulty
+									level
 
 							FROM	exams
 							JOIN	classes
@@ -1097,7 +1114,7 @@ exports.postClassExam = async (req, res) => {
 									answerB,
 									answerC,
 									answerD,
-									difficulty
+									level
 
 							FROM	exams
 							JOIN	classes
@@ -1124,11 +1141,15 @@ exports.postClassExam = async (req, res) => {
 						chapters
 							.split(',')
 							.map(async (chapterNumber) =>
-								exam.addChapters(await chapters.findByPk(chapterNumber))
+								exam.addChapters(await Chapter.findByPk(chapterNumber))
 							)
 					);
 					await student.addExam(exam, {
-						through: { content },
+						through: {
+							duration: duration * 60,
+
+							content,
+						},
 					});
 
 					const noti = await classroom.createNotification({
@@ -1146,7 +1167,7 @@ exports.postClassExam = async (req, res) => {
 						.to(`${classId}`)
 						.emit('exam:created', exam.toJSON(), lecture_name.name);
 					getIO().to(`${classId}`).emit('exam:notify', noti.toJSON());
-					successResponse(res, 200, _, req.method);
+					successResponse(res, 200, exam, req.method);
 					return;
 				})
 			);

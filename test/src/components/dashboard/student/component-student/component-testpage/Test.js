@@ -54,6 +54,7 @@ function Test() {
 	};
 
 	useEffect(() => {
+		socket.connect();
 		const handleBeforeUnload1 = (e) => {
 			console.log('|||||||||||||||||||||||||||');
 			// socket.on('exam:start', () => {
@@ -92,13 +93,12 @@ function Test() {
 				setDuration(questionsAPI.data.duration);
 				// startTimer(questionsAPI.data.duration);
 			})
-
-			.then(() => {})
 			.catch((error) => {
 				console.log(error);
 			});
 
 		socket.on('test', (data) => {
+			console.log(data);
 			setDuration(data);
 		});
 
@@ -153,7 +153,7 @@ function Test() {
 			window.removeEventListener('unload', handleBeforeUnload1);
 			// window.removeEventListener('load', handleBeforeUnload1);
 			window.removeEventListener('popstate', handleBeforeUnload1, false);
-			socket.disconnect();
+			// socket.disconnect();
 		};
 	}, []);
 
