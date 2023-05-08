@@ -202,3 +202,18 @@ exports.getLectureQuestion = async (req, res, _) => {
 		errorResponse(res, error);
 	}
 };
+
+exports.deleteLectureQuestion = async (req, res, _) => {
+	try {
+		const { questions } = req.body;
+		await Promise.all(
+			questions.map(async (question) => {
+				const questionInDB = await Question.findByPk(question.id);
+				await questionInDB.destroy();
+			})
+		);
+		successResponse(res, 200, _, req.method);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};

@@ -741,18 +741,28 @@ exports.postClass = async (req, res, _) => {
 					const month = cuttedDOB[1];
 					const day = cuttedDOB[0];
 					console.log(student['Mã lớp'].slice(0, 3));
-					await newClass.createAccount({
-						password: await bycrypt.hash(accountpassword, 10),
-						account_id: student['MSSV'] || student['Mã sinh viên'],
-						dob: new Date(year, month, day) || new Date(),
-						firstName: student['Tên'],
-						lastName: student['Họ lót'],
-						type: 'SV',
-						majorId:
-							student['chuyên ngành'] ||
-							student['Chuyên ngành'] ||
-							student['Mã lớp'].slice(0, 3),
-					});
+					await Account.findOrCreate(
+						{
+							where: {
+								account_id: student['MSSV'] || student['Mã sinh viên'],
+							},
+						},
+
+						{
+							defaults: {
+								password: await bycrypt.hash(accountpassword, 10),
+								account_id: student['MSSV'] || student['Mã sinh viên'],
+								dob: new Date(year, month, day) || new Date(),
+								firstName: student['Tên'],
+								lastName: student['Họ lót'],
+								type: 'SV',
+								majorId:
+									student['chuyên ngành'] ||
+									student['Chuyên ngành'] ||
+									student['Mã lớp'].slice(0, 3),
+							},
+						}
+					);
 				})
 			);
 

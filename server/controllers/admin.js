@@ -144,7 +144,7 @@ exports.getAllAccounts = async (req, res, _) => {
 			isActive
 			FROM
 			accounts
-			WHERE account_id != '0'
+			WHERE account_id != '0' AND accounts.id ="0"
 			LIMIT ${(page - 1) * perPage} ,${perPage};`,
 			{ type: sequelize.QueryTypes.SELECT }
 		);
