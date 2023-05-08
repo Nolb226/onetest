@@ -128,7 +128,7 @@ function Question({ questionObject }) {
          <div style={{ width: "100%" }}>
             <div className="flex-center" style={{ width: "100%" }}>
                <input
-                  name="question"
+                  name="description"
                   type="text"
                   placeholder="Câu hỏi"
                   title={questionObject.description}
