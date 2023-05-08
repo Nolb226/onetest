@@ -137,7 +137,7 @@ function StatisticExamList() {
 
                            <li className="flex-center column-text">
                               <Link
-                                 to={`./${exam.id}/detail-statistic`}
+                                 to={`./${exam.class_id}/${exam.id}/detail-statistic`}
                                  relative="path"
                               >
                                  <button

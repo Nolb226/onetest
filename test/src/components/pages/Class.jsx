@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import { Outlet, useLocation } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import ExamFilter from "../dashboard/student/component-student/component-studentpage/ExamFilter";
 
 const Menu = () => {
    const { pathname } = useLocation();
    const [active, setActive] = useState("details");
+
+   const [isOpen, setIsOpen] = useState(false);
+   const [searchParams, setSearchParams] = useSearchParams({ sort: "all" });
    // const path = useRef('details');
    useEffect(() => {
       setActive(pathname.split("/")[4]);
@@ -25,9 +28,9 @@ const Menu = () => {
             </li>
          </ul>
          <ExamFilter
-         // setSearchParams={setSearchParams}
-         // isOpen={isOpen}
-         // setIsOpen={setIsOpen}
+            setSearchParams={setSearchParams}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
          />
       </div>
    );

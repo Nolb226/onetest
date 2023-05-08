@@ -242,6 +242,21 @@ exports.getClassEdit = async (req, res, _) => {
 		errorResponse(res, error);
 	}
 };
+exports.getClassEdit = async (req, res, _) => {
+	try {
+		const { classId } = req.params;
+		const foundedClass = await Classes.findByPk(classId, {
+			attributes: ['id', 'name', 'semester', 'password'],
+		});
+		// console.log(foundedClass);
+		if (!foundedClass) {
+			return throwError('Class not found', 404);
+		}
+		return successResponse(res, 200, foundedClass, 'GET');
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
 
 exports.getAllStudent = async (req, res, _) => {
 	try {
@@ -260,15 +275,15 @@ exports.getAllStudent = async (req, res, _) => {
 				{
 					model: Student_Result,
 					attributes: ['grade'],
-					include: [
-						{
-							model: Exam,
-							where: { classId : `${classId}`},
-						},
-					],
+					// include: [
+					// 	{
+					// 		model: Exam,
+					// 		where: { classId : `${classId}`},
+					// 	: `${classId}`},
+					// ],
 				},
 			],
-			// order: ['firstName', 'account_id'],
+			// // order: ['firstName', 'account_id'],
 
 			joinTableAttributes: [],
 			// raw: true,
@@ -1931,3 +1946,113 @@ exports.deleteClassStudent = async (req, res, _) => {
 		errorResponse(res, error);
 	}
 };
+
+//
+exports.getClassStudentResults = async (req, res) => {
+	try {
+	   const { classId } = req.params;
+	   const classFounded = await Classes.findByPk(classId);
+	   if (!classFounded) {
+		  throwError("Could not find classFounded", 404);
+	   }
+	   const grade = [
+		  "grade_0",
+		  "grade_1",
+		  "grade_2",
+		  "grade_3",
+		  "grade_4",
+		  "grade_5",
+		  "grade_6",
+		  "grade_7",
+		  "grade_8",
+		  "grade_9",
+		  "grade_10",
+	   ];
+	   const query = grade
+		  .map((col, index) => {
+			 return `
+			 (SELECT 	COUNT(grade)
+				 FROM 		classes
+				 JOIN		exams
+				 ON			exams.classId = classes.id
+				 JOIN 		studentresults
+				 ON 			studentresults.examId	= exams.id
+				 WHERE 		classes.id			="${classId}"
+				 AND			grade IS NOT NULL
+				 AND			grade = "${index}")
+ 
+			  as ${col}
+			 `;
+		  })
+		  .join(",");
+	   console.log(query);
+	   console.log(1);
+ 
+	   const [result] = await sequelize.query(
+		  `
+				 SELECT
+							 ${query}
+ 
+			 `,
+		  { type: sequelize.QueryTypes.SELECT }
+	   );
+	   successResponse(res, 200, result, req.method);
+	} catch (error) {
+	   errorResponse(res, error);
+	}
+ };
+
+ exports.getExamStudentResults = async (req, res) => {
+	try {
+	   const { classId,examId } = req.params;
+	   const classFounded = await Classes.findByPk(classId);
+	   if (!classFounded) {
+		  throwError("Could not find classFounded", 404);
+	   }
+	   const grade = [
+		  "grade_0",
+		  "grade_1",
+		  "grade_2",
+		  "grade_3",
+		  "grade_4",
+		  "grade_5",
+		  "grade_6",
+		  "grade_7",
+		  "grade_8",
+		  "grade_9",
+		  "grade_10",
+	   ];
+	   const query = grade
+		  .map((col, index) => {
+			 return `
+			 (SELECT 	COUNT(grade)
+				 FROM 		classes
+				 JOIN		exams
+				 ON			exams.classId = classes.id
+				 JOIN 		studentresults
+				 ON 			studentresults.examId	= exams.id
+				 WHERE 		classes.id			="${classId}"
+				 AND			grade IS NOT NULL
+				 AND         exams.id="${examId}"
+				 AND			grade = "${index}")
+ 
+			  as ${col}
+			 `;
+		  })
+		  .join(",");
+	   console.log(query);
+	   console.log(1);
+ 
+	   const [result] = await sequelize.query(
+		  `
+				 SELECT
+							 ${query}
+ 
+			 `,
+		  { type: sequelize.QueryTypes.SELECT }
+	   );
+	   successResponse(res, 200, result, req.method);
+	} catch (error) {
+	   errorResponse(res, error);
+	}
+ };
