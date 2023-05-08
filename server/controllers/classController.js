@@ -754,7 +754,7 @@ exports.postClass = async (req, res, _) => {
 					const month = cuttedDOB[1];
 					const day = cuttedDOB[0];
 					console.log(student['Mã lớp'].slice(0, 3));
-					await Account.findOrCreate(
+					const student = await Account.findOrCreate(
 						{
 							where: {
 								account_id: student['MSSV'] || student['Mã sinh viên'],
@@ -776,6 +776,7 @@ exports.postClass = async (req, res, _) => {
 							},
 						}
 					);
+					newClass.addAccount(student);
 				})
 			);
 
