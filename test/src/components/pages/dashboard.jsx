@@ -390,8 +390,12 @@ function Dashboard() {
 									style={{ marginRight: '20px' }}
 									onClick={(e) => {
 										e.stopPropagation();
-										menuElement.classList.remove('closeMenu');
-										menuElement.classList.add('openMenu');
+										document
+											.querySelector('#left-menu')
+											.classList.remove('closeMenu');
+										document
+											.querySelector('#left-menu')
+											.classList.add('openMenu');
 										document.querySelector('.menu-layer').style.display =
 											'block';
 									}}

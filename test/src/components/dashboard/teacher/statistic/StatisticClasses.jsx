@@ -5,8 +5,9 @@ import { Link } from "react-router-dom";
 import api from "../../../../config/config";
 import { Outlet, useOutlet, useSearchParams } from "react-router-dom";
 import "./style.css";
+import LoadingData from "../../../loadingAnimation/LoadingData";
 
-function Classes(prop) {
+function StatisticClasses(prop) {
    const [classes, setClasses] = useState([]);
    const [page, setPage] = useState(1);
    const [totalPage, setTotalPage] = useState(1);
@@ -14,8 +15,13 @@ function Classes(prop) {
    const [searchParams, setSearchParams] = useSearchParams({ search: "" });
    const outlet = useOutlet();
 
+   const [isLoadingData, setIsLoadingData] = useState(false);
+   const [errorLoadingData, setErrorLoadingData] = useState("");
+
    const handleClasses = (value) => {
       const currentUser = localStorage.getItem(`currentUser`);
+      setIsLoadingData(true);
+
       fetch(
          `${api}/classes?search=${
             searchParams.get("search") || ""
@@ -32,7 +38,11 @@ function Classes(prop) {
             console.log(classes);
             setClasses(classes.data.data);
             setTotalPage(Math.ceil(classes.data.total / 10));
-            // console.log(classes.data.total);
+            setIsLoadingData(false);
+         })
+         .catch(() => {
+            setErrorLoadingData("Không thể lấy dữ liệu. Vui lòng thử lại !");
+            setIsLoadingData(false);
          });
    };
 
@@ -82,10 +92,6 @@ function Classes(prop) {
       <>
          {outlet || (
             <>
-               <div className="statistic-menu">
-                  <button>Lớp</button>
-                  <button>Bài thi</button>
-               </div>
                <div class="table-zone grid position-relative">
                   <div class="grid table__content ">
                      <header className="table__header">
@@ -93,7 +99,7 @@ function Classes(prop) {
                            class="flex-center table__content--heading"
                            style={{
                               display: "grid",
-                              gridTemplateColumns: "12% 22% 30% 7% 17% 12%",
+                              gridTemplateColumns: "17% 28% 33% 10% 12%",
                            }}
                         >
                            <li class="flex-center column-text">
@@ -113,36 +119,37 @@ function Classes(prop) {
                            </li>
 
                            <li class="flex-center column-text">
-                              <h3>Danh sách</h3>
-                           </li>
-
-                           <li class="flex-center column-text">
                               <h3>Thống kê</h3>
                            </li>
                         </ul>
                      </header>
 
                      <div class="table__content--list classes ">
-                        {classes.length === 0 ? (
+                        {errorLoadingData && (
                            <div
                               className="flex-center"
-                              style={{ height: "100%" }}
+                              style={{
+                                 width: "100%",
+                                 height: "100%",
+                                 fontSize: "1.6rem",
+                                 color: "#777",
+                              }}
                            >
-                              <h1 class="noClass">Không có lớp</h1>
+                              {errorLoadingData}
                            </div>
-                        ) : (
-                           classes.map((Class) => {
-                              return (
-                                 <ClassItem
-                                    key={Class.id}
-                                    Class={Class}
-                                    handleLock={handleLock}
-                                    handleRePass={prop.handleRePass}
-                                    handleClassList={prop.handleClassList}
-                                 />
-                              );
-                           })
                         )}
+                        {isLoadingData && <LoadingData />}
+                        {classes.map((Class) => {
+                           return (
+                              <ClassItem
+                                 key={Class.id}
+                                 Class={Class}
+                                 handleLock={handleLock}
+                                 handleRePass={prop.handleRePass}
+                                 handleClassList={prop.handleClassList}
+                              />
+                           );
+                        })}
                      </div>
                   </div>
                   <div className="mobile-table-content">
@@ -159,47 +166,20 @@ function Classes(prop) {
                                  </h3>
                                  <span>Môn:&nbsp; {Class.lecture_name}</span>
                                  <span>Lớp:&nbsp;{Class.name}</span>
-                                 <div
-                                    className="flex-center lock-exam"
-                                    // onClick={() => {
-                                    //    console.log(Class.isLock);
-                                    //    handleLock(Class.class_id, Class);
-                                    // }}
-                                 >
-                                    <button
-                                       className={`${
-                                          Class.isLock
-                                             ? "list_btn list_btn_lock"
-                                             : "list_btn list_btn_unlock"
-                                       }`}
-                                       onClick={() => handleLock(Class)}
-                                    >
-                                       <i
-                                          class={`fa-solid fa-${
-                                             Class.isLock ? "" : "un"
-                                          }lock`}
-                                       ></i>
-                                    </button>
+                                 <span>
+                                    Số lượng:&nbsp;{Class.totalStudent}
+                                 </span>
 
-                                    <Link
-                                       to={`${Class.id}/edit`}
-                                       relative="path"
-                                    >
-                                       <button
-                                          class="list_btn list_btn_edit "
-                                          // onClick={() => Class.handleRePass(Class.Class)}
-                                       >
-                                          <i class="fa-solid fa-pen-to-square"></i>
-                                       </button>
-                                    </Link>
-                                 </div>
-                                 <button className="view-btn">
+                                 <button
+                                    className="view-btn"
+                                    style={{ backgroundColor: "#b30b00" }}
+                                 >
                                     <Link
                                        to={`./${Class.id}`}
                                        relative="path"
                                        style={{ color: "#fff" }}
                                     >
-                                       Danh sách
+                                       Thống kê
                                     </Link>
                                  </button>
                               </div>
@@ -220,6 +200,6 @@ function Classes(prop) {
    );
 }
 
-export default Classes;
+export default StatisticClasses;
 
-// Classes.map(Class => (<ClassItem key={Class.id} Class = {Class} />)) }
+// StatisticClasses.map(Class => (<ClassItem key={Class.id} Class = {Class} />)) }

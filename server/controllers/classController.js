@@ -30,7 +30,6 @@ const sequelize = require('../util/database');
 const { Op, QueryTypes } = require('sequelize');
 const Question = require('../models/question');
 const Account = require('../models/account');
-const { getIO } = require('../util/socket');
 const deleteExcel = function (filePath) {
 	const file = path.join(__dirname, '..', filePath);
 	fs.unlink(file, (err) => console.log(err));
@@ -271,7 +270,22 @@ exports.getClassEdit = async (req, res, _) => {
 		if (!foundedClass) {
 			return throwError('Class not found', 404);
 		}
-		return successResponse(res, 200, foundedClass);
+		return successResponse(res, 200, foundedClass, 'GET');
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
+exports.getClassEdit = async (req, res, _) => {
+	try {
+		const { classId } = req.params;
+		const foundedClass = await Classes.findByPk(classId, {
+			attributes: ['id', 'name', 'semester', 'password'],
+		});
+		// console.log(foundedClass);
+		if (!foundedClass) {
+			return throwError('Class not found', 404);
+		}
+		return successResponse(res, 200, foundedClass, 'GET');
 	} catch (error) {
 		errorResponse(res, error);
 	}
@@ -282,8 +296,9 @@ exports.getAllStudent = async (req, res, _) => {
 		const page = req.query.page || 1;
 		const perPage = 10;
 		const { classId } = req.params;
-
+		// console.log(classId);
 		const classroom = await Classes.findByPk(classId);
+		// console.log(classroom);
 		if (!classroom) {
 			throwError(`Could not find class`, 404);
 		}
@@ -293,15 +308,15 @@ exports.getAllStudent = async (req, res, _) => {
 				{
 					model: Student_Result,
 					attributes: ['grade'],
-					include: [
-						{
-							model: Exam,
-							where: { classId },
-						},
-					],
+					// include: [
+					// 	{
+					// 		model: Exam,
+					// 		where: { classId : `${classId}`},
+					// 	: `${classId}`},
+					// ],
 				},
 			],
-			order: ['firstName', 'account_id'],
+			// // order: ['firstName', 'account_id'],
 
 			joinTableAttributes: [],
 			// raw: true,
@@ -713,9 +728,7 @@ exports.postClass = async (req, res, _) => {
 			semester,
 			year,
 			lectureId,
-			accountId: account.id,
 		});
-		console.log(newClass.toJSON());
 
 		// sequelize.query(`INSERT INTO classes VALUES (${},${})`)
 
@@ -2056,6 +2069,116 @@ exports.deleteClassStudent = async (req, res, _) => {
 		}
 		await classroom.removeAccount(student);
 		successResponse(res, 200, _, req.method);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
+
+//
+exports.getClassStudentResults = async (req, res) => {
+	try {
+		const { classId } = req.params;
+		const classFounded = await Classes.findByPk(classId);
+		if (!classFounded) {
+			throwError('Could not find classFounded', 404);
+		}
+		const grade = [
+			'grade_0',
+			'grade_1',
+			'grade_2',
+			'grade_3',
+			'grade_4',
+			'grade_5',
+			'grade_6',
+			'grade_7',
+			'grade_8',
+			'grade_9',
+			'grade_10',
+		];
+		const query = grade
+			.map((col, index) => {
+				return `
+			 (SELECT 	COUNT(grade)
+				 FROM 		classes
+				 JOIN		exams
+				 ON			exams.classId = classes.id
+				 JOIN 		studentresults
+				 ON 			studentresults.examId	= exams.id
+				 WHERE 		classes.id			="${classId}"
+				 AND			grade IS NOT NULL
+				 AND			grade = "${index}")
+ 
+			  as ${col}
+			 `;
+			})
+			.join(',');
+		console.log(query);
+		console.log(1);
+
+		const [result] = await sequelize.query(
+			`
+				 SELECT
+							 ${query}
+ 
+			 `,
+			{ type: sequelize.QueryTypes.SELECT }
+		);
+		successResponse(res, 200, result, req.method);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
+
+exports.getExamStudentResults = async (req, res) => {
+	try {
+		const { classId, examId } = req.params;
+		const classFounded = await Classes.findByPk(classId);
+		if (!classFounded) {
+			throwError('Could not find classFounded', 404);
+		}
+		const grade = [
+			'grade_0',
+			'grade_1',
+			'grade_2',
+			'grade_3',
+			'grade_4',
+			'grade_5',
+			'grade_6',
+			'grade_7',
+			'grade_8',
+			'grade_9',
+			'grade_10',
+		];
+		const query = grade
+			.map((col, index) => {
+				return `
+			 (SELECT 	COUNT(grade)
+				 FROM 		classes
+				 JOIN		exams
+				 ON			exams.classId = classes.id
+				 JOIN 		studentresults
+				 ON 			studentresults.examId	= exams.id
+				 WHERE 		classes.id			="${classId}"
+				 AND			grade IS NOT NULL
+				 AND         exams.id="${examId}"
+				 AND			grade = "${index}")
+ 
+			  as ${col}
+			 `;
+			})
+			.join(',');
+		console.log(query);
+		console.log(1);
+
+		const [result] = await sequelize.query(
+			`
+				 SELECT
+							 ${query}
+ 
+			 `,
+			{ type: sequelize.QueryTypes.SELECT }
+		);
+		successResponse(res, 200, result, req.method);
 	} catch (error) {
 		errorResponse(res, error);
 	}

@@ -215,6 +215,26 @@ function App() {
 									return (
 										<>
 											<Route path="statistics" element={<Statistics />}></Route>
+											<Route path="statistics" element={<Statistics />}>
+												<Route path="" element={<StatisticClasses />} />
+												<Route
+													path="classList"
+													element={<StatisticClasses />}
+												/>
+
+												<Route
+													path="classList/:classId/detail-statistic"
+													element={<DetailStatistic />}
+												/>
+												<Route
+													path="examList"
+													element={<StatisticExamList />}
+												/>
+												<Route
+													path="examList/:classId/:examId/detail-statistic"
+													element={<DetailStatistic />}
+												/>
+											</Route>
 
 											<Route path="bank" element={<Bank />}></Route>
 											<Route path="addQuestion" element={<AddNewQuestion />} />
