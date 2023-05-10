@@ -32,6 +32,7 @@ import Permission from "./components/dashboard/admin/Permission";
 import ExamDetail from "./components/dashboard/teacher/exam/ExamDetail";
 import Bank from "./components/dashboard/teacher/bank/Bank";
 import AddNewQuestion from "./components/dashboard/teacher/bank/AddNewQuestion";
+import Assignment from "./components/dashboard/admin/Assignment";
 
 function App() {
    const currentUser = localStorage.getItem("currentUser");
@@ -209,6 +210,9 @@ function App() {
                      </Route>
 
                      <Route path="permission" element={<Permission />}>
+                        {/* <Route path="" element={<Classes />} /> */}
+                     </Route>
+                     <Route path="assignment" element={<Assignment />}>
                         {/* <Route path="" element={<Classes />} /> */}
                      </Route>
                   </Route>
