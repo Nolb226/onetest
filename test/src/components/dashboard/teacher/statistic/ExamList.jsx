@@ -25,7 +25,7 @@ function StatisticExamList() {
       .then((data) => {
         setExamData(data.data);
         setIsLoadingData(false);
-        setTotalPage(Math.ceil(studentList.data.total / 10));
+        setTotalPage(Math.ceil(data.data.total / 10));
       })
       .catch(() => {
         setErrorLoadingData("Không thể lấy dữ liệu. Vui lòng thử lại !");
