@@ -17,27 +17,6 @@ function Classes(prop) {
 
 	const isAllowedToLock = permissions.find((x) => x.id === 23);
 
-	const handleClasses = (value) => {
-		const currentUser = localStorage.getItem(`currentUser`);
-		fetch(
-			`${api}/classes/manage?search=${
-				searchParams.get('search') || ''
-			}&page=${page}`,
-			{
-				method: 'GET',
-				headers: {
-					Authorization: 'Bearer ' + currentUser,
-				},
-			}
-		)
-			.then((res) => res.json())
-			.then((classes) => {
-				console.log(classes);
-				setClasses(classes.data.data);
-				setTotalPage(Math.ceil(classes.data.total / 10));
-				// console.log(classes.data.total);
-			});
-	};
    const handleClasses = (value) => {
       const currentUser = localStorage.getItem(`currentUser`);
       fetch(
