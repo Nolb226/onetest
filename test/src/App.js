@@ -38,6 +38,7 @@ import DetailStatistic from './components/dashboard/teacher/statistic/DetailStat
 import StatisticExamList from './components/dashboard/teacher/statistic/ExamList';
 import { useEffect, useState } from 'react';
 import socket from './util/socket';
+import Error404 from './components/pages/Error404';
 
 function App() {
 	const currentUser = localStorage.getItem('currentUser');
@@ -231,6 +232,7 @@ function App() {
 						</Route>
 					</Route>
 				)}
+				<Route path="*" element={<Error404 />} />
 			</Routes>
 		</div>
 	);

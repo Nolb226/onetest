@@ -1375,6 +1375,7 @@ exports.postClassStudentExam = async (req, res, _) => {
 					attributes: [
 						'id',
 						'correctAns',
+						'description',
 						'answerA',
 						'answerB',
 						'answerC',
@@ -1500,7 +1501,7 @@ exports.postExamPDF = async (req, res, _) => {
 			watermark: {
 				text: `Best of Test - BoT`,
 				color: '#161F80',
-				opacity: 0.2,
+				opacity: 0.1,
 				bold: true,
 			},
 			header: '',

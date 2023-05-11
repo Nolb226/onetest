@@ -25,9 +25,9 @@ exports.signup = async (req, res, next) => {
 
 		const upperCaseType = type.toUpperCase();
 
-		const isExist = Account.findOne({ where: { account_id: username } });
-		if (isExist.account_id) {
-			throwError('Account is already exist', 409);
+		const isExist = await Account.findOne({ where: { account_id: username } });
+		if (isExist) {
+			throwError('Mã cá nhân đã được sử dụng', 409);
 		}
 
 		const foreignKey = majors || department;
@@ -69,14 +69,14 @@ exports.login = async (req, res, next) => {
 		});
 
 		if (!account) {
-			throwError('Username or password is incorrect', 401);
+			throwError('Mã cá nhân hoặc mật khẩu không hợp lệ', 401);
 		}
 
 		const isValid = bycrypt.compareSync(password, account.password);
 
 		console.log(isValid);
 		if (!isValid) {
-			throwError('Username or password is incorrect', 401);
+			throwError('Mã cá nhân hoặc mật khẩu không hợp lệ', 401);
 		}
 
 		// if (!account.isActive) {
