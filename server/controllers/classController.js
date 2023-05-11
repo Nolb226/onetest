@@ -759,13 +759,11 @@ exports.postClass = async (req, res, _) => {
 					const day = cuttedDOB[0];
 					console.log(student['Mã lớp'].slice(0, 3));
 					const studentInDB = await Account.findOrCreate(
-						{
-							where: {
-								account_id: InDB['MSSV'] || student['Mã sinh viên'],
-							},
-						},
 
 						{
+              where: {
+								account_id: student['MSSV'] || student['Mã sinh viên'],
+							},
 							defaults: {
 								password: await bycrypt.hash(accountpassword, 10),
 								account_id: student['MSSV'] || student['Mã sinh viên'],
