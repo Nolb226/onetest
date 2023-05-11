@@ -105,6 +105,7 @@ function Classes(prop) {
 							to={`create`}
 							relative="path"
 							style={{ padding: '0', filter: 'none' }}
+							target="_blank"
 						>
 							<button
 								class="flex-center join-button"

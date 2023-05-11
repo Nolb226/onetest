@@ -701,6 +701,7 @@ exports.getQuestionInClassByChapter = async (req, res, _) => {
 			ON		chapters.id 			= questions.chapterId
 			WHERE	(chapters.id 			= "${classroom.lectureId}-${query}")
 			AND		classes.id              = "${classId}"
+			AND 	questions.deletedAt		IS NULL 
 
 			`,
 			{
@@ -732,7 +733,8 @@ exports.postClass = async (req, res, _) => {
 		});
 
 		// sequelize.query(`INSERT INTO classes VALUES (${},${})`)
-
+		const workbook = new Excel.Workbook();
+		await workbook.xlsx.writeFile(`./class-excel/${newClass.id}.xlsx`);
 		// await user.addClass(newClass);
 
 		if ((file = req.file)) {
@@ -1431,27 +1433,27 @@ exports.postExamPDF = async (req, res, _) => {
 
 		const [result] = await sequelize.query(
 			`
-			SELECT 	SEC_TO_TIME(exams.duration*60 - TIME_TO_SEC(studentresults.duration)) as duration,
-		classes.id as class_id,
-        lectures.name as lecture_name,
-        DATE_FORMAT(exams.timeStart, "%d/%m/%y %H:%i:%s") as timeStart,
-       	DATE_FORMAT(exams.timeEnd, "%d/%m/%y %H:%i:%s") as timeEnd,
-        easy,
-        hard,
-        content,
-		totalQuestions,
-		exams.examId as examId
+			SELECT 	SEC_TO_TIME(exams.duration*60 - TIME_TO_SEC(studentresults.duration)) 	as duration,
+					classes.id 																as class_id,
+					lectures.name 															as lecture_name,
+					DATE_FORMAT(exams.timeStart, "%d/%m/%y %H:%i:%s") 						as timeStart,
+					DATE_FORMAT(exams.timeEnd, "%d/%m/%y %H:%i:%s") 						as timeEnd,
+					easy,
+					hard,
+					content,
+					totalQuestions,
+					exams.examId 															as examId
 
-FROM	lectures
-JOIN	classes
-ON		classes.lectureId = lectures.id
-JOIN	exams
-ON		exams.classId = classes.id
-JOIN	studentresults	ON studentresults.examId = exams.id
-JOIN	accounts as teacher ON teacher.id = classes.accountId
-JOIN	accounts as student	ON student.id = studentresults.accountId
-WHERE
-	student.id = "${student}" AND exams.id = "${examId}" 
+			FROM	lectures
+			JOIN	classes
+			ON		classes.lectureId 														= lectures.id
+			JOIN	exams
+			ON		exams.classId 															= classes.id
+			JOIN	studentresults	ON studentresults.examId 								= exams.id
+			JOIN	accounts as teacher ON teacher.id 										= classes.accountId
+			JOIN	accounts as student	ON student.id 										= studentresults.accountId
+			WHERE	student.id 																= "${student}" 
+			AND 	exams.id 																= "${examId}" 
 			`,
 			{
 				type: QueryTypes.SELECT,
@@ -1706,10 +1708,15 @@ exports.postClassToGetExcel = async (req, res, _) => {
 			},
 		];
 
-		worksheet.mergeCells('B2', 'C2');
+		// worksheet.mergeCells('B2', 'C2');
 		worksheet.properties.defaultColWidth = 20;
-		let titleRow = worksheet.getCell('B2');
-		titleRow.value = `Lớp ${classroom.name}`;
+		const classInfo = classroom.name.split('-');
+		let titleRow = worksheet.addRow([
+			null,
+			`Lớp ${classInfo[0]}`,
+			classInfo[1],
+			classInfo[2],
+		]);
 		titleRow.font = {
 			name: 'Calibri',
 			size: 18,
@@ -1718,6 +1725,7 @@ exports.postClassToGetExcel = async (req, res, _) => {
 		titleRow.alignment = { vertical: 'middle', horizontal: 'center' };
 		titleRow.height = 20;
 
+		worksheet.addRow([]);
 		const classInfoRow = worksheet.addRow([
 			'',
 			`Giảng viên: ${teacher.lastName + ' ' + teacher.firstName}`,
@@ -2109,7 +2117,8 @@ exports.getClassStudentResults = async (req, res) => {
 				 ON 			studentresults.examId	= exams.id
 				 WHERE 		classes.id			="${classId}"
 				 AND			grade IS NOT NULL
-				 AND			grade = "${index}")
+				 AND			grade <= "${index}"
+				 AND			grade > "${index - 1}")
  
 			  as ${col}
 			 `;
@@ -2164,7 +2173,8 @@ exports.getExamStudentResults = async (req, res) => {
 				 WHERE 		classes.id			="${classId}"
 				 AND			grade IS NOT NULL
 				 AND         exams.id="${examId}"
-				 AND			grade = "${index}")
+				 AND			grade <= "${index}"
+				 AND			grade > "${index - 1}")
  
 			  as ${col}
 			 `;

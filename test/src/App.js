@@ -66,53 +66,6 @@ function App() {
 
 	return (
 		<div id="app" className="position-relative">
-			<Routes></Routes>
-			{/* <Routes>
-				{!currentUser ? (
-					<>
-						<Route exact path="/" element={<Home />} />
-						<Route path="*" element={<Navigate to="/" />} />
-					</>
-				) : (
-					<Route exact path="/" element={<Dashboard />}>
-						(
-						<Route path="student" element={<Student />}>
-							<Route path="" element={<Navigate to="class" replace={true} />} />
-							<Route path="class">
-								<Route index element={<ViewClass />} />
-								<Route path="join" element={<JoinClass />} />
-								<Route path=":classId" element={<ClassStudentView />}>
-									{/* <Route path="" element={<Navigate to="details" />} /> }
-									<Route index element={<Detail />} />
-									<Route path="exams" element={<StudentPage />} />
-								</Route>
-							</Route>
-
-							<Route path="exam/" element={<Test />} />
-							<Route path="result/" element={<Result />} />
-							{/* <Route path="*" element={<Student />} /> }
-						</Route>
-						): (
-						<Route path="teacher" element={<Teacher />}>
-							<Route path="" element={<Navigate to="class" replace={true} />} />
-							<Route path="class" element={<Class />}>
-								<Route path="" element={<Classes />} />
-								<Route path=":classId" element={<Classlist />} />
-								<Route path=":classId/edit" element={<Repass />} />
-								<Route path="create" element={<CreateClass />} />
-							</Route>
-							<Route path="exam" element={<Exam />}>
-								<Route path="" element={<ExamList />} />
-								<Route path="create" element={<ClassList />} />
-							</Route>
-							{/* <Route path="class/:classId/student/:studentId/edit" element={<Student />} /> }
-						</Route>
-						)
-					</Route>
-				)}
-			</Routes> */}
-
-			{/* <Home /> */}
 			<Routes>
 				{!currentUser ? (
 					<>
@@ -125,28 +78,6 @@ function App() {
 						path="/"
 						element={<Dashboard permissions={permissions} />}
 					>
-						{/* {Components.map((component) => {
-							const Test = component[test];
-							if (component.childrens) {
-								return (
-									<Route path={component.path} element={<Test />}>
-										{component.childrens.map((child) => {
-											console.log(child);
-											const ChildTest = child['join'];
-											return (
-												<Route
-													key={child.path}
-													path={child.path}
-													element={<ChildTest />}
-												/>
-											);
-										})}
-									</Route>
-								);
-							}
-							return <Route path={component.path} element={<Test />} />;
-						})} */}
-
 						{permissions.map((permission) => {
 							if (permission.id === 5) {
 								return (
@@ -228,7 +159,10 @@ function App() {
 										<>
 											{/* <Route path="statistics" element={<Statistics />}></Route> */}
 											<Route path="statistics" element={<Statistics />}>
-												<Route path="" element={<StatisticClasses />} />
+												<Route
+													path=""
+													element={<Navigate to={'classList'} replace={true} />}
+												/>
 												<Route
 													path="classList"
 													element={<StatisticClasses />}

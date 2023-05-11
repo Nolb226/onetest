@@ -264,16 +264,6 @@ exports.putAcount = async (req, res, _) => {
 			} WHERE account_id = "${accountId}"`,
 			{ type: sequelize.QueryTypes.UPDATE }
 		);
-		// await accountFounded.update({
-		// 	account_id,
-		// 	firstName,
-		// 	lastName,
-		// 	dob,
-		// 	departmentId,
-		// 	majorId,
-		// 	isActive,
-		// 	type,
-		// });
 
 		successResponse(res, 201, account, 'PUT');
 	} catch (error) {

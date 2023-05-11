@@ -25,15 +25,15 @@ function ClassItem(Class) {
 			<li class="flex-center column-text">{Class.Class.totalStudent}</li>
 
 			<li class="flex-center column-text">
-				<button className="view-btn" style={{ backgroundColor: '#b30b00' }}>
-					<Link
-						to={`./${Class.Class.id}/detail-statistic`}
-						relative="path"
-						style={{ color: '#fff' }}
-					>
+				<Link
+					to={`./${Class.Class.id}/detail-statistic`}
+					relative="path"
+					style={{ color: '#fff' }}
+				>
+					<button className="view-btn" style={{ backgroundColor: '#b30b00' }}>
 						Xem
-					</Link>
-				</button>
+					</button>
+				</Link>
 			</li>
 		</ul>
 	);

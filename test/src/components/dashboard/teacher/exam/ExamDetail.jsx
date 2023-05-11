@@ -42,7 +42,7 @@ function ExamDetail() {
 	//       }),
 	//       headers: {
 	//          Authorization: "Bearer " + currentUser,
-	//          "Content-type": "application/json",
+	//  "Content-type": "application/json",
 	//       },
 	//    }).then((response) => response.json());
 
@@ -210,14 +210,16 @@ function ExamDetail() {
 														'Content-Type': 'application/json',
 													},
 												});
-
+												document.body.style.cursor = 'wait';
 												const handleDownload = () => {
+													document.body.style.cursor = 'default';
+
 													window.open(
 														`${api}/${examDetailData.examId}-${student.account_id}.pdf`
 													);
 												};
 
-												setTimeout(handleDownload, 1000);
+												setTimeout(handleDownload, 1500);
 											}}
 										>
 											Tải file
