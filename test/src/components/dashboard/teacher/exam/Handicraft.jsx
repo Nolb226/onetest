@@ -201,14 +201,6 @@ function validator(formSelector, setIsLoading, classId, navigate) {
                }
             });
          }
-
-         // fetch(`${api}/classes/${classId}/exams?type`, {
-         //    body: formData,
-         //    method: "POST",
-         //    headers: {
-         //       Authorization: "Bearer " + currentUser,
-         //    },
-         // });
       };
    }
 }

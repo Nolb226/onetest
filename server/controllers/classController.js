@@ -314,7 +314,6 @@ exports.getAllStudent = async (req, res, _) => {
 					// 	{
 					// 		model: Exam,
 					// 		where: { classId : `${classId}`},
-					// 	: `${classId}`},
 					// ],
 				},
 			],

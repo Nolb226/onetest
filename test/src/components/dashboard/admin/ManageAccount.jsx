@@ -38,31 +38,6 @@ function ManageAccount() {
 		console.log(newPage);
 	};
 
-	//   const handleLock = (classID, exam) => {
-	//     fetch(`${api}/classes/${classID}/exams/${exam.id}`, {
-	//       method: "PATCH",
-	//       body: JSON.stringify({
-	//         isLock: !exam.isLock,
-	//       }),
-	//       headers: {
-	//         Authorization: "Bearer " + currentUser,
-	//         "Content-type": "application/json",
-	//       },
-	//     }).then((response) => response.json());
-
-	//     setExamData(updateLockExam(classID, exam.id));
-	//   };
-
-	//   const updateLockExam = (classID, examID) => {
-	//     return examData.map((exam) => {
-	//       if (exam.class_id === classID && exam.id === examID) {
-	//         exam.isLock = !exam.isLock;
-	//         console.log(exam.isLock);
-	//       }
-	//       return exam;
-	//     });
-	//   };
-
 	const handleModal = (id) => {
 		setAccountId(id);
 		setIsOpenModal(!isOpenModal);
@@ -119,7 +94,7 @@ function ManageAccount() {
 						className="table__content--heading"
 						style={{
 							display: 'grid',
-							gridTemplateColumns: '5% 15% 35% 10% 20% 10% 5%',
+							gridTemplateColumns: '5% 15% 40% 20% 10% 10%',
 						}}
 					>
 						<li className="flex-center column-text">
@@ -129,13 +104,15 @@ function ManageAccount() {
 						<li className="flex-center column-text">
 							<h3>Mã cá nhân</h3>
 						</li>
+						<li className="flex-center column-text">
+							<h3>Mã cá nhân</h3>
+						</li>
 
 						<li className="flex-center column-text">
 							<h3>Họ và tên</h3>
 						</li>
-
 						<li className="flex-center column-text">
-							<h3>Ngày tạo</h3>
+							<h3>Họ và tên</h3>
 						</li>
 
 						<li className="flex-center column-text">
@@ -156,7 +133,11 @@ function ManageAccount() {
 						{accountList.length == 0 ? (
 							<h1
 								className="flex-center"
-								style={{ height: '100%', fontSize: '15px', marginTop: '50px' }}
+								style={{
+									height: '100%',
+									fontSize: '15px',
+									marginTop: '50px',
+								}}
 							>
 								Không tồn tại tài khoản
 							</h1>
@@ -167,7 +148,8 @@ function ManageAccount() {
 										className="flex-center table__content--item"
 										style={{
 											display: 'grid',
-											gridTemplateColumns: '5% 15% 35% 10% 20% 10% 5%',
+
+											gridTemplateColumns: '5% 15% 40% 20% 10% 10%',
 										}}
 										key={index}
 									>
@@ -181,10 +163,6 @@ function ManageAccount() {
 
 										<li className="flex-center column-text">
 											<h3>{account.fullname}</h3>
-										</li>
-
-										<li className="flex-center column-text">
-											<h3>{account?.createdAt?.split('T')[0]}</h3>
 										</li>
 
 										<li className="flex-center column-text">
@@ -203,7 +181,11 @@ function ManageAccount() {
 														isActive: !account.isActive,
 													})
 												}
-												style={{ height: '20px', width: '20px', zIndex: '2' }}
+												style={{
+													height: '20px',
+													width: '20px',
+													zIndex: '2',
+												}}
 											/>
 											<span
 												class="checkmark"
@@ -236,6 +218,70 @@ function ManageAccount() {
 						)}
 					</div>
 				</div>
+
+				<div className="mobile-table-content">
+					{accountList.length == 0 ? (
+						<h1
+							className="flex-center"
+							style={{
+								height: '100%',
+								fontSize: '15px',
+								marginTop: '50px',
+							}}
+						>
+							Không tồn tại tài khoản
+						</h1>
+					) : (
+						accountList.map((account, index) => {
+							return (
+								<div
+									className="flex-center mobile-table-item"
+									key={account.account_id}
+								>
+									<h3>{account.account_id}</h3>
+									<span>{account.fullname}</span>
+									<h3>{account.type == 'NULL' ? '' : account.type}</h3>
+									<div className="flex-center">
+										<input
+											type="checkbox"
+											name="account.isActive"
+											id=""
+											checked={account.isActive}
+											onClick={() =>
+												updateIsActive(account.account_id, {
+													isActive: !account.isActive,
+												})
+											}
+											style={{
+												height: '25px',
+												width: '25px',
+												zIndex: '2',
+												marginRight: '5px',
+												borderRadius: '3px',
+												backgroundColor: '#1f2ec9',
+											}}
+										/>
+										<button
+											class="list_btn list_btn_edit "
+											style={{
+												width: '25px',
+												height: '25px',
+												border: 'none',
+												borderRadius: '3px',
+												padding: '0',
+											}}
+											onClick={() => {
+												handleModal(account.account_id);
+											}}
+										>
+											<i class="fa-solid fa-pen-to-square"></i>
+										</button>
+									</div>
+								</div>
+							);
+						})
+					)}
+				</div>
 				<Paginator
 					handlePageChange={handlePageChange}
 					page={page}
@@ -244,8 +290,6 @@ function ManageAccount() {
 			</div>
 			{isOpenModal ? (
 				<DetailInformation
-					isAllowedToPut={isAllowedToPut !== undefined}
-					isAllowedToDelete={isAllowedToDelete !== undefined}
 					accountId={accountId}
 					handleModal={handleModal}
 					updateAccounts={updateAccounts}

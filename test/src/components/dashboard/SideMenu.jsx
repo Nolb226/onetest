@@ -82,6 +82,12 @@ function SideMenu({ info }) {
 			icon: 'menu-icon fa-solid fa-gear',
 			name: 'Quyền',
 		},
+		{
+			permissionId: 20,
+			nav: `admin/assignment`,
+			icon: 'menu-icon fa-solid fa-user-pen',
+			name: 'Phân công',
+		},
 	];
 
 	useEffect(() => {

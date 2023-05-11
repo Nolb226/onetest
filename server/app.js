@@ -178,6 +178,7 @@ const majorRoutes = require('./routes/major');
 const lectureRoutes = require('./routes/lecture');
 const adminRoutes = require('./routes/admin');
 const permissionsRoutes = require('./routes/permission');
+const teachRoutes = require('./routes/teach');
 const { checkPermission } = require('./middleware/check-permission');
 const { errorResponse, throwError } = require('./util/helper');
 //Middleware
@@ -210,6 +211,7 @@ app.use('/classes', classesRoutes);
 app.use('/admin', adminRoutes);
 // app.use('/test', testRoutes);
 app.use('/permissions', permissionsRoutes);
+app.use('/teach', teachRoutes);
 //App start when connected to database
 app.get('/', (req, res) => {
 	res.send(Hiii);

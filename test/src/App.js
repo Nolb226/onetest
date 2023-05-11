@@ -32,6 +32,7 @@ import Permission from './components/dashboard/admin/Permission';
 import ExamDetail from './components/dashboard/teacher/exam/ExamDetail';
 import Bank from './components/dashboard/teacher/bank/Bank';
 import AddNewQuestion from './components/dashboard/teacher/bank/AddNewQuestion';
+import Assignment from './components/dashboard/admin/Assignment';
 import StatisticClasses from './components/dashboard/teacher/statistic/StatisticClasses';
 import DetailStatistic from './components/dashboard/teacher/statistic/DetailStatistic';
 import StatisticExamList from './components/dashboard/teacher/statistic/ExamList';
@@ -224,6 +225,9 @@ function App() {
 									);
 								}
 							})}
+							<Route path="assignment" element={<Assignment />}>
+								{/* <Route path="" element={<Classes />} /> */}
+							</Route>
 						</Route>
 					</Route>
 				)}
