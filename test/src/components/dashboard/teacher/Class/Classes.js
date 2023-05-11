@@ -10,15 +10,13 @@ function Classes(prop) {
    const [page, setPage] = useState(1);
    const [totalPage, setTotalPage] = useState(1);
    const [search, setSearch] = useState("");
-   const [searchParams, setSearchParams] = useSearchParams({ search: "" });
+   // const [searchParams, setSearchParams] = useSearchParams({ search: "" });
    const outlet = useOutlet();
 
    const handleClasses = (value) => {
       const currentUser = localStorage.getItem(`currentUser`);
       fetch(
-         `${api}/classes/manage?search=${
-            searchParams.get("search") || ""
-         }&page=${page}`,
+         `${api}/classes/manage?search=${search}&page=${page}`,
          {
             method: "GET",
             headers: {
@@ -38,8 +36,8 @@ function Classes(prop) {
    useEffect(() => {
       // const search_input = document.querySelector(".search-input");
       // handleClasses(search_input.value);
-      handleClasses(searchParams.get("search"));
-   }, [page, searchParams]);
+      handleClasses();
+   }, [page, search]);
 
    const handlePageChange = (newPage) => {
       setPage(newPage);
@@ -77,6 +75,20 @@ function Classes(prop) {
       update(Class);
    };
 
+   const handleSearch = () =>{
+      const search_input = document.querySelector('.search-input')
+      if(search_input){
+        search_input.addEventListener("keyup", function(event) {
+          if (event.key === "Enter") {
+            setSearch(search_input.value)
+          }
+      })
+      }
+      
+    }
+  
+    handleSearch()
+
    return (
       <>
          {outlet || (
@@ -86,7 +98,6 @@ function Classes(prop) {
                      type="text"
                      class="search-input"
                      placeholder="Nhập mã lớp"
-                     onInput={(e) => setSearch(e.target.value)}
                   />
                   {/* <button
                      className="search-class-btn"
