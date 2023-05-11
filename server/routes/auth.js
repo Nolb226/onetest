@@ -42,10 +42,10 @@ router.post(
 			.notEmpty()
 			.isIn(['SV', 'GV'])
 			.withMessage('Invalid type'),
-	]
+	],
 
 	//min : 8
-	// authController.signup
+	authController.signup
 );
 
 module.exports = router;

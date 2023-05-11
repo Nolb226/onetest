@@ -4,7 +4,7 @@ import Repass from './Repass';
 import ClassList from './ClassList';
 import CreateClass from './CreateClass';
 import './styleClass.css';
-import { Outlet } from 'react-router';
+import { Outlet, useOutletContext } from 'react-router';
 import './reponsive.css';
 
 function Class() {
@@ -13,6 +13,8 @@ function Class() {
 	const [classListPage, setClassListPage] = useState(false);
 	const [createClassPage, setCreateClassPage] = useState(false);
 	const [isClass, setIsClass] = useState({});
+
+	const { permissions } = useOutletContext();
 
 	const handleRePass = (Class) => {
 		setRepassPage(!repassPage);
@@ -44,7 +46,7 @@ function Class() {
          )}
          {classListPage && <ClassList isClass={isClass} handleClassList = {handleClassList} />}
          {createClassPage && <CreateClass handleCreateClass = {handleCreateClass} />} */}
-			<Outlet />
+			<Outlet context={{ permissions }} />
 		</>
 	);
 }

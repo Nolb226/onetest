@@ -55,7 +55,7 @@ const port = process.env.PORT || 8080;
 	Chapter.hasMany(Question);
 	Question.belongsTo(Chapter);
 
-	Account.belongsTo(Major,{isNull: true});
+	Account.belongsTo(Major, { isNull: true });
 	Major.hasMany(Account);
 
 	// Major.belongsTo(Teacher, { foreignKey: 'headOfMajor' });
@@ -125,7 +125,7 @@ const port = process.env.PORT || 8080;
 		timestamps: false,
 		// as: 'permissions',
 		foreignKey: 'type',
-		isNull: true
+		isNull: true,
 	});
 	Permission_Group.hasMany(Account, {
 		timestamps: false,
@@ -178,7 +178,7 @@ const majorRoutes = require('./routes/major');
 const lectureRoutes = require('./routes/lecture');
 const adminRoutes = require('./routes/admin');
 const permissionsRoutes = require('./routes/permission');
-const teachRoutes = require('./routes/teach')
+const teachRoutes = require('./routes/teach');
 const { checkPermission } = require('./middleware/check-permission');
 const { errorResponse, throwError } = require('./util/helper');
 //Middleware
@@ -210,7 +210,7 @@ app.use('/classes', classesRoutes);
 // app.use('/chapters', chaptersRoutes);
 app.use('/admin', adminRoutes);
 // app.use('/test', testRoutes);
-// app.use('/permissions', permissionsRoutes);
+app.use('/permissions', permissionsRoutes);
 app.use('/teach', teachRoutes);
 //App start when connected to database
 app.get('/', (req, res) => {

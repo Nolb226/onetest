@@ -12,32 +12,26 @@ module.exports.isAuth = async (req, res, next) => {
 		}
 		const decodedToken = jwt.verify(token, 'group5');
 		const { id: accountId } = decodedToken;
-		const user = await Account.findByPk(accountId, {
-			include: [
-				{
-					model: Permission_Group,
-					attributes: ['name'],
-					include: [
-						{
-							model: Functions,
-							attributes: ['id', 'method', 'path'],
-							through: {
-								attributes: [],
-							},
-						},
-					],
-				},
-			],
-			attributes: ['id', 'password', 'type', 'isActive'],
-
-			required: false,
-		});
+		const user = await Account.findByPk(accountId);
 		if (!user) {
 			throwError('Invalid account id in token', 401);
 		}
+
+		const permissions = await user.getPermissiongroup({
+			include: [
+				{
+					model: Functions,
+					attributes: ['id', 'method', 'path', 'descripton'],
+					through: {
+						attributes: [],
+					},
+				},
+			],
+		});
+
 		// req.user = JSON.stringify(user);
 		req.account = user;
-		req.permissions = JSON.stringify(user.permissions);
+		req.permissions = JSON.stringify(permissions.toJSON().functions);
 		next();
 	} catch (error) {
 		errorResponse(res, error);

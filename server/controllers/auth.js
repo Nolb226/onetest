@@ -25,19 +25,31 @@ exports.signup = async (req, res, next) => {
 
 		const upperCaseType = type.toUpperCase();
 
-		const isExist = model.findByPk(username);
-		if (isExist.accountId) {
+		const isExist = Account.findOne({ where: { account_id: username } });
+		if (isExist.account_id) {
 			throwError('Account is already exist', 409);
 		}
+
 		const foreignKey = majors || department;
 		upperCaseType === 'GV' ? req.body.departmentId : req.body.majorId;
-		const account = await model.createAccount({
-			id: username,
-			fullname,
+		let lastName = '';
+		for (let index = 0; index < fullname.split(' ').length - 1; index++) {
+			if (index == fullname.split(' ').length - 2) {
+				lastName += fullname.split(' ')[index];
+			} else {
+				lastName += fullname.split(' ')[index] + ' ';
+			}
+		}
+		const account = await Account.create({
+			account_id: username,
+			firstName: fullname.split(' ').at(-1),
+			lastName,
 			dob,
 			password: await bycrypt.hash(password, 10),
 			upperCaseType,
-			foreignKey,
+			type: upperCaseType,
+			majorId: majors,
+			departmentId: department,
 		});
 
 		return successResponse(res, 201, '', req.method);

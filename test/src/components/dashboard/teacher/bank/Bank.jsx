@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import api from "../../../../config/config";
 import Loading from "../../../loadingAnimation/Loading";
 import LoadingData from "../../../loadingAnimation/LoadingData";
-import { Outlet, useNavigate, useOutlet } from "react-router";
+import { Outlet, useNavigate, useOutlet, useOutletContext } from "react-router";
 
 const inputList = {
    width: "100%",
@@ -52,12 +52,23 @@ const answer = {
    alignItems: "center",
 };
 
-function Question({ questionObject }) {
+function Question({ questionObject, isAllowedToPut }) {
+   const handlePermission = (e) => {
+      if (isAllowedToPut === undefined) {
+         e.stopPropagation();
+      }
+   };
+
    useEffect(() => {
       const liElement = document.getElementById(`${questionObject.id}`);
       liElement.querySelectorAll("input[type=radio]").forEach((item) => {
          if (item.value === questionObject.correctAns) item.checked = true;
       });
+
+      liElement.addEventListener("click", handlePermission, true);
+      return () => {
+         liElement.removeEventListener("click", handlePermission, true);
+      };
    }, []);
 
    return (
@@ -128,7 +139,7 @@ function Question({ questionObject }) {
          <div style={{ width: "100%" }}>
             <div className="flex-center" style={{ width: "100%" }}>
                <input
-                  name="question"
+                  name="description"
                   type="text"
                   placeholder="Câu hỏi"
                   title={questionObject.description}
@@ -254,19 +265,28 @@ function clearErrorMessage(selector) {
    parentElement.classList.remove("invalid");
 }
 
-function disableInput() {
-   document
-      .querySelectorAll(".question-box input")
-      .forEach((input) => (input.disabled = true));
+function disableInput(isAllowedToDelete) {
+   document.querySelectorAll(".question-box input").forEach((input) => {
+      if (input.type === "checkbox") {
+         if (isAllowedToDelete) {
+            input.disable = false;
+         } else {
+            console.log(1);
+            input.disabled = true;
+         }
+      } else {
+         input.disabled = true;
+      }
+   });
 
    document
       .querySelectorAll(".question-box select")
       .forEach((input) => (input.disabled = true));
 }
 
-function editQuestion(editQuestionArray) {
+function editQuestion(editQuestionArray, isAllowedToPut) {
    document.querySelectorAll(".question-box .edit-btn").forEach((editIcon) => {
-      editIcon.addEventListener("click", () => {
+      editIcon.addEventListener("click", (e) => {
          let questionBox = editIcon.closest(".question-box");
          questionBox.querySelectorAll("input").forEach((input) => {
             input.disabled = false;
@@ -303,16 +323,25 @@ function Bank() {
    const [examChapter, setExamChapter] = useState([]);
    const [examQuestions, setExamQuestions] = useState([]);
    const [chapters, setChapters] = useState([]);
-   const [lectureId, setLectureId] = useState("");
+   const [lectureList, setLectureList] = useState([]);
+   const [lectureId, setLectureId] = useState([]);
    const editQuestionArray = [];
    const [isLoading, setIsLoading] = useState(false);
    const [isLoadingData, setIsLoadingData] = useState(false);
    let editedQuestion = [];
    const Outlet = useOutlet();
 
-   const easyElement = document.getElementById("easy");
-   const hardElement = document.getElementById("hard");
-   const totalElement = document.getElementById("totalQuestions");
+   const { permissions } = useOutletContext();
+
+   console.log(lectureList);
+
+   const isAllowedToAdd = permissions.find((x) => x.id === 13);
+   const isAllowedToDelete = permissions.find((x) => x.id === 15);
+   const isAllowedToPut = permissions.find((x) => x.id === 14);
+
+   // const easyElement = document.getElementById('easy');
+   // const hardElement = document.getElementById('hard');
+   // const totalElement = document.getElementById('totalQuestions');
 
    // window.onbeforeunload = preventFunc(e);
 
@@ -324,6 +353,19 @@ function Bank() {
       },
       false
    );
+
+   useEffect(() => {
+      fetch(`${api}/lectures/user`, {
+         headers: {
+            Authorization: "Bearer " + currentUser,
+         },
+      })
+         .then((data) => data.json())
+         .then((data) => {
+            setLectureList(data.data);
+            setIsLoadingData(false);
+         });
+   }, []);
 
    // ----- Fetch API to get Chapters from Subject -----
 
@@ -395,9 +437,9 @@ function Bank() {
             : (questionBox.style.borderLeft = "solid 5px #d3ae56");
       });
       console.log(examQuestions);
-      disableInput();
-      editQuestion(editQuestionArray);
-   }, [examQuestions]);
+      disableInput(isAllowedToDelete);
+      editQuestion(editQuestionArray, isAllowedToPut);
+   }, [examQuestions, permissions]);
 
    function deleteQuestion() {
       let deleteQuestionId = [];
@@ -418,9 +460,10 @@ function Bank() {
 
       fetch(`${api}/lectures/841109/chapters/${chapters}/questions`, {
          body: JSON.stringify(deleteQuestionId),
-         method: "POST",
+         method: "DELETE",
          headers: {
             Authorization: "Bearer " + currentUser,
+            "Content-Type": "application/json",
          },
       }).then((res) => {
          if (!res.ok) {
@@ -488,20 +531,24 @@ function Bank() {
             <>
                <div className="create-select-from-bank__layout">
                   <div className="bank-menu">
-                     <button
-                        className="add-new-question"
-                        onClick={(e) => {
-                           navigator("../addQuestion");
-                        }}
-                     >
-                        Thêm câu hỏi
-                     </button>
-                     <button
-                        className="remove-question"
-                        onClick={() => deleteQuestion()}
-                     >
-                        Xóa câu hỏi đã chọn
-                     </button>
+                     {isAllowedToAdd && (
+                        <button
+                           className="add-new-question"
+                           onClick={(e) => {
+                              navigator("../addQuestion");
+                           }}
+                        >
+                           Thêm câu hỏi
+                        </button>
+                     )}
+                     {isAllowedToDelete && (
+                        <button
+                           className="remove-question"
+                           onClick={() => deleteQuestion()}
+                        >
+                           Xóa câu hỏi đã chọn
+                        </button>
+                     )}
                   </div>
                   <div id="bank">
                      <div className="flex-center flex-direction-col info-box__select-from-bank">
@@ -535,7 +582,7 @@ function Bank() {
                                     justifyContent: "flex-start",
                                  }}
                               >
-                                 <input
+                                 {/* <input
                                     className="form-control"
                                     type="text"
                                     name="examId"
@@ -553,7 +600,26 @@ function Bank() {
                                     onChange={(e) =>
                                        setLectureId(e.target.value)
                                     }
-                                 />
+                                 /> */}
+
+                                 <select
+                                    className="form-control"
+                                    type="text"
+                                    name="examId"
+                                    id="examId"
+                                    onChange={(e) =>
+                                       setLectureId(e.target.value)
+                                    }
+                                 >
+                                    {lectureList?.map((lecture) => {
+                                       return (
+                                          <option value={lecture.id}>
+                                             {lecture.id}
+                                          </option>
+                                       );
+                                    })}
+                                 </select>
+
                                  <label
                                     htmlFor="examId"
                                     className="form-message"
@@ -735,14 +801,16 @@ function Bank() {
                            </li>
                         </ul>
 
-                        <button
-                           className="create-exam-btn-pc"
-                           onClick={() => {
-                              saveChange(editQuestionArray, editedQuestion);
-                           }}
-                        >
-                           Lưu
-                        </button>
+                        {isAllowedToPut && (
+                           <button
+                              className="create-exam-btn-pc"
+                              onClick={() => {
+                                 saveChange(editQuestionArray, editedQuestion);
+                              }}
+                           >
+                              Lưu
+                           </button>
+                        )}
                      </div>
 
                      <div className="question-list_container">
@@ -756,21 +824,28 @@ function Bank() {
                            }}
                         >
                            {examQuestions?.map((item) => (
-                              <Question questionObject={item} key={item.id} />
+                              <Question
+                                 questionObject={item}
+                                 isAllowedToPut={isAllowedToPut}
+                                 isAllowedToDelete={isAllowedToDelete}
+                                 key={item.id}
+                              />
                            ))}
                            {isLoadingData && <LoadingData />}
                         </ul>
                      </div>
 
-                     <button
-                        className="create-exam-btn-tablet"
-                        style={{ marginTop: "10px" }}
-                        onClick={() => {
-                           saveChange(editQuestionArray, editedQuestion);
-                        }}
-                     >
-                        Lưu
-                     </button>
+                     {isAllowedToPut && (
+                        <button
+                           className="create-exam-btn-tablet"
+                           style={{ marginTop: "10px" }}
+                           onClick={() => {
+                              saveChange(editQuestionArray, editedQuestion);
+                           }}
+                        >
+                           Lưu
+                        </button>
+                     )}
                   </div>
                </div>
             </>

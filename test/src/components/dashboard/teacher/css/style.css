@@ -107,6 +107,10 @@ button:hover {
 .filter-box {
    border: none;
    color: #888;
+   right: 0;
+   top: 0;
+   position: absolute;
+   z-index: 100;
    font-weight: 500;
 }
 
@@ -119,7 +123,7 @@ button:hover {
 
 .custom-select__option-list {
    border: none;
-   margin-top: 1.2rem;
+   margin-top: 2 px;
    justify-content: center;
    flex-direction: column;
    background-color: #fff;
@@ -874,6 +878,10 @@ button:hover {
 }
 
 @media (max-width: 739px) {
+   .custom-select {
+      width: 80px;
+      font-size: 1.2rem;
+   }
    .create-exam__option {
       width: 200px;
       height: 200px;

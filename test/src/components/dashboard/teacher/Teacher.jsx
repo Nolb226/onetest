@@ -5,15 +5,21 @@ import './css/responsive.css';
 import Exam from './exam/Exam.jsx';
 import Statistics from './statistic/Statistics.jsx';
 import React, { Suspense } from 'react';
-import { Outlet, Route, Routes, useParams } from 'react-router-dom';
+import {
+	Outlet,
+	Route,
+	Routes,
+	useOutletContext,
+	useParams,
+} from 'react-router-dom';
 import Class from './Class/Class';
 
 function Teacher() {
-	const { type } = useParams();
+	const { permissions } = useOutletContext();
 
 	return (
 		<>
-				<Outlet />
+			<Outlet context={{ permissions }} />
 		</>
 	);
 }

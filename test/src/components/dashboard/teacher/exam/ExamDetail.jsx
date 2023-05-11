@@ -42,7 +42,7 @@ function ExamDetail() {
 	//       }),
 	//       headers: {
 	//          Authorization: "Bearer " + currentUser,
-	//          "Content-type": "application/json",
+	//  "Content-type": "application/json",
 	//       },
 	//    }).then((response) => response.json());
 
@@ -190,32 +190,42 @@ function ExamDetail() {
 											marginLeft: '4rem',
 										}}
 									>
-										<Link
+										{/* <Link
 											to={`${api}/${examDetailData.examId}-${student.account_id}.pdf`}
 											target="_blank"
+											download={`${api}/${examDetailData.examId}-${student.account_id}.pdf`}
+										> */}
+										<button
+											className="view-btn download-pdf"
+											onClick={() => {
+												const currentUser = localStorage.getItem(`currentUser`);
+												fetch(`${api}/classes/exams/${examId}/pdf`, {
+													method: 'POST',
+													body: JSON.stringify({
+														student: `${student.id}`,
+														accountId: student.account_id,
+													}),
+													headers: {
+														Authorization: 'Bearer ' + currentUser,
+														'Content-Type': 'application/json',
+													},
+												});
+												document.body.style.cursor = 'wait';
+												const handleDownload = () => {
+													document.body.style.cursor = 'default';
+
+													window.open(
+														`${api}/${examDetailData.examId}-${student.account_id}.pdf`
+													);
+												};
+
+												setTimeout(handleDownload, 1500);
+											}}
 										>
-											<button
-												className="view-btn download-pdf"
-												onClick={() => {
-													const currentUser =
-														localStorage.getItem(`currentUser`);
-													fetch(`${api}/classes/exams/${examId}/pdf`, {
-														method: 'POST',
-														body: JSON.stringify({
-															student: `${student.id}`,
-															accountId: student.account_id,
-														}),
-														headers: {
-															Authorization: 'Bearer ' + currentUser,
-															'Content-Type': 'application/json',
-														},
-													});
-												}}
-											>
-												Tải file
-												<i className="fa-solid fa-file-pdf"></i>
-											</button>
-										</Link>
+											Tải file
+											<i className="fa-solid fa-file-pdf"></i>
+										</button>
+										{/* </Link> */}
 									</li>
 								</ul>
 							);

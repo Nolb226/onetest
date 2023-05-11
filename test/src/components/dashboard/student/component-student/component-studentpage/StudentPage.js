@@ -1,6 +1,6 @@
 import Info from '../Info';
 import api from '../../../../../config/config.js';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useOutletContext, useParams, useSearchParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import ExamItem, { ExamButton } from './ExamItem';
 import ExamFilter from './ExamFilter';
@@ -13,7 +13,6 @@ function StudentPage() {
 	const [searchParams, setSearchParams] = useSearchParams({ sort: 'all' });
 	const params = useParams();
 	const { classId } = params;
-
 	useEffect(() => {
 		const currentUser = localStorage.getItem('currentUser');
 		fetch(
@@ -37,7 +36,7 @@ function StudentPage() {
 	console.log(searchParams);
 
 	useEffect(() => {
-		socket.connect();
+		// socket.connect();
 		socket.on('exam:lock', (examId, lockState) => {
 			console.log(exams, examId, lockState);
 			const list = exams.map((exam) => {
@@ -50,7 +49,20 @@ function StudentPage() {
 			console.log(list);
 			setExams(list);
 		});
+
+		socket.on('exam:created', (exam, lecture_name) => {
+			console.log(lecture_name);
+
+			// if (exams.length < 10) {
+			const list = [
+				...exams,
+				{ ...exam, lecture_name, exam_id: exam.examId, exam_name: exam.name },
+			];
+			setExams(list);
+			// }
+		});
 		return () => {
+			socket.off('exam:created');
 			socket.off('exam:lock');
 			// socket.disconnect();
 		};

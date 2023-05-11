@@ -1,4 +1,5 @@
 exports.errorResponse = function (res, error, data = {}) {
+	console.log(error);
 	if (!error.message) {
 		return res.status(error.statusCode || 500).json({
 			// status: error.statusCode || 500,
@@ -37,7 +38,7 @@ exports.successResponse = function (res, status, data, method = 'GET') {
 
 exports.throwError = function (message, status) {
 	let error;
-	console.log(typeof message);
+	console.log(message);
 	if (typeof message === 'object') {
 		error = message.map(({ value, msg: message, param }) => {
 			return { value, message, param };
