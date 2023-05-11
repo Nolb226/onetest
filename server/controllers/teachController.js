@@ -44,11 +44,11 @@ exports.deleteLectureAccount = async (req, res, _) => {
 
 exports.postTeach = async (req, res, _) => {
   try {
-    const { lectureId, account_id } = req.body;
+    const { lectureId, accountId } = req.body;
     const lecture = await Lecture.findByPk(lectureId);
     const account = await Account.findOne({
       where: {
-        account_id,
+        account_id:accountId,
       },
     });
     if (!lecture) {
