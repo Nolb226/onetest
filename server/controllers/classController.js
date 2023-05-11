@@ -965,7 +965,6 @@ exports.postClassExam = async (req, res) => {
 				);
 				await student.addExam(exam, {
 					through: { content: examContent, duration: duration * 60 },
-					r,
 				});
 				const noti = await classroom.createNotification({
 					description: `bạn có bài thi ở lớp ${classroom.name}`,
@@ -995,62 +994,117 @@ exports.postClassExam = async (req, res) => {
 				?.split(',')
 				.join(`" OR chapters.id = "${classroom.lectureId}-`);
 
+			await Promise.all(
+				chapters
+					.split(',')
+					.map(async (chapterNumber) =>
+						exam.addChapters(await Chapter.findByPk(chapterNumber))
+					)
+			);
+
 			const content = await sequelize.query(
+				// 	`
+				// SELECT DISTINCT * FROM (
+				// 	(
+				// 		SELECT DISTINCT  questions.id,
+				// 				description,
+				// 				answerA,
+				// 				answerB,
+				// 				answerC,
+				// 				answerD,
+				// 				level
+
+				// 		FROM	exams
+				// 		JOIN	classes
+				// 		ON		exams.classId 			= classes.id
+				// 		JOIN	lectures
+				// 		ON		lectures.id 			= classes.lectureId
+				// 		JOIN	chapters
+				// 		ON		lectures.id 			= chapters.lectureId
+				// 		JOIN	questions
+				// 		ON		chapters.id 			= questions.chapterId
+				// 		WHERE	chapters.id 			= "${classroom.lectureId}-${query}"
+				// 		AND		questions.level 		= 0
+				// 		AND		questions.deletedAt	IS NULL
+				// 		LIMIT	${easy}
+
+				// 	)
+				// 		UNION ALL
+				// 	(
+				// 		SELECT DISTINCT  questions.id,
+				// 				description,
+				// 				answerA,
+				// 				answerB,
+				// 				answerC,
+				// 				answerD,
+				// 				level
+
+				// 		FROM	exams
+				// 		JOIN	classes
+				// 		ON		exams.classId 			= classes.id
+				// 		JOIN	lectures
+				// 		ON		lectures.id 			= classes.lectureId
+				// 		JOIN	chapters
+				// 		ON		lectures.id 			= chapters.lectureId
+				// 		JOIN	questions
+				// 		ON		chapters.id 			= questions.chapterId
+				// 		WHERE	chapters.id 			= "${classroom.lectureId}-${query}"
+
+				// 		AND		questions.level	 		= 1
+				// 		AND		questions.deletedAt	IS NULL
+				// 		LIMIT	${hard}
+				// 	)
+				// ) as q
+				// ORDER BY RAND()
+
+				// `,
+
 				`
-			SELECT DISTINCT * FROM (
+			SELECT	*
+			FROM
 				(
-					SELECT DISTINCT  questions.id,
-							description,
-							answerA,
-							answerB,
-							answerC,
-							answerD,
-							level
-
-					FROM	exams
-					JOIN	classes
-					ON		exams.classId 			= classes.id
-					JOIN	lectures
-					ON		lectures.id 			= classes.lectureId
-					JOIN	chapters
-					ON		lectures.id 			= chapters.lectureId
-					JOIN	questions
-					ON		chapters.id 			= questions.chapterId
-					WHERE	chapters.id 			= "${classroom.lectureId}-${query}"
-					AND		questions.level 		= 0
-					AND		questions.deletedAt	IS NULL
-					LIMIT	${easy}
-
+					(
+					SELECT
+						questions.id,
+						description,
+						answerA,
+						answerB,
+						answerC,
+						answerD
+					FROM
+						exams
+					JOIN classes ON exams.classId = classes.id
+					JOIN lectures ON lectures.id = classes.lectureId
+					JOIN chapters ON lectures.id = chapters.lectureId
+					JOIN questions ON chapters.id = questions.chapterId
+					WHERE
+					(questions.chapterId			= "${classroom.lectureId}-${query}") AND 
+						questions.level = 0 AND questions.deletedAt IS NULL and exams.id ="${exam.id}"
+					LIMIT ${easy}
 				)
-					UNION ALL
+			UNION ALL
 				(
-					SELECT DISTINCT  questions.id,
-							description,
-							answerA,
-							answerB,
-							answerC,
-							answerD,
-							level
-
-
-					FROM	exams
-					JOIN	classes
-					ON		exams.classId 			= classes.id
-					JOIN	lectures
-					ON		lectures.id 			= classes.lectureId
-					JOIN	chapters
-					ON		lectures.id 			= chapters.lectureId
-					JOIN	questions
-					ON		chapters.id 			= questions.chapterId
-					WHERE	chapters.id 			= "${classroom.lectureId}-${query}"
-
-					AND		questions.level	 		= 1
-					AND		questions.deletedAt	IS NULL
-					LIMIT	${hard}
-				)
-			) as q
-			ORDER BY RAND()
-
+				SELECT
+					questions.id,
+					description,
+					answerA,
+					answerB,
+					answerC,
+					answerD
+				FROM
+					exams
+				JOIN classes ON exams.classId = classes.id
+				JOIN lectures ON lectures.id = classes.lectureId
+				JOIN chapters ON lectures.id = chapters.lectureId
+				JOIN questions ON chapters.id = questions.chapterId
+				WHERE
+				(questions.chapterId			= "${classroom.lectureId}-${query}") AND 
+					questions.level = 1 AND questions.deletedAt IS NULL and exams.id = "${exam.id}"
+				LIMIT ${hard}
+			)
+				) AS q
+			ORDER BY
+				RAND()
 			`,
 				{ type: sequelize.QueryTypes.SELECT }
 			);
@@ -1107,61 +1161,106 @@ exports.postClassExam = async (req, res) => {
 			const result = await Promise.all(
 				students.map(async (student) => {
 					const content = await sequelize.query(
+						// 	`
+						// SELECT DISTINCT * FROM (
+						// 	(
+						// 		SELECT DISTINCT  questions.id,
+						// 				description,
+						// 				answerA,
+						// 				answerB,
+						// 				answerC,
+						// 				answerD,
+						// 				level
+
+						// 		FROM	exams
+						// 		JOIN	classes
+						// 		ON		exams.classId 			= classes.id
+						// 		JOIN	lectures
+						// 		ON		lectures.id 			= classes.lectureId
+						// 		JOIN	chapters
+						// 		ON		lectures.id 			= chapters.lectureId
+						// 		JOIN	questions
+						// 		ON		chapters.id 			= questions.chapterId
+						// 		WHERE	chapters.id 			= "${classroom.lectureId}-${query}"
+
+						// 		AND		questions.level 		= 0
+						// 		AND		questions.deletedAt	IS NULL
+						// 		LIMIT	${easy}
+
+						// 	)
+						// 		UNION ALL
+						// 	(
+						// 		SELECT DISTINCT  questions.id,
+						// 				description,
+						// 				answerA,
+						// 				answerB,
+						// 				answerC,
+						// 				answerD,
+						// 				level
+
+						// 		FROM	exams
+						// 		JOIN	classes
+						// 		ON		exams.classId 			= classes.id
+						// 		JOIN	lectures
+						// 		ON		lectures.id 			= classes.lectureId
+						// 		JOIN	chapters
+						// 		ON		lectures.id 			= chapters.lectureId
+						// 		JOIN	questions
+						// 		ON		chapters.id 			= questions.chapterId
+						// 		WHERE	chapters.id 			= "${classroom.lectureId}-${query}"
+
+						// 		AND		questions.level	 		= 1
+						// 		AND		questions.deletedAt	IS NULL
+						// 		LIMIT	${hard}
+						// 	)
+						// ) as q
+						// ORDER BY RAND()
+
+						// `,
+
 						`
-					SELECT DISTINCT * FROM (
+					SELECT	*
+					FROM
 						(
-							SELECT DISTINCT  questions.id,
+							(
+							SELECT	questions.id,
 									description,
 									answerA,
 									answerB,
 									answerC,
-									answerD,
-									level
-
+									answerD
 							FROM	exams
-							JOIN	classes
-							ON		exams.classId 			= classes.id
-							JOIN	lectures
-							ON		lectures.id 			= classes.lectureId
-							JOIN	chapters
-							ON		lectures.id 			= chapters.lectureId
-							JOIN	questions
-							ON		chapters.id 			= questions.chapterId
-							WHERE	chapters.id 			= "${classroom.lectureId}-${query}"
-
-							AND		questions.level 		= 0
-							AND		questions.deletedAt	IS NULL
-							LIMIT	${easy}
-
+							JOIN 	classes ON exams.classId 					= classes.id
+							JOIN 	lectures ON lectures.id 					= classes.lectureId
+							JOIN 	chapters ON lectures.id 					= chapters.lectureId
+							JOIN 	questions ON chapters.id 					= questions.chapterId
+							WHERE	(questions.chapterId 						= "${classroom.lectureId}-${query}") 
+							AND		questions.level 							= 0 
+							AND 	questions.deletedAt IS NULL and exams.id 	= ${exam.id}
+							ORDER BY
+						RAND()
+							LIMIT ${easy}
 						)
-							UNION ALL
+					UNION ALL
 						(
-							SELECT DISTINCT  questions.id,
-									description,
-									answerA,
-									answerB,
-									answerC,
-									answerD,
-									level
-
-							FROM	exams
-							JOIN	classes
-							ON		exams.classId 			= classes.id
-							JOIN	lectures
-							ON		lectures.id 			= classes.lectureId
-							JOIN	chapters
-							ON		lectures.id 			= chapters.lectureId
-							JOIN	questions
-							ON		chapters.id 			= questions.chapterId
-							WHERE	chapters.id 			= "${classroom.lectureId}-${query}"
-
-							AND		questions.level	 		= 1
-							AND		questions.deletedAt	IS NULL
-							LIMIT	${hard}
-						)
-					) as q
-					ORDER BY RAND()
-
+						SELECT	questions.id,
+								description,
+								answerA,
+								answerB,
+								answerC,
+								answerD
+						FROM	exams
+						JOIN 	classes ON exams.classId 										= classes.id
+						JOIN 	lectures ON lectures.id 										= classes.lectureId
+						JOIN 	chapters ON lectures.id 										= chapters.lectureId
+						JOIN 	questions ON chapters.id 										= questions.chapterId
+						WHERE	(questions.chapterId											= "${classroom.lectureId}-${query}") 
+						AND 
+							questions.level = 1 AND questions.deletedAt IS NULL and exams.id 	= ${exam.id}
+						ORDER BY RAND()
+						LIMIT ${hard}
+					)
+						) AS q
 					`,
 						{ type: sequelize.QueryTypes.SELECT }
 					);
@@ -1200,7 +1299,7 @@ exports.postClassExam = async (req, res) => {
 				})
 			);
 
-			// successResponse(res, 200, result);
+			return successResponse(res, 200, result);
 		}
 	} catch (error) {
 		console.log(error);

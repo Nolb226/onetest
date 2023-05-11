@@ -78,11 +78,13 @@ function Test() {
 					...submitted,
 					status: questionsAPI.data.isDone,
 				});
+				if (!questionsAPI.data.isDone) {
+					socket.emit('exam:start', {
+						id: questionsAPI.data.id,
+						// examId: questionsAPI.data.examId,
+					});
+				}
 
-				socket.emit('exam:start', {
-					id: questionsAPI.data.id,
-					// examId: questionsAPI.data.examId,
-				});
 				// socket.disconnect();
 
 				window.addEventListener('beforeunload', handleBeforeUnload1);

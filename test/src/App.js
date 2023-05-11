@@ -75,164 +75,176 @@ function App() {
 						<Route path="*" element={<Navigate to="/" />} />
 					</>
 				) : (
-					<Route
-						exact
-						path="/"
-						element={<Dashboard permissions={permissions} />}
-					>
-						{permissions.map((permission) => {
-							if (permission.id === 5) {
-								return (
-									<Route path="student" element={<Student />}>
-										<Route
-											path=""
-											element={<Navigate to="class" replace={true} />}
-										/>
-										<Route path="class">
-											<Route index element={<ViewClass />} />
-											<Route path="join" element={<JoinClass />} />
-											<Route path=":classId" element={<ClassStudentView />}>
-												{<Route path="" element={<Navigate to="details" />} />}
-												<Route path="exams" element={<StudentPage />} />
-												<Route index element={<Detail />} />
-											</Route>
-										</Route>
-										<Route path="exam/:examId" element={<Test />} />
-										<Route path="result/:examId" element={<Result />} />
-										{<Route path="*" element={<Student />} />}
-									</Route>
-								);
-							}
-						})}
-
-						<Route path="teacher" element={<Teacher />}>
+					<>
+						<Route
+							exact
+							path="/"
+							element={<Dashboard permissions={permissions} />}
+						>
 							{permissions.map((permission) => {
-								if (permission.id === 8) {
+								if (permission.id === 5) {
 									return (
-										<>
+										<Route path="student" element={<Student />}>
 											<Route
 												path=""
 												element={<Navigate to="class" replace={true} />}
 											/>
-											<Route path="class" element={<Class />}>
-												<Route path="" element={<Classes />} />
-												<Route path=":classId" element={<Classlist />} />
-												<Route path=":classId/edit" element={<Repass />} />
-												<Route path="create" element={<CreateClass />} />
+											<Route path="class">
+												<Route index element={<ViewClass />} />
+												<Route path="join" element={<JoinClass />} />
+												<Route path=":classId" element={<ClassStudentView />}>
+													{
+														<Route
+															path=""
+															element={<Navigate to="details" />}
+														/>
+													}
+													<Route path="exams" element={<StudentPage />} />
+													<Route index element={<Detail />} />
+												</Route>
 											</Route>
-										</>
+											<Route path="exam/:examId" element={<Test />} />
+											<Route path="result/:examId" element={<Result />} />
+											{<Route path="*" element={<Student />} />}
+										</Route>
 									);
 								}
-								return null;
 							})}
 
-							{permissions.map((permission) => {
-								if (permission.id === 1) {
-									console.log('||| EXAM |||');
-									return (
-										<>
-											<Route
-												path=""
-												element={<Navigate to="exam" replace={true} />}
-											/>
-											<Route path="exam" element={<Exam />}>
-												<Route path="" element={<ExamList />} />
-												<Route path="create" element={<ClassList />} />
+							<Route path="teacher" element={<Teacher />}>
+								{permissions.map((permission) => {
+									if (permission.id === 8) {
+										return (
+											<>
 												<Route
-													path=":examId/detailExam"
-													element={<ExamDetail />}
+													path=""
+													element={<Navigate to="class" replace={true} />}
 												/>
-											</Route>
-										</>
-									);
-								}
-							})}
+												<Route path="class" element={<Class />}>
+													<Route path="" element={<Classes />} />
+													<Route path=":classId" element={<Classlist />} />
+													<Route path=":classId/edit" element={<Repass />} />
+													<Route path="create" element={<CreateClass />} />
+												</Route>
+											</>
+										);
+									}
+									return null;
+								})}
 
-							{/* {
+								{permissions.map((permission) => {
+									if (permission.id === 1) {
+										console.log('||| EXAM |||');
+										return (
+											<>
+												<Route
+													path=""
+													element={<Navigate to="exam" replace={true} />}
+												/>
+												<Route path="exam" element={<Exam />}>
+													<Route path="" element={<ExamList />} />
+													<Route path="create" element={<ClassList />} />
+													<Route
+														path=":examId/detailExam"
+														element={<ExamDetail />}
+													/>
+												</Route>
+											</>
+										);
+									}
+								})}
+
+								{/* {
 								<Route
 									path="class/:classId/student/:studentId/edit"
 									element={<Student />}
 								/>
 							} */}
 
-							{permissions.map((permission) => {
-								if (permission.id === 12) {
-									return (
-										<>
-											{/* <Route path="statistics" element={<Statistics />}></Route> */}
-											<Route path="statistics" element={<Statistics />}>
+								{permissions.map((permission) => {
+									if (permission.id === 12) {
+										return (
+											<>
+												{/* <Route path="statistics" element={<Statistics />}></Route> */}
+												<Route path="statistics" element={<Statistics />}>
+													<Route
+														path=""
+														element={
+															<Navigate to={'classList'} replace={true} />
+														}
+													/>
+													<Route
+														path="classList"
+														element={<StatisticClasses />}
+													/>
+
+													<Route
+														path="classList/:classId/detail-statistic"
+														element={<DetailStatistic />}
+													/>
+													<Route
+														path="examList"
+														element={<StatisticExamList />}
+													/>
+													<Route
+														path="examList/:classId/:examId/detail-statistic"
+														element={<DetailStatistic />}
+													/>
+												</Route>
+
+												<Route path="bank" element={<Bank />}></Route>
+												<Route
+													path="addQuestion"
+													element={<AddNewQuestion />}
+												/>
+											</>
+										);
+									}
+								})}
+							</Route>
+
+							<Route path="admin" element={<Admin />}>
+								{permissions.map((permission) => {
+									if (permission.id === 16) {
+										return (
+											<>
 												<Route
 													path=""
-													element={<Navigate to={'classList'} replace={true} />}
+													element={
+														<Navigate to="manage-account" replace={true} />
+													}
 												/>
 												<Route
-													path="classList"
-													element={<StatisticClasses />}
-												/>
-
+													path="manage-account"
+													element={<ManageAccount />}
+												></Route>
+											</>
+										);
+									}
+								})}
+								{permissions.map((permission) => {
+									if (permission.id === 19) {
+										return (
+											<>
 												<Route
-													path="classList/:classId/detail-statistic"
-													element={<DetailStatistic />}
+													path=""
+													element={<Navigate to="permission" replace={true} />}
 												/>
-												<Route
-													path="examList"
-													element={<StatisticExamList />}
-												/>
-												<Route
-													path="examList/:classId/:examId/detail-statistic"
-													element={<DetailStatistic />}
-												/>
-											</Route>
-
-											<Route path="bank" element={<Bank />}></Route>
-											<Route path="addQuestion" element={<AddNewQuestion />} />
-										</>
-									);
-								}
-							})}
-						</Route>
-
-						<Route path="admin" element={<Admin />}>
-							{permissions.map((permission) => {
-								if (permission.id === 16) {
-									return (
-										<>
-											<Route
-												path=""
-												element={
-													<Navigate to="manage-account" replace={true} />
-												}
-											/>
-											<Route
-												path="manage-account"
-												element={<ManageAccount />}
-											></Route>
-										</>
-									);
-								}
-							})}
-							{permissions.map((permission) => {
-								if (permission.id === 19) {
-									return (
-										<>
-											<Route
-												path=""
-												element={<Navigate to="permission" replace={true} />}
-											/>
-											<Route path="permission" element={<Permission />}>
-												{/* <Route path="" element={<Classes />} /> */}
-											</Route>
-										</>
-									);
-								}
-							})}
-							<Route path="assignment" element={<Assignment />}>
-								{/* <Route path="" element={<Classes />} /> */}
+												<Route path="permission" element={<Permission />}>
+													{/* <Route path="" element={<Classes />} /> */}
+												</Route>
+											</>
+										);
+									}
+								})}
+								<Route path="assignment" element={<Assignment />}>
+									{/* <Route path="" element={<Classes />} /> */}
+								</Route>
 							</Route>
 						</Route>
-					</Route>
+						<Route path="*" element={<Error404 />} />
+					</>
 				)}
-				<Route path="*" element={<Error404 />} />
 			</Routes>
 		</div>
 	);

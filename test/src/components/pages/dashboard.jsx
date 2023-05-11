@@ -332,7 +332,7 @@ function Dashboard({ permissions }) {
 	useEffect(() => {
 		socket.connect();
 		socket.on('exam:notify', (noti) => {
-			setNotifies([...notifies, noti]);
+			setNotifies([noti, ...notifies]);
 		});
 		return () => {
 			socket.off('exam:notify');
