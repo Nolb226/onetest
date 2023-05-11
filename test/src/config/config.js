@@ -3,8 +3,10 @@
 // const api = "http://192.168.31.80:8080";
 // lupis
 
-// const api = 'http://192.168.89.236:8080';
+import port from "./port";
 
-// const api = "http://192.168.43.129:8080";
-const api = "http://localhost:8080";
+// const api = 'http://192.168.89.236:8080';
+// const api = 'http://192.168.43.129:8080';
+// const api = 'http://192.168.1.3:8080' ;
+const api = `${port}:8080`;
 export default api;

@@ -11,7 +11,6 @@ const {
 } = require('../util/helper');
 const { where } = require('sequelize');
 const Permission_Group = require('../models/permission_group');
-const { route } = require('../routes/auth');
 
 exports.signup = async (req, res, next) => {
 	try {
@@ -62,6 +61,8 @@ exports.login = async (req, res, next) => {
 		}
 
 		const isValid = bycrypt.compareSync(password, account.password);
+
+		console.log(isValid);
 		if (!isValid) {
 			throwError('Username or password is incorrect', 401);
 		}
@@ -76,6 +77,7 @@ exports.login = async (req, res, next) => {
 		res.status(200).json({ token, type: account.type });
 		// res.status(200).json(token);
 	} catch (error) {
+		console.log(error);
 		errorResponse(res, error);
 	}
 };

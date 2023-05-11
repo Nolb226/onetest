@@ -59,41 +59,80 @@ const UserMenu = ({ info, setIsOpenProfile, setType }) => {
    );
 };
 
-const UserModel = ({ setIsOpenProfile, info, type }) => {
+const UserModel = ({ setIsOpenProfile, info, type, handleUpdate }) => {
+   const [user, setUser] = useState({ ...info });
+   const [oldPass, setOldPass] = useState("");
+   const [password, setPassword] = useState("");
    const vietNamFomatter = new Intl.DateTimeFormat("vi-VN", {
       year: "numeric",
       month: "long",
       day: "numeric",
    });
    const date = new Date("2003", "9", "30");
-   console.log(date);
+   //   console.log(date);
    const isPasswordForm = type === "password";
+   const handleUser = (e) => {
+      setUser({ ...user, [e.target.name]: e.target.value });
+   };
+
+   const submit = (e) => {
+      e.preventDefault();
+      if (!isPasswordForm) {
+         handleUpdate(user);
+      } else {
+         const currentUser = localStorage.getItem("currentUser");
+         fetch(`${api}/accounts/${user.account_id}/pass/edit`, {
+            method: "PATCH",
+            body: JSON.stringify({
+               oldPass,
+               password,
+            }),
+            headers: {
+               Authorization: "Bearer " + currentUser,
+               "Content-type": "application/json",
+            },
+         }).then((response) => {
+            if (response.ok) {
+               alert("Cập nhật mat khau thành công");
+            } else {
+               alert("Cập nhật mat khau thất bại");
+            }
+         });
+      }
+   };
+
    return (
       <>
          <div
             className="flex-center overlay"
-            onClick={() => setIsOpenProfile(false)}
+            // onClick={() => setIsOpenProfile(false)}
          >
-            <form id="profile-form" className="user-form ">
+            <form
+               id="profile-form"
+               className="user-form "
+               onSubmit={(e) => submit(e)}
+            >
                <header className="user-form__header">
                   <div className="header__icon-box">
                      <i class="fa-regular fa-user"></i>
                   </div>
                   <div className="header__heading-box">
                      <p className="form-header__heading">
-                        {/* <input
-							type="text"
-							disabled
-							className=""
-							value={'Nguyễn Trương Khánh Hoàng'}
-						/> */}
-                        {info.fullname}
+                        <input
+                           type="text"
+                           className=""
+                           name="fullName"
+                           value={user.fullName}
+                           onChange={(e) => handleUser(e)}
+                        />
+                        {/* {info.fullname} */}
                      </p>
                   </div>
                   <div className="header__box">
                      {!isPasswordForm ? (
                         <button className="btn btn-edit-profile">
-                           <i class="fa-regular fa-pen-to-square"></i>
+                           {/* <i class="fa-regular fa-pen-to-square"></i> */}
+                           <h1>Lưu</h1>
                         </button>
                      ) : (
                         <div className="green-dot" title="Online"></div>
@@ -113,24 +152,40 @@ const UserModel = ({ setIsOpenProfile, info, type }) => {
                      <>
                         <label className="body__row">
                            <span className="row-text">Mã cá nhân:</span>
-                           <span className="row-text"> {info.id}</span>
+                           <input
+                              type="text"
+                              className="row-text"
+                              name="account_id"
+                              value={user.account_id}
+                              onChange={(e) => handleUser(e)}
+                           />
                         </label>
                         <label className="body__row">
                            <span className="row-text">Ngày sinh:</span>
-                           <span className="row-text">
-                              {vietNamFomatter.format(date)}
-                           </span>
+                           <input
+                              className="row-text"
+                              type="date"
+                              name="dob"
+                              onChange={(e) => handleUser(e)}
+                              value={user.dob}
+                           />
                         </label>
                      </>
                   ) : (
                      <>
                         <label className="body__row">
                            <span className="row-text">Mật khẩu cũ :</span>
-                           <input type="password" />
+                           <input
+                              type="password"
+                              onChange={(e) => setOldPass(e.target.value)}
+                           />
                         </label>
                         <label className="body__row">
                            <span className="row-text">Mật khẩu mới :</span>
-                           <input type="password" />
+                           <input
+                              type="password"
+                              onChange={(e) => setPassword(e.target.value)}
+                           />
                         </label>
                      </>
                   )}
@@ -189,50 +244,112 @@ const Notification = () => {
 };
 
 function Dashboard() {
-   const [info, setInfo] = useState([]);
+   const [info, setInfo] = useState({});
+   const [notifies, setNotifies] = useState([]);
    const [isOpen, setIsOpen] = useState(false);
    const [type, setType] = useState("");
    const [isOpenProfile, setIsOpenProfile] = useState(false);
    const [isOpenNotifications, setIsOpenNotifications] = useState(false);
+
+   const fetchData = async () => {
+      try {
+         const currentUser = localStorage.getItem("currentUser");
+
+         const [info, notify] = await Promise.all([
+            fetch(`${api}/accounts`, {
+               headers: {
+                  Authorization: "Bearer " + currentUser,
+               },
+            }),
+            fetch(`${api}/classes/notifications`, {
+               headers: {
+                  Authorization: "Bearer " + currentUser,
+               },
+            }),
+         ]);
+
+         const infoInDB = await info.json();
+         const notifyInDB = await notify.json();
+
+         setInfo({
+            ...infoInDB.data,
+            fullName: infoInDB.data?.lastName + " " + infoInDB.data?.firstName,
+         });
+
+         setNotifies(notifyInDB.data);
+      } catch (error) {}
+   };
+
    useEffect(() => {
       const currentUser = localStorage.getItem("currentUser");
-      fetch(`${api}/accounts`, {
-         headers: {
-            Authorization: "Bearer " + currentUser,
-         },
-      })
-         .then((response) => response.json())
+      Promise.all([
+         fetch(`${api}/accounts`, {
+            headers: {
+               Authorization: "Bearer " + currentUser,
+            },
+         }),
+         fetch(`${api}/classes/notifications`, {
+            headers: {
+               Authorization: "Bearer " + currentUser,
+            },
+         }),
+      ])
+         .then((response) => {
+            return response.json();
+         })
          .then((infoAPI) => {
-            setInfo(infoAPI.data);
+            console.log(infoAPI);
+            setInfo({
+               ...infoAPI.data,
+               fullName: infoAPI.data?.lastName + " " + infoAPI.data?.firstName,
+            });
          })
          .catch((error) => {
             console.log(error);
          });
    }, []);
 
-   const menuElement = document.getElementById("left-menu");
-   console.log(menuElement);
-
    const handleCloseSideMenu = () => {
       if (window.innerWidth < 740) {
-         menuElement.classList.remove("openMenu");
-         menuElement.classList.add("closeMenu");
+         document.querySelector("#left-menu").classList.remove("openMenu");
+         document.querySelector("#left-menu").classList.add("closeMenu");
          document.querySelector(".menu-layer").style.display = "none";
       }
+   };
+
+   const handleUpdate = (newInfo) => {
+      console.log(newInfo);
+      const currentUser = localStorage.getItem("currentUser");
+      fetch(`${api}/accounts/${info.account_id}/edit`, {
+         method: "PUT",
+         body: JSON.stringify(newInfo),
+         headers: {
+            Authorization: "Bearer " + currentUser,
+            "Content-type": "application/json",
+         },
+      }).then((response) => {
+         if (response.ok) {
+            alert("Cập nhật thông tin thành công");
+            setInfo(newInfo);
+         } else {
+            alert("Cập nhật thông tin thất bại");
+         }
+      });
    };
 
    return (
       <div
          id="main-layout"
          className="grid wide"
-         // onClick={() => setIsOpen(false)}
+         onClick={() => handleCloseSideMenu()}
       >
-         <div className="layout--body" onClick={handleCloseSideMenu}>
+         <div className="layout--body">
             <SideMenu info={info} />
 
             <div id="dashboard-container">
                {/* {isConfig && <UserModel />} */}
                <div className="top-bar">
+                  {/* {isConfig && <UserModel />} */}
                   <header className="header position-relative">
                      <div className="header__title">
                         <i
@@ -240,8 +357,12 @@ function Dashboard() {
                            style={{ marginRight: "20px" }}
                            onClick={(e) => {
                               e.stopPropagation();
-                              menuElement.classList.remove("closeMenu");
-                              menuElement.classList.add("openMenu");
+                              document
+                                 .querySelector("#left-menu")
+                                 .classList.remove("closeMenu");
+                              document
+                                 .querySelector("#left-menu")
+                                 .classList.add("openMenu");
                               document.querySelector(
                                  ".menu-layer"
                               ).style.display = "block";
@@ -293,18 +414,18 @@ function Dashboard() {
                                  setIsOpenNotifications(false);
                               }}
                               title={
-                                 info.fullname || "Nguyen Truong Khanh Hoang"
+                                 info.fullName || "Nguyen Truong Khanh Hoang"
                               }
                            >
                               {/* <div className="information">
-                                 <div className="flex-center name inf-children">
-                                    {info.fullname ||
-                                       "Nguyen Truong Khanh Hoang"}
-                                 </div>
-                                 <div className="flex-center code inf-children">
-                                    {info.id || "3121410146"}
-                                 </div>
-                              </div> */}
+								 <div className="flex-center name inf-children">
+									{info.fullname ||
+									   "Nguyen Truong Khanh Hoang"}
+								 </div>
+								 <div className="flex-center code inf-children">
+									{info.id || "3121410146"}
+								 </div>
+							  </div> */}
                               <div className="nav__icon flex-center ">
                                  <i className="fa-regular fa-user"></i>
                               </div>
@@ -323,19 +444,19 @@ function Dashboard() {
                         </ul>
                      </div>
                   </header>
-               </div>
-
-               <div className="content">
-                  {isOpenProfile && (
-                     <UserModel
-                        info={info}
-                        type={type}
-                        setIsOpenProfile={setIsOpenProfile}
-                     />
-                  )}
-                  <Outlet />
-                  {/* <Teacher /> */}
-                  {/* <Student idStudent={info.id} nameStudent={info.fullname} /> */}
+                  <div className="content">
+                     {isOpenProfile && (
+                        <UserModel
+                           info={info}
+                           type={type}
+                           setIsOpenProfile={setIsOpenProfile}
+                           handleUpdate={handleUpdate}
+                        />
+                     )}
+                     <Outlet />
+                     {/* <Teacher /> */}
+                     {/* <Student idStudent={info.id} nameStudent={info.fullname} /> */}
+                  </div>
                </div>
             </div>
          </div>

@@ -172,7 +172,9 @@ function ExamDetail() {
 									</li>
 
 									<li className="flex-center column-text">
-										<h3>{vietNamFomatter.format(new Date(student.dob))}</h3>
+										<h3>
+											{vietNamFomatter.format(new Date(student?.dob || ''))}
+										</h3>
 									</li>
 
 									<li className="flex-center column-text">

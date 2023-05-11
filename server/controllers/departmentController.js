@@ -6,7 +6,6 @@ const {
 	errorResponse,
 	throwError,
 } = require('../util/helper');
-const Account = require('../models/account');
 
 module.exports.getDepartments = async function (req, res, _) {
 	try {
@@ -19,6 +18,42 @@ module.exports.getDepartments = async function (req, res, _) {
 	}
 };
 
+// module.exports.getDepartment = async function (req, res, _) {
+// 	const { departmentId } = req.params;
+// 	try {
+// 		const department = await Department.findByPk(departmentId, {
+// 			attributes: ['id', 'name', 'headOfDepartment'],
+// 			include: [
+// 				{ model: Major, attributes: ['id', 'name'] },
+// 				{
+// 					model: Teacher,
+// 					attributes: ['id', 'fullname'],
+// 				},
+// 			],
+// 		});
+// 		if (!department) {
+// 			throwError(`Could not find department`, 404);
+// 		}
+// 		successResponse(res, 200, department);
+// 	} catch (error) {
+// 		errorResponse(res, error);
+// 	}
+// };
+module.exports.getMajorsInDepartment = async function (req, res, _) {
+	try {
+		const { departmentId } = req.params;
+		const department = await Department.findByPk(departmentId, {
+			attributes: ['id', 'name'],
+		});
+		if (!department) {
+			throwError('Could not find department');
+		}
+		const majors = await department.getMajors({ attributes: ['id', 'name'] });
+		successResponse(res, 200, majors);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
 module.exports.getDepartment = async function (req, res, _) {
 	const { departmentId } = req.params;
 	try {

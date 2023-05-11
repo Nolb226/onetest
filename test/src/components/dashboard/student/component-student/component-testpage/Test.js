@@ -12,15 +12,14 @@ import QuestionItem from './QuestionItem';
 import Info from '../Info';
 import api from '../../../../../config/config';
 import QuestionsRender from './QuestionsRender';
+import socket from '../../../../../util/socket';
 // import socket from '../../../../../utils/socket';
 
 function Test() {
 	const [questions, setQuestions] = useState([]); //Chứa mảng câu hỏi
 	const [isOpen, setIsOpen] = useState(false); //Bật tắt modal confirm
 	const [answer, setAnswer] = useState([]);
-	const [clickedOutside, setClickedOutside] = useState(0);
-	const [intervalId, setIntervalId] = useState(null);
-	const navigator = useNavigate();
+
 	const [submitted, setSubmitted] = useState({
 		text: 'Nộp bài',
 		status: false,
@@ -28,41 +27,41 @@ function Test() {
 	// const [isDone, setIsDone] = useState(false);
 
 	const [duration, setDuration] = useState();
+
+	const [modalType, setModalType] = useState('submit');
+
 	const params = useParams();
 	const { examId } = params;
 	const { state } = useLocation();
 	// const []
 
-	let timer = null;
+	const handleSubmitAnswer = (e) => {
+		e.preventDefault();
 
-	const startTimer = (duration) => {
-		const countDownDuration = () => {
-			// -
-			// Math.round((new Date().getTime() - startTime) / 1000);
+		const accesToken = localStorage.getItem('currentUser');
+		fetch(`${api}/classes/${state?.classId}/exams/${examId}`, {
+			method: 'POST',
+			headers: {
+				Authorization: 'Bearer ' + accesToken,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ questions: answer, duration }),
+		})
+			.then(() => navigator('../'))
+			.catch((error) => console.log(error));
 
-			if (time < 0) {
-				clearInterval(timer);
-				setDuration({ hours: '00', minutes: '00', seconds: '00' });
-				return;
-			}
-			console.log(time);
-			const hours = String(parseInt(time / 3600, 10)).padStart(2, '0');
-			const others = String(parseInt(time % 3600, 10)).padStart(2, '0');
-			const minutes = String(parseInt(others / 60, 10)).padStart(2, '0');
-			const seconds = String(parseInt(others % 60, 10)).padStart(2, '0');
-			setDuration((prev) => ({ ...prev, hours, minutes, seconds }));
-			time--;
-		};
-		let time = parseInt(duration, 10);
-
-		countDownDuration();
-		setIntervalId(setInterval(countDownDuration, 1000));
-
-		return timer;
+		// history.push('/class');
 	};
 
 	useEffect(() => {
-		// window.addEventListener('blur', handleBlur);
+		const handleBeforeUnload1 = (e) => {
+			console.log('|||||||||||||||||||||||||||');
+			// socket.on('exam:start', () => {
+			socket.emit('exam:leave', answer);
+
+			// });
+			// e.returnValue = '';
+		};
 
 		const currentUser = localStorage.getItem('currentUser');
 
@@ -78,9 +77,20 @@ function Test() {
 					...submitted,
 					status: questionsAPI.data.isDone,
 				});
-				clearInterval(intervalId);
 
-				startTimer(questionsAPI.data.duration);
+				socket.emit('exam:start', {
+					id: questionsAPI.data.id,
+					// examId: questionsAPI.data.examId,
+				});
+				// socket.disconnect();
+
+				window.addEventListener('beforeunload', handleBeforeUnload1);
+				window.addEventListener('unload', handleBeforeUnload1);
+				window.addEventListener('popstate', handleBeforeUnload1, false);
+				// window.addEventListener('load', handleBeforeUnload1);
+				// clearInterval(intervalId);
+				setDuration(questionsAPI.data.duration);
+				// startTimer(questionsAPI.data.duration);
 			})
 
 			.then(() => {})
@@ -88,40 +98,150 @@ function Test() {
 				console.log(error);
 			});
 
-		return () => {
-			clearInterval(intervalId);
+		socket.on('test', (data) => {
+			setDuration(data);
+		});
 
-			// window.removxeEventListener('blur', handleBlur);
-		};
-	}, []);
-
-	const handleBeforeUnload = (e) => {
-		e.preventDefault();
-		setIsOpen(true);
-		console.log(1);
-		clearInterval(intervalId);
-		e.returnValue = '';
-		return '';
-		//
-	};
-
-	useEffect(() => {
-		const handleOnBlur = (e) => {
-			setClickedOutside((prev) => prev + 1);
+		const handleOnBlur = () => {
+			if (!document.hasFocus()) {
+				socket.emit('exam:clickOutside');
+			}
 		};
 
 		window.addEventListener('blur', handleOnBlur);
-		window.addEventListener('beforeunload', handleBeforeUnload);
-		window.addEventListener('unload', handleBeforeUnload);
-		window.addEventListener('popstate', handleBeforeUnload);
+
+		const handleRightClickContext = (e) => {
+			e.preventDefault();
+			return false;
+		};
+
+		// const handleKeyPress = (e) => {
+		// 	console.log('||||||||||||||||||||||||||||||||||');
+		// 	const code = e.keyCode || e.which;
+		// 	alert('1');
+		// 	if (code == 122) {
+		// 		openFullscreen();
+		// 	}
+		// };
+
+		window.addEventListener('contextmenu', handleRightClickContext);
+		// window.addEventListener('keydown', handleKeyPress, false);
+		socket.on('exam:expired', (e) => {
+			const accesToken = localStorage.getItem('currentUser');
+			fetch(`${api}/classes/${state?.classId}/exams/${examId}`, {
+				method: 'POST',
+				headers: {
+					Authorization: 'Bearer ' + accesToken,
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ questions: answer, duration }),
+			})
+				// .then(() => navigator('../'))
+				.catch((error) => console.log(error));
+			document.getElementById('answerform');
+			setModalType('expired');
+			setIsOpen(true);
+		});
+
 		return () => {
+			socket.off('exam:expired');
+			socket.off('test');
+			window.removeEventListener('contextmenu', handleRightClickContext);
+			// window.removeEventListener('keydown', handleKeyPress, false);
 			window.removeEventListener('blur', handleOnBlur);
-			window.removeEventListener('beforeunload', handleBeforeUnload);
-			window.removeEventListener('unload', handleBeforeUnload);
-			window.removeEventListener('popstate', handleBeforeUnload);
+			window.removeEventListener('beforeunload', handleBeforeUnload1);
+			window.removeEventListener('unload', handleBeforeUnload1);
+			// window.removeEventListener('load', handleBeforeUnload1);
+			window.removeEventListener('popstate', handleBeforeUnload1, false);
+			socket.disconnect();
 		};
 	}, []);
-	console.log(clickedOutside);
+
+	useEffect(() => {
+		if (!state?.isDone) {
+			const elem = document.getElementById('dashboard-container');
+			function openFullscreen(elem) {
+				if (elem.requestFullscreen) {
+					elem.requestFullscreen();
+				} else if (elem.webkitRequestFullscreen) {
+					/* Safari */
+					elem.webkitRequestFullscreen();
+				} else if (elem.msRequestFullscreen) {
+					/* IE11 */
+					elem.msRequestFullscreen();
+				}
+			}
+
+			const exitFullscreenHandler = () => {
+				if (
+					!document.fullscreenElement &&
+					!document.mozFullScreenElement &&
+					!document.webkitFullscreenElement &&
+					!document.msFullscreenElement
+				) {
+					setModalType('out-screen');
+					setIsOpen(true);
+				}
+			};
+
+			openFullscreen(elem);
+
+			document.addEventListener('fullscreenchange', exitFullscreenHandler);
+			document.addEventListener(
+				'webkitfullscreenchange',
+				exitFullscreenHandler
+			);
+			document.addEventListener('mozfullscreenchange', exitFullscreenHandler);
+			document.addEventListener('MSFullscreenChange', exitFullscreenHandler);
+
+			return () => {
+				document.removeEventListener('fullscreenchange', exitFullscreenHandler);
+				document.removeEventListener(
+					'webkitfullscreenchange',
+					exitFullscreenHandler
+				);
+				document.removeEventListener(
+					'mozfullscreenchange',
+					exitFullscreenHandler
+				);
+				document.removeEventListener(
+					'MSFullscreenChange',
+					exitFullscreenHandler
+				);
+			};
+		}
+	}, []);
+	// const handleBeforeUnload = (e) => {
+	// 	e.preventDefault();
+	// 	setIsOpen(true);
+	// 	console.log(1);
+	// 	clearInterval(intervalId);
+	// 	e.returnValue = '';
+	// 	return '';
+	// 	//
+	// };
+
+	// useEffect(() => {
+	// 	const handleOnBlur = (e) => {
+	// 		setClickedOutside((prev) => prev + 1);
+	// 	};
+
+	// 	const handleBeforeUnload = (e) => {
+	// 		e.preventDefault();
+	// 		e.returnValue = '';
+	// 		setIsOpen(true);
+	// 		return '';
+	// 	};
+
+	// 	window.addEventListener('blur', handleOnBlur);
+	// 	window.addEventListener('beforeunload', handleBeforeUnload);
+	// 	window.addEventListener('popstate', handleBeforeUnload);
+	// 	return () => {
+	// 		window.removeEventListener('blur', handleOnBlur);
+	// 		window.removeEventListener('beforeunload', handleBeforeUnload);
+	// 		window.removeEventListener('popstate', handleBeforeUnload);
+	// 	};
+	// }, []);
 	const handleSubmit = () => {
 		setSubmitted({
 			text: 'Xem điểm',
@@ -142,10 +262,14 @@ function Test() {
 					setIsOpen={setIsOpen}
 					submitted={submitted}
 					duration={duration}
+					setDuration={setDuration}
+					handleSubmitAnswer={handleSubmitAnswer}
 				/>
 			</div>
 			{isOpen && !submitted.status && (
 				<ConfirmModel
+					type={modalType}
+					setType={setModalType}
 					isOpen
 					setIsOpen={setIsOpen}
 					result={answer}

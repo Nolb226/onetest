@@ -18,6 +18,9 @@ function SideMenu({ info }) {
    useEffect(() => {
       console.log(pathname.split("/")[3]);
    }, [pathname]);
+   useEffect(() => {
+      console.log(pathname.split("/")[3]);
+   }, [pathname]);
 
    const teacherAccount = [
       {

@@ -33,6 +33,9 @@ import ExamDetail from "./components/dashboard/teacher/exam/ExamDetail";
 import Bank from "./components/dashboard/teacher/bank/Bank";
 import AddNewQuestion from "./components/dashboard/teacher/bank/AddNewQuestion";
 import Assignment from "./components/dashboard/admin/Assignment";
+import StatisticClasses from "./components/dashboard/teacher/statistic/StatisticClasses";
+import StatisticExamList from "./components/dashboard/teacher/statistic/ExamList";
+import DetailStatistic from "./components/dashboard/teacher/statistic/DetailStatistic";
 
 function App() {
    const currentUser = localStorage.getItem("currentUser");
@@ -40,26 +43,6 @@ function App() {
    {
       /* <Route path="*" element={<Home />}></Route> */
    }
-
-   // socket.connect();
-
-   // const Components = [
-   // 	{
-   // 		classes: ViewClass,
-   // 		path: 'classes',
-   // 		childrens: [
-   // 			{
-   // 				// index: true,
-   // 				join: JoinClass,
-   // 				path: 'join',
-   // 			},
-   // 		],
-   // 	},
-   // 	{
-   // 		exams: StudentPage,
-   // 		path: 'exams',
-   // 	},
-   // ];
 
    return (
       <div id="app" className="position-relative">
@@ -159,11 +142,11 @@ function App() {
                         </Route>
                      </Route>
                      <Route path="exam/:examId" element={<Test />} />
-                     <Route path="result/" element={<Result />} />
-                     <Route
+                     <Route path="result/:examId" element={<Result />} />
+                     {/* <Route
                         path="exams/:classId/:examId"
                         element={<Result />}
-                     />
+                     /> */}
                      {<Route path="*" element={<Student />} />}
                   </Route>
                   <Route path="teacher" element={<Teacher />}>
@@ -193,15 +176,31 @@ function App() {
                         />
                      }
 
-                     <Route path="statistics" element={<Statistics />}></Route>
+                     <Route path="statistics" element={<Statistics />}>
+                        <Route path="" element={<StatisticClasses />} />
+                        <Route
+                           path="classList"
+                           element={<StatisticClasses />}
+                        />
+
+                        <Route
+                           path="classList/:classId/detail-statistic"
+                           element={<DetailStatistic />}
+                        />
+                        <Route
+                           path="examList"
+                           element={<StatisticExamList />}
+                        />
+                        <Route
+                           path="examList/:classId/:examId/detail-statistic"
+                           element={<DetailStatistic />}
+                        />
+                     </Route>
 
                      <Route path="bank" element={<Bank />}>
                         {/* <Route path="" element={<Bank />} /> */}
-                        <Route
-                           path="addQuestion"
-                           element={<AddNewQuestion />}
-                        />
                      </Route>
+                     <Route path="addQuestion" element={<AddNewQuestion />} />
                   </Route>
 
                   <Route path="admin" element={<Admin />}>

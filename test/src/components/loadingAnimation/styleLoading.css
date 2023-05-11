@@ -3,12 +3,20 @@
    position: absolute;
    top: 0;
    left: 0;
-   height: 100%;
-   width: 100%;
+   height: 100vh;
+   width: 100vw;
+   z-index: 100;
+   background-color: rgba(0, 0, 0, 0.2);
 }
 
-.loading__layout {
+.loading-data__layout {
    position: absolute;
+   top: 0;
+   left: 0;
+   height: 100%;
+   width: 100%;
+   z-index: 100;
+   background-color: rgba(0, 0, 0, 0.2);
 }
 
 .loading-data__layout {
@@ -20,16 +28,16 @@
    font-family: Verdana, Geneva, Tahoma, sans-serif;
    z-index: 100;
    font-size: 2rem;
-   color: #fff;
+   color: var(--primary-color);
    font-weight: 800;
    animation: flash 1.5s linear infinite;
 }
 
 @keyframes flash {
    0% {
-      color: var(--white-color);
+      color: var(--primary-color);
 
-      text-shadow: 0 0 5px var(--primary-color);
+      text-shadow: 0 0 5px var(--white-color);
    }
    90% {
       color: #fff;

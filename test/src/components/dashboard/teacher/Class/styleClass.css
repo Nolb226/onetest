@@ -314,6 +314,10 @@
    #dashboard-container .page-btn {
       background-color: var(--white-color);
    }
+   #dashboard-container .current {
+      background-color: var(--primary-color);
+      color: #fff;
+   }
 }
 
 @media (max-width: 739px) {

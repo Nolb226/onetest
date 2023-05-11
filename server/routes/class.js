@@ -59,11 +59,11 @@ router.get(
 	classController.getClass
 );
 
-// router.get(
-// 	'/:classId/edit',
-// 	// checkPermission.bind({ path: 'class' }),
-// 	classController.getClassEdit
-// );
+router.get(
+	'/:classId/edit',
+	// checkPermission.bind({ path: 'class' }),
+	classController.getClassEdit
+);
 
 /*
 *teacher
@@ -75,6 +75,12 @@ router.get(
 	// checkPermission,
 	classController.getAllStudent
 );
+
+router.get("/:classId/dashboard", classController.getClassStudentResults);
+router.get("/:classId/:examId/dashboard", classController.getExamStudentResults);
+
+
+// router.get('/notifications', classController.getClassesNotifications);
 
 // /*
 // *teacher
@@ -114,33 +120,33 @@ router.get('/:classId/join', classController.getClassJoin);
 
 // //METHOD : POST
 
-// router.post(
-// 	'/',
-// 	[
-// 		body('semester')
-// 			.trim()
-// 			.notEmpty()
-// 			.isInt()
-// 			.withMessage('must be a number')
-// 			.isIn([1, 2, 3])
-// 			.withMessage('value is not correct '),
-// 		body('year').trim().notEmpty(),
-// 		body('lectureId')
-// 			.trim()
-// 			.notEmpty()
-// 			.custom(async (value) => {
-// 				try {
-// 					const lecture = await Lecture.findByPk(value);
-// 					if (!lecture) {
-// 						throw new Error(`Could not find Lecture`);
-// 					}
-// 				} catch (error) {
-// 					throw new Error(`Could not find Lecture`);
-// 				}
-// 			}),
-// 	],
-// 	classController.postClass
-// );
+router.post(
+	'/',
+	[
+		body('semester')
+			.trim()
+			.notEmpty()
+			.isInt()
+			.withMessage('must be a number')
+			.isIn([1, 2, 3])
+			.withMessage('value is not correct '),
+		body('year').trim().notEmpty(),
+		body('lectureId')
+			.trim()
+			.notEmpty()
+			.custom(async (value) => {
+				try {
+					const lecture = await Lecture.findByPk(value);
+					if (!lecture) {
+						throw new Error(`Could not find Lecture`);
+					}
+				} catch (error) {
+					throw new Error(`Could not find Lecture`);
+				}
+			}),
+	],
+	classController.postClass
+);
 
 router.post('/:classId/students', classController.postClassStudent);
 

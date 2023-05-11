@@ -1,5 +1,4 @@
 'use strict';
-const port = process.env.PORT || 8080;
 
 //Packages
 const path = require('path');
@@ -12,10 +11,11 @@ const { v4: uuidv4 } = require('uuid');
 //Utils
 const sequelize = require('./util/database');
 const app = express();
+const http = require('http').createServer({ rejectUnauthorized: false }, app);
 // const http = require('http').createServer(app);
 
 require('dotenv').config();
-
+const port = process.env.PORT || 8080;
 //Models
 
 (() => {
@@ -55,7 +55,7 @@ require('dotenv').config();
 	Chapter.hasMany(Question);
 	Question.belongsTo(Chapter);
 
-	Account.belongsTo(Major);
+	Account.belongsTo(Major,{isNull: true});
 	Major.hasMany(Account);
 
 	// Major.belongsTo(Teacher, { foreignKey: 'headOfMajor' });
@@ -125,6 +125,7 @@ require('dotenv').config();
 		timestamps: false,
 		// as: 'permissions',
 		foreignKey: 'type',
+		isNull: true
 	});
 	Permission_Group.hasMany(Account, {
 		timestamps: false,
@@ -177,6 +178,7 @@ const majorRoutes = require('./routes/major');
 const lectureRoutes = require('./routes/lecture');
 const adminRoutes = require('./routes/admin');
 const permissionsRoutes = require('./routes/permission');
+const teachRoutes = require('./routes/teach')
 const { checkPermission } = require('./middleware/check-permission');
 const { errorResponse, throwError } = require('./util/helper');
 //Middleware
@@ -209,6 +211,7 @@ app.use('/classes', classesRoutes);
 app.use('/admin', adminRoutes);
 // app.use('/test', testRoutes);
 // app.use('/permissions', permissionsRoutes);
+app.use('/teach', teachRoutes);
 //App start when connected to database
 app.get('/', (req, res) => {
 	res.send(Hiii);
@@ -227,8 +230,15 @@ sequelize
 	.sync()
 
 	.then(() => {
-		app.listen(port, '0.0.0.0', () =>
-			console.log('> Server is up and running on port : ' + port)
-		);
+		const io = require('./util/socket').init(http);
+
+		http.listen(port, '0.0.0.0', function () {
+			console.log(
+				'Express server listening on port %d in %s mode',
+				this.address().port,
+				app.settings.env
+			);
+		});
+		// io.listen(3001);
 	})
 	.catch((err) => console.log('Fail to connect to the database ' + err));

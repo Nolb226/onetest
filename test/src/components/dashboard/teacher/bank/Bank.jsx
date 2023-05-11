@@ -53,7 +53,6 @@ const answer = {
 };
 
 function Question({ questionObject }) {
-   console.log(questionObject);
    useEffect(() => {
       const liElement = document.getElementById(`${questionObject.id}`);
       liElement.querySelectorAll("input[type=radio]").forEach((item) => {
@@ -69,32 +68,72 @@ function Question({ questionObject }) {
             width: "100%",
             padding: "5px 0",
             borderBottom: "solid 1px #d5d5d5",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
          }}
          key={questionObject.chapterId}
          // data-level={questionObject.level}
          // data-chapterId={questionObject.chapterId}
       >
+         <div
+            className="control flex-center"
+            style={{
+               width: "100%",
+               justifyContent: "space-between",
+               padding: "0 15px",
+            }}
+         >
+            <input
+               type="checkbox"
+               name=""
+               data-level={questionObject.level}
+               data-chapterid={questionObject.chapterId}
+               id={questionObject.id}
+               style={{
+                  width: "18px",
+                  height: "18px",
+                  marginRight: "5px",
+                  cursor: "pointer",
+               }}
+            />
+
+            <select
+               name="level"
+               id="level"
+               className="tool-btn"
+               style={{
+                  // position: "absolute",
+                  width: "120px",
+                  height: "25px",
+                  top: "0",
+                  left: "100%",
+                  border: "none",
+                  outline: "none",
+                  textAlign: "center",
+                  borderRadius: "2px",
+                  cursor: "pointer",
+               }}
+            >
+               <option value="0">Mức độ: Dễ</option>
+               <option value="1">Mức độ: Khó</option>
+            </select>
+
+            <i
+               className="edit-btn fa-solid fa-pen-to-square"
+               style={{ fontSize: "1.5rem", color: "#777", cursor: "pointer" }}
+            ></i>
+         </div>
          <div style={{ width: "100%" }}>
             <div className="flex-center" style={{ width: "100%" }}>
                <input
-                  type="checkbox"
-                  name=""
-                  data-level={questionObject.level}
-                  data-chapterid={questionObject.chapterId}
-                  id={questionObject.id}
-                  style={{
-                     width: "18px",
-                     height: "18px",
-                     marginRight: "5px",
-                  }}
-               />
-               <input
                   name="question"
                   type="text"
-                  style={question}
                   placeholder="Câu hỏi"
                   title={questionObject.description}
                   defaultValue={questionObject.description}
+                  style={question}
                />
             </div>
 
@@ -118,6 +157,7 @@ function Question({ questionObject }) {
                      }}
                   />
                   <input
+                     name="answerA"
                      type="text"
                      defaultValue={questionObject.answerA}
                      style={answer}
@@ -139,6 +179,7 @@ function Question({ questionObject }) {
                      }}
                   />
                   <input
+                     name="answerB"
                      type="text"
                      defaultValue={questionObject.answerB}
                      style={answer}
@@ -160,6 +201,7 @@ function Question({ questionObject }) {
                      }}
                   />
                   <input
+                     name="answerC"
                      type="text"
                      defaultValue={questionObject.answerC}
                      style={answer}
@@ -181,6 +223,7 @@ function Question({ questionObject }) {
                      }}
                   />
                   <input
+                     name="answerD"
                      type="text"
                      defaultValue={questionObject.answerD}
                      style={answer}
@@ -211,6 +254,48 @@ function clearErrorMessage(selector) {
    parentElement.classList.remove("invalid");
 }
 
+function disableInput() {
+   document
+      .querySelectorAll(".question-box input")
+      .forEach((input) => (input.disabled = true));
+
+   document
+      .querySelectorAll(".question-box select")
+      .forEach((input) => (input.disabled = true));
+}
+
+function editQuestion(editQuestionArray) {
+   document.querySelectorAll(".question-box .edit-btn").forEach((editIcon) => {
+      editIcon.addEventListener("click", () => {
+         let questionBox = editIcon.closest(".question-box");
+         questionBox.querySelectorAll("input").forEach((input) => {
+            input.disabled = false;
+
+            input.addEventListener("change", () => {
+               if (
+                  editQuestionArray.find((item) => item == questionBox.id) ===
+                  undefined
+               ) {
+                  editQuestionArray.push(questionBox.id);
+               }
+            });
+         });
+
+         questionBox.querySelectorAll("select").forEach((select) => {
+            select.disabled = false;
+            select.addEventListener("change", () => {
+               if (
+                  editQuestionArray.find((item) => item == questionBox.id) ===
+                  undefined
+               ) {
+                  editQuestionArray.push(questionBox.id);
+               }
+            });
+         });
+      });
+   });
+}
+
 function Bank() {
    const currentUser = localStorage.getItem("currentUser");
    const navigator = useNavigate();
@@ -219,9 +304,10 @@ function Bank() {
    const [examQuestions, setExamQuestions] = useState([]);
    const [chapters, setChapters] = useState([]);
    const [lectureId, setLectureId] = useState("");
-   const [questionArray, setQuestionArray] = useState([]);
+   const editQuestionArray = [];
    const [isLoading, setIsLoading] = useState(false);
    const [isLoadingData, setIsLoadingData] = useState(false);
+   let editedQuestion = [];
    const Outlet = useOutlet();
 
    const easyElement = document.getElementById("easy");
@@ -264,9 +350,9 @@ function Bank() {
 
    const getExamQuestions = async () => {
       setIsLoadingData(true);
-      console.log(chapters);
       await fetch(
-         `${api}/classes/841109222-12/chapters/questions?chapters=${chapters}`,
+         // `${api}/classes/841109222-12/chapters/questions?chapters=${chapters}`,
+         `${api}/lectures/${lectureId}/chapters/${chapters}/questions`,
          {
             headers: {
                Authorization: "Bearer " + currentUser,
@@ -282,14 +368,119 @@ function Bank() {
    };
 
    useEffect(() => {
-      getExamQuestions();
+      if (chapters != "Chọn chương") {
+         getExamQuestions();
+      }
    }, [chapters]);
 
    // ----- Handle when change question list -----
 
    useEffect(() => {
+      let easy = 0;
+      let hard = 0;
+      examQuestions?.forEach((question) => {
+         console.log(question.level);
+         question.level === 0 || question.level === "0"
+            ? (easy += 1)
+            : (hard += 1);
+      });
+
+      document.getElementById("easy").value = easy;
+      document.getElementById("hard").value = hard;
+
+      examQuestions?.forEach((question) => {
+         const questionBox = document.getElementById(`${question.id}`);
+         question.level === 0
+            ? (questionBox.style.borderLeft = "solid 5px #1f2ec9")
+            : (questionBox.style.borderLeft = "solid 5px #d3ae56");
+      });
       console.log(examQuestions);
+      disableInput();
+      editQuestion(editQuestionArray);
    }, [examQuestions]);
+
+   function deleteQuestion() {
+      let deleteQuestionId = [];
+      let arr = examQuestions;
+      document
+         .querySelectorAll("input[type=checkbox]:checked")
+         .forEach((checkbox) => {
+            arr = arr.filter(
+               (item) => parseInt(item.id) !== parseInt(checkbox.id)
+            );
+
+            let temp = { id: checkbox.id };
+            deleteQuestionId.push(temp);
+         });
+      setExamQuestions(arr);
+
+      setIsLoading(true);
+
+      fetch(`${api}/lectures/841109/chapters/${chapters}/questions`, {
+         body: JSON.stringify(deleteQuestionId),
+         method: "POST",
+         headers: {
+            Authorization: "Bearer " + currentUser,
+         },
+      }).then((res) => {
+         if (!res.ok) {
+            setIsLoading(false);
+            alert("Thay đổi không thành công! Vui lòng thử lại.");
+         } else if (res.ok) {
+            alert("Thay đổi thành công!");
+            setIsLoading(false);
+         }
+      });
+   }
+
+   function saveChange(editQuestionArray, editedQuestion) {
+      console.log(editQuestionArray);
+      editQuestionArray?.forEach((item) => {
+         const tempQuestion = {};
+         console.log(item);
+         const questionBox = document.getElementById(`${item}`);
+         questionBox.querySelectorAll('input[type="text"]').forEach((input) => {
+            console.log(input.name, input.value);
+            tempQuestion[input.name] = input.value;
+
+            // tempQuestion.push(`${input.name}: ${input.value}`);
+         });
+
+         questionBox
+            .querySelectorAll('input[type="radio"]:checked')
+            .forEach((input) => {
+               console.log(input.name, input.value);
+               tempQuestion[input.name] = input.value;
+
+               // tempQuestion.push(`${input.name}: ${input.value}`);
+            });
+
+         const levelSelect = questionBox.querySelector("select");
+         console.log(levelSelect.name, levelSelect.value);
+         tempQuestion[levelSelect.name] = levelSelect.value;
+         // tempQuestion.push(`${input.name}: ${input.value}`)
+
+         editedQuestion.push(tempQuestion);
+      });
+      console.log(editedQuestion);
+      setIsLoading(true);
+
+      fetch(`${api}/lectures/841109/chapters/${chapters}/questions`, {
+         body: JSON.stringify(editedQuestion),
+         method: "POST",
+         headers: {
+            Authorization: "Bearer " + currentUser,
+         },
+      }).then((res) => {
+         if (!res.ok) {
+            setIsLoading(false);
+            alert("Thay đổi không thành công! Vui lòng thử lại.");
+         } else if (res.ok) {
+            alert("Thay đổi thành công!");
+            setIsLoading(false);
+         }
+      });
+   }
 
    return (
       <>
@@ -300,16 +491,19 @@ function Bank() {
                      <button
                         className="add-new-question"
                         onClick={(e) => {
-                           navigator("./addQuestion");
+                           navigator("../addQuestion");
                         }}
                      >
                         Thêm câu hỏi
                      </button>
-                     <button className="remove-question">
+                     <button
+                        className="remove-question"
+                        onClick={() => deleteQuestion()}
+                     >
                         Xóa câu hỏi đã chọn
                      </button>
                   </div>
-                  <form action="" method="POST" id="bank">
+                  <div id="bank">
                      <div className="flex-center flex-direction-col info-box__select-from-bank">
                         <ul
                            className="flex-center flex-direction-col"
@@ -330,11 +524,12 @@ function Bank() {
                                  style={label}
                                  className="form-label"
                               >
-                                 Mã môn học
+                                 Mã môn
                               </label>
                               <div
                                  style={{
                                     flex: "1",
+                                    // width: "50%",
                                     display: "flex",
                                     flexDirection: "column",
                                     justifyContent: "flex-start",
@@ -365,57 +560,6 @@ function Bank() {
                                  ></label>
                               </div>
                            </li>
-                           {/* 
-                           <li
-                              className="flex-center form-group"
-                              style={{
-                                 width: "100%",
-                                 margin: "5px 0",
-                                 flexDirection: "row",
-                                 alignItems: "flex-start",
-                                 height: "40px",
-                              }}
-                           >
-                              <label
-                                 htmlFor="name"
-                                 style={label}
-                                 className="form-label"
-                              >
-                                 Môn
-                              </label>
-
-                              <div
-                                 style={{
-                                    flex: "1",
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    justifyContent: "flex-start",
-                                 }}
-                              >
-                                 <input
-                                    rules="require"
-                                    className="form-control"
-                                    type="text"
-                                    name="name"
-                                    id="name"
-                                    disabled="true"
-                                    placeholder="Lập trình web"
-                                    style={{
-                                       fontSize: "1.4rem",
-                                       paddingLeft: "10px",
-                                       flex: "1",
-                                       height: "30px",
-                                       outline: "none",
-                                       borderRadius: "4px",
-                                       border: "solid 2px #BFBFBF",
-                                    }}
-                                 />
-                                 <label
-                                    htmlFor="name"
-                                    className="form-message"
-                                 ></label>
-                              </div>
-                           </li> */}
 
                            <li
                               className="flex-center form-group"
@@ -450,6 +594,7 @@ function Bank() {
                                     style={{
                                        fontSize: "1.4rem",
                                        paddingLeft: "10px",
+                                       maxWidth: "150px",
                                        flex: "1",
                                        height: "30px",
                                        outline: "none",
@@ -478,58 +623,6 @@ function Bank() {
                                        }
                                     })}
                                  </select>
-                              </div>
-                           </li>
-
-                           <li
-                              className="flex-center form-group"
-                              style={{
-                                 width: "100%",
-                                 margin: "5px 0",
-                                 flexDirection: "row",
-                                 alignItems: "flex-start",
-                                 height: "40px",
-                              }}
-                           >
-                              <label
-                                 htmlFor="totalQuestions"
-                                 style={label}
-                                 className="form-label"
-                              >
-                                 Số câu hỏi
-                              </label>
-
-                              <div
-                                 style={{
-                                    flex: "1",
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    justifyContent: "flex-start",
-                                 }}
-                              >
-                                 <input
-                                    rules="require"
-                                    className="form-control"
-                                    disabled="true"
-                                    type="text"
-                                    name="totalQuestions"
-                                    id="totalQuestions"
-                                    style={{
-                                       width: "150px",
-                                       fontSize: "1.4rem",
-                                       paddingLeft: "10px",
-                                       flex: "1",
-                                       height: "30px",
-                                       outline: "none",
-                                       borderRadius: "4px",
-                                       border: "solid 2px #BFBFBF",
-                                       textAlign: "center",
-                                    }}
-                                 />
-                                 <label
-                                    htmlFor="totalQuestions"
-                                    className="form-message totalQuestions"
-                                 ></label>
                               </div>
                            </li>
 
@@ -576,6 +669,8 @@ function Bank() {
                                        borderRadius: "4px",
                                        border: "solid 2px #BFBFBF",
                                        textAlign: "center",
+                                       color: "#1f2ec9",
+                                       fontWeight: "600",
                                     }}
                                  />
                                  <label
@@ -628,6 +723,8 @@ function Bank() {
                                        borderRadius: "4px",
                                        border: "solid 2px #BFBFBF",
                                        textAlign: "center",
+                                       color: "#d3ae56",
+                                       fontWeight: "600",
                                     }}
                                  />
                                  <label
@@ -638,7 +735,14 @@ function Bank() {
                            </li>
                         </ul>
 
-                        <button className="create-exam-btn-pc">Lưu</button>
+                        <button
+                           className="create-exam-btn-pc"
+                           onClick={() => {
+                              saveChange(editQuestionArray, editedQuestion);
+                           }}
+                        >
+                           Lưu
+                        </button>
                      </div>
 
                      <div className="question-list_container">
@@ -648,12 +752,11 @@ function Bank() {
                               height: "100%",
                               overflowY: "scroll",
                               width: "100%",
-                              paddingTop: "5px",
                               justifyContent: "flex-start",
                            }}
                         >
-                           {examQuestions.map((item) => (
-                              <Question questionObject={item} />
+                           {examQuestions?.map((item) => (
+                              <Question questionObject={item} key={item.id} />
                            ))}
                            {isLoadingData && <LoadingData />}
                         </ul>
@@ -662,10 +765,13 @@ function Bank() {
                      <button
                         className="create-exam-btn-tablet"
                         style={{ marginTop: "10px" }}
+                        onClick={() => {
+                           saveChange(editQuestionArray, editedQuestion);
+                        }}
                      >
                         Lưu
                      </button>
-                  </form>
+                  </div>
                </div>
             </>
          )}
