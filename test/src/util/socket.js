@@ -6,6 +6,7 @@ const socket = io.connect(`${api}`, {
 		token: localStorage.getItem('currentUser'),
 	},
 	'connect timeout': 5000,
+	// multiplex: false,
 	// transports: ['websocket'],
 });
 

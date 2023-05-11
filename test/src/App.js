@@ -32,6 +32,9 @@ import Permission from './components/dashboard/admin/Permission';
 import ExamDetail from './components/dashboard/teacher/exam/ExamDetail';
 import Bank from './components/dashboard/teacher/bank/Bank';
 import AddNewQuestion from './components/dashboard/teacher/bank/AddNewQuestion';
+import StatisticClasses from './components/dashboard/teacher/statistic/StatisticClasses';
+import DetailStatistic from './components/dashboard/teacher/statistic/DetailStatistic';
+import StatisticExamList from './components/dashboard/teacher/statistic/ExamList';
 import { useEffect, useState } from 'react';
 import socket from './util/socket';
 
@@ -44,6 +47,10 @@ function App() {
 	const [permissions, setPermissions] = useState([]);
 	useEffect(() => {
 		socket.connect();
+
+		socket.on('connect', () => {
+			socket.emit('join');
+		});
 		socket.on('user:check-permissions', (permissions) => {
 			setPermissions(permissions);
 		});
@@ -53,8 +60,9 @@ function App() {
 		return () => {
 			socket.off('user:check-permissions');
 			socket.off('permissions:updated');
+			socket.disconnect();
 		};
-	}, [permissions]);
+	}, []);
 
 	return (
 		<div id="app" className="position-relative">
@@ -112,7 +120,11 @@ function App() {
 						<Route path="*" element={<Navigate to="/" />} />
 					</>
 				) : (
-					<Route exact path="/" element={<Dashboard />}>
+					<Route
+						exact
+						path="/"
+						element={<Dashboard permissions={permissions} />}
+					>
 						{/* {Components.map((component) => {
 							const Test = component[test];
 							if (component.childrens) {
@@ -214,7 +226,7 @@ function App() {
 								if (permission.id === 12) {
 									return (
 										<>
-											<Route path="statistics" element={<Statistics />}></Route>
+											{/* <Route path="statistics" element={<Statistics />}></Route> */}
 											<Route path="statistics" element={<Statistics />}>
 												<Route path="" element={<StatisticClasses />} />
 												<Route

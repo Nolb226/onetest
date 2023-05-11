@@ -77,7 +77,10 @@ function Result() {
 						</div>
 					</div>
 					<footer className="result-footer flex-center">
-						<Link to="/exam/:examId">
+						<Link
+							to={`../exam/${examId}`}
+							state={{ isDone: true, classId: state?.classId }}
+						>
 							<button className="see-detail-test">Chi tiết bài làm</button>
 						</Link>
 					</footer>

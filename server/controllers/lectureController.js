@@ -136,7 +136,7 @@ exports.postLectureQuestion = async (req, res, _) => {
 			},
 		});
 		await Promise.all(
-			questions.map(async (question) => {
+			JSON.parse(questions).map(async (question) => {
 				try {
 					const created = await chapter.createQuestion(question);
 
@@ -177,6 +177,7 @@ exports.putLectureQuestions = async (req, res, _) => {
 						answerC: question.answerC,
 						answerD: question.answerD,
 						correctAns: question.correctAns,
+						status: 1,
 					});
 
 					return created;
@@ -205,7 +206,7 @@ exports.getLectureQuestion = async (req, res, _) => {
 
 exports.deleteLectureQuestion = async (req, res, _) => {
 	try {
-		const { questions } = req.body;
+		const questions = req.body;
 		await Promise.all(
 			questions.map(async (question) => {
 				const questionInDB = await Question.findByPk(question.id);

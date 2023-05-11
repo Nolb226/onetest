@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../../../../config/config';
-import { useNavigate } from 'react-router';
+import { useNavigate, useOutletContext } from 'react-router';
 import LoadingData from '../../../loadingAnimation/LoadingData';
 import { Link } from 'react-router-dom';
 import socket from '../../../../util/socket';
@@ -11,6 +11,11 @@ function ExamList() {
 	const [examData, setExamData] = useState([]);
 	const [isLoadingData, setIsLoadingData] = useState(false);
 	const [errorLoadingData, setErrorLoadingData] = useState('');
+
+	const { permissions } = useOutletContext();
+
+	const isAllowedToPost = permissions.find((x) => x.id === 2);
+	const isAllowedToLock = permissions.find((x) => x.id === 24);
 
 	const getExamData = async () => {
 		setIsLoadingData(true);
@@ -67,15 +72,17 @@ function ExamList() {
 					className="search-input"
 					placeholder="Nhập mã đề thi"
 				/>
-				<button
-					className="flex-center join-button"
-					onClick={() => {
-						navigator('create', { relative: 'path' });
-					}}
-				>
-					<i className="fa-solid fa-plus"></i>
-					<span>Tạo bài thi</span>
-				</button>
+				{isAllowedToPost && (
+					<button
+						className="flex-center join-button"
+						onClick={() => {
+							navigator('create', { relative: 'path' });
+						}}
+					>
+						<i className="fa-solid fa-plus"></i>
+						<span>Tạo bài thi</span>
+					</button>
+				)}
 			</div>
 			<div className="table-zone manage-exam">
 				<header className="table__header">
@@ -96,9 +103,11 @@ function ExamList() {
 							<h3>Nộp</h3>
 						</li>
 
-						<li className="flex-center column-text">
-							<h3>Xem đáp án</h3>
-						</li>
+						{isAllowedToLock && (
+							<li className="flex-center column-text">
+								<h3>Xem đáp án</h3>
+							</li>
+						)}
 
 						<li className="flex-center column-text">Chi tiết</li>
 					</ul>
@@ -145,27 +154,29 @@ function ExamList() {
 										<h3>{exam.totals}</h3>
 									</li>
 
-									<li
-										className="flex-center column-text view-result"
-										onClick={() => {
-											console.log(exam.isLock);
-											socket.emit(
-												'class:exam-lock',
-												exam.class_id,
-												exam.id,
-												!exam.isLock
-											);
-											handleLock(exam.class_id, exam);
-										}}
-									>
-										<input
-											type="checkbox"
-											name=""
-											id=""
-											checked={!exam.isLock}
-										/>
-										<span class="checkmark"></span>
-									</li>
+									{isAllowedToLock && (
+										<li
+											className="flex-center column-text view-result"
+											onClick={() => {
+												console.log(exam.isLock);
+												socket.emit(
+													'class:exam-lock',
+													exam.class_id,
+													exam.id,
+													!exam.isLock
+												);
+												handleLock(exam.class_id, exam);
+											}}
+										>
+											<input
+												type="checkbox"
+												name=""
+												id=""
+												checked={!exam.isLock}
+											/>
+											<span class="checkmark"></span>
+										</li>
+									)}
 									<li className="flex-center column-text">
 										<Link
 											to={`${exam.id}/detailExam`}

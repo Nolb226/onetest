@@ -144,7 +144,7 @@ exports.getAllAccounts = async (req, res, _) => {
 			isActive
 			FROM
 			accounts
-			WHERE account_id != '0' AND accounts.id ="0"
+			WHERE account_id != '0' AND accounts.id !="0"
 			LIMIT ${(page - 1) * perPage} ,${perPage};`,
 			{ type: sequelize.QueryTypes.SELECT }
 		);
@@ -333,8 +333,9 @@ exports.putFuntionOfPermission = async (req, res, _) => {
 		);
 		await permissionFounded.setFunctions(inFunc);
 		const newfunctions = await permissionFounded.getFunctions();
+		// getIO().connect();
+		console.log('||||||||||||||||||||||||||||');
 		getIO().to(permissionId).emit('permissions:updated', newfunctions);
-
 		successResponse(res, 201, permissionFounded, 'PUT');
 	} catch (error) {
 		errorResponse(res, error);
@@ -377,6 +378,21 @@ exports.deleteAccount = async (req, res, _) => {
 		await accountFounded.destroy();
 		successResponse(res, 201, {}, 'DELETE');
 	} catch (error) {
+		errorResponse(res, error);
+	}
+};
+
+exports.deletePermissions = async (req, res, _) => {
+	try {
+		const { permissionId } = req.params;
+		const permissions = await Permission_Group.findByPk(permissionId);
+		if (!permissions) {
+			throwError(`Permission not found`, 404);
+		}
+		await permissions.destroy();
+		successResponse(res, 201, _, req.method);
+	} catch (error) {
+		console.log(error);
 		errorResponse(res, error);
 	}
 };

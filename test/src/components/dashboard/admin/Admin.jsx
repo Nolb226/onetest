@@ -1,12 +1,13 @@
-import "./admin.css";
-import { Outlet } from "react-router";
+import './admin.css';
+import { Outlet, useOutletContext } from 'react-router';
 
 function Admin() {
-   return (
-      <div id="admin-layout">
-         <Outlet />
-      </div>
-   );
+	const { permissions } = useOutletContext();
+	return (
+		<div id="admin-layout">
+			<Outlet context={{ permissions }} />
+		</div>
+	);
 }
 
 export default Admin;

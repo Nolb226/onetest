@@ -6,6 +6,7 @@ const {
 	errorResponse,
 	throwError,
 } = require('../util/helper');
+const Account = require('../models/account');
 
 module.exports.getDepartments = async function (req, res, _) {
 	try {

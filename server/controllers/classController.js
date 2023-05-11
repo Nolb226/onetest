@@ -30,6 +30,7 @@ const sequelize = require('../util/database');
 const { Op, QueryTypes } = require('sequelize');
 const Question = require('../models/question');
 const Account = require('../models/account');
+const { getIO } = require('../util/socket');
 const deleteExcel = function (filePath) {
 	const file = path.join(__dirname, '..', filePath);
 	fs.unlink(file, (err) => console.log(err));
@@ -211,7 +212,8 @@ exports.getClassesNotifications = async (req, res, _) => {
 			student.id = classdetail.accountId
 		JOIN notifications ON notifications.classId = classes.id
 		WHERE
-			student.id = "${req.account.id}"
+		student.id = "${req.account.id}"
+		ORDER BY notifications.createdAt DESC
 
 			`,
 			{
@@ -416,8 +418,7 @@ exports.getClassesExams = async (req, res, _) => {
 			JOIN      	lectures
 			ON 			classes.lectureId = lectures.id
 			WHERE 		classes.accountId = "${req.account.id}"
-			LIMIT 		${perPage}
-			OFFSET 		${perPage * (page - 1)}
+
 		`,
 			{
 				type: sequelize.QueryTypes.SELECT,
@@ -754,10 +755,10 @@ exports.postClass = async (req, res, _) => {
 					const month = cuttedDOB[1];
 					const day = cuttedDOB[0];
 					console.log(student['Mã lớp'].slice(0, 3));
-					const student = await Account.findOrCreate(
+					const studentInDB = await Account.findOrCreate(
 						{
 							where: {
-								account_id: student['MSSV'] || student['Mã sinh viên'],
+								account_id: InDB['MSSV'] || student['Mã sinh viên'],
 							},
 						},
 
@@ -776,7 +777,7 @@ exports.postClass = async (req, res, _) => {
 							},
 						}
 					);
-					newClass.addAccount(student);
+					newClass.addAccount(studentInDB);
 				})
 			);
 
@@ -954,7 +955,7 @@ exports.postClassExam = async (req, res) => {
 					students.map(async (student) => {
 						try {
 							return await student.addExam(exam, {
-								through: { content: examContent },
+								through: { content: examContent, duration: duration * 60 },
 							});
 						} catch (error) {
 							console.log(error);
@@ -962,7 +963,8 @@ exports.postClassExam = async (req, res) => {
 					})
 				);
 				await student.addExam(exam, {
-					through: { content: examContent },
+					through: { content: examContent, duration: duration * 60 },
+					r,
 				});
 				const noti = await classroom.createNotification({
 					description: `bạn có bài thi ở lớp ${classroom.name}`,
@@ -994,9 +996,9 @@ exports.postClassExam = async (req, res) => {
 
 			const content = await sequelize.query(
 				`
-			SELECT * FROM (
+			SELECT DISTINCT * FROM (
 				(
-					SELECT  questions.id,
+					SELECT DISTINCT  questions.id,
 							description,
 							answerA,
 							answerB,
@@ -1013,7 +1015,7 @@ exports.postClassExam = async (req, res) => {
 					ON		lectures.id 			= chapters.lectureId
 					JOIN	questions
 					ON		chapters.id 			= questions.chapterId
-					WHERE	chapters.id 			= "${query}"
+					WHERE	chapters.id 			= "${classroom.lectureId}-${query}"
 					AND		questions.level 		= 0
 					AND		questions.deletedAt	IS NULL
 					LIMIT	${easy}
@@ -1021,7 +1023,7 @@ exports.postClassExam = async (req, res) => {
 				)
 					UNION ALL
 				(
-					SELECT  questions.id,
+					SELECT DISTINCT  questions.id,
 							description,
 							answerA,
 							answerB,
@@ -1039,7 +1041,8 @@ exports.postClassExam = async (req, res) => {
 					ON		lectures.id 			= chapters.lectureId
 					JOIN	questions
 					ON		chapters.id 			= questions.chapterId
-					WHERE	chapters.id 			= "${query}"
+					WHERE	chapters.id 			= "${classroom.lectureId}-${query}"
+
 					AND		questions.level	 		= 1
 					AND		questions.deletedAt	IS NULL
 					LIMIT	${hard}
@@ -1093,8 +1096,7 @@ exports.postClassExam = async (req, res) => {
 				.emit('exam:created', exam.toJSON(), lecture_name.name);
 			getIO().to(`${classId}`).emit('exam:notify', noti.toJSON());
 
-			successResponse(res, 200, result);
-			return;
+			return successResponse(res, 200, result);
 		}
 		if (type === '3') {
 			const { chapters } = req.query;
@@ -1105,9 +1107,9 @@ exports.postClassExam = async (req, res) => {
 				students.map(async (student) => {
 					const content = await sequelize.query(
 						`
-					SELECT * FROM (
+					SELECT DISTINCT * FROM (
 						(
-							SELECT  questions.id,
+							SELECT DISTINCT  questions.id,
 									description,
 									answerA,
 									answerB,
@@ -1124,7 +1126,8 @@ exports.postClassExam = async (req, res) => {
 							ON		lectures.id 			= chapters.lectureId
 							JOIN	questions
 							ON		chapters.id 			= questions.chapterId
-							WHERE	chapters.id 			= "${query}"
+							WHERE	chapters.id 			= "${classroom.lectureId}-${query}"
+
 							AND		questions.level 		= 0
 							AND		questions.deletedAt	IS NULL
 							LIMIT	${easy}
@@ -1132,7 +1135,7 @@ exports.postClassExam = async (req, res) => {
 						)
 							UNION ALL
 						(
-							SELECT  questions.id,
+							SELECT DISTINCT  questions.id,
 									description,
 									answerA,
 									answerB,
@@ -1149,7 +1152,8 @@ exports.postClassExam = async (req, res) => {
 							ON		lectures.id 			= chapters.lectureId
 							JOIN	questions
 							ON		chapters.id 			= questions.chapterId
-							WHERE	chapters.id 			= "${query}"
+							WHERE	chapters.id 			= "${classroom.lectureId}-${query}"
+
 							AND		questions.level	 		= 1
 							AND		questions.deletedAt	IS NULL
 							LIMIT	${hard}
@@ -1191,13 +1195,11 @@ exports.postClassExam = async (req, res) => {
 						.to(`${classId}`)
 						.emit('exam:created', exam.toJSON(), lecture_name.name);
 					getIO().to(`${classId}`).emit('exam:notify', noti.toJSON());
-					successResponse(res, 200, exam, req.method);
-					return;
+					return successResponse(res, 200, exam, req.method);
 				})
 			);
 
-			successResponse(res, 200, result);
-			return;
+			// successResponse(res, 200, result);
 		}
 	} catch (error) {
 		console.log(error);

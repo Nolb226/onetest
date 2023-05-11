@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import '../../image/class-icon.png';
 import { useEffect, useState } from 'react';
 import socket from '../../util/socket';
+import api from '../../config/config';
 
 const IconComponent = ({ icon }) => {
 	const iconClass = icon;
@@ -13,6 +14,14 @@ const IconComponent = ({ icon }) => {
 };
 
 function SideMenu({ info }) {
+	const [studentPermissions, setStudentPermissions] = useState([]);
+
+	const [teacherPermissions, setTeacherPermissions] = useState([]);
+
+	const [adminPermissions, setAdminPermissions] = useState([]);
+
+	const [allPermissions, setAllPermissions] = useState([]);
+
 	const navigator = useNavigate();
 	const { pathname } = useLocation();
 
@@ -75,12 +84,6 @@ function SideMenu({ info }) {
 		},
 	];
 
-	const [studentPermissions, setStudentPermissions] = useState([]);
-
-	const [teacherPermissions, setTeacherPermissions] = useState([]);
-
-	const [adminPermissions, setAdminPermissions] = useState([]);
-
 	useEffect(() => {
 		console.log(pathname.split('/')[3]);
 	}, [pathname]);
@@ -127,40 +130,64 @@ function SideMenu({ info }) {
 	];
 
 	useEffect(() => {
-		socket.on('user:check-permissions', (permissions) => {
-			setTeacherPermissions(
-				permissions
-					.map((permission) => {
-						if (permission.method === 'GET') {
-							return teacherAccount.find(
-								(x) => x.permissionId === permission.id
-							);
-						}
-					})
-					.filter((x) => x !== undefined)
-			);
-			setStudentPermissions(
-				permissions
-					.map((permission) => {
-						if (permission.method === 'GET') {
-							return studentAccount.find(
-								(x) => x.permissionId === permission.id
-							);
-						}
-					})
-					.filter((x) => x !== undefined)
-			);
-			setAdminPermissions(
-				permissions
-					.map((permission) => {
-						if (permission.method === 'GET') {
-							return adminAccount.find((x) => x.permissionId === permission.id);
-						}
-					})
-					.filter((x) => x !== undefined)
-			);
-		});
+		// socket.connect();
 
+		const currentUser = localStorage.getItem('currentUser');
+		fetch(`${api}/permissions/user`, {
+			headers: {
+				Authorization: 'Bearer ' + currentUser,
+			},
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				setTeacherPermissions(
+					data.data
+						?.map((permission) => {
+							if (permission.method === 'GET') {
+								return teacherAccount.find(
+									(x) => x.permissionId === permission.id
+								);
+							}
+						})
+						.filter((x) => x !== undefined)
+				);
+				setStudentPermissions(
+					data.data
+						?.map((permission) => {
+							if (permission.method === 'GET') {
+								return studentAccount.find(
+									(x) => x.permissionId === permission.id
+								);
+							}
+						})
+						.filter((x) => x !== undefined)
+				);
+				setAdminPermissions(
+					data.data
+						?.map((permission) => {
+							if (permission.method === 'GET') {
+								return adminAccount.find(
+									(x) => x.permissionId === permission.id
+								);
+							}
+						})
+						.filter((x) => x !== undefined)
+				);
+			})
+			.then(() => {
+				console.log('||||');
+				console.log(allPermissions);
+			});
+		// return () => {
+		// 	if (socket.readyState === 1) {
+		// 		// <-- This is important
+		// 		socket.close();
+		// 	}
+		// };
+	}, []);
+
+	useEffect(() => {
+		socket.connect();
 		socket.on('permissions:updated', (permissions) => {
 			setTeacherPermissions(
 				permissions
@@ -197,10 +224,10 @@ function SideMenu({ info }) {
 
 		return () => {
 			socket.off('permissions:updated');
-			socket.off('user:check-permissions');
+			socket.disconnect();
+			// socket.off('user:check-permissions');
 		};
-	}, [teacherPermissions, studentPermissions, adminPermissions]);
-	console.log(teacherPermissions);
+	}, [studentPermissions, adminPermissions, teacherPermissions]);
 	function activeButton(e) {
 		let buttons = document.querySelectorAll('.menu-item');
 		buttons.forEach((button) => {

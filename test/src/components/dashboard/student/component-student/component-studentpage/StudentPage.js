@@ -1,6 +1,6 @@
 import Info from '../Info';
 import api from '../../../../../config/config.js';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useOutletContext, useParams, useSearchParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import ExamItem, { ExamButton } from './ExamItem';
 import ExamFilter from './ExamFilter';
@@ -13,7 +13,6 @@ function StudentPage() {
 	const [searchParams, setSearchParams] = useSearchParams({ sort: 'all' });
 	const params = useParams();
 	const { classId } = params;
-
 	useEffect(() => {
 		const currentUser = localStorage.getItem('currentUser');
 		fetch(

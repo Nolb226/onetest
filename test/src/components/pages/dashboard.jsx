@@ -19,7 +19,9 @@ const UserMenu = ({ info, setIsOpenProfile, setType }) => {
 					<p className="info-box__text info-box__text--main  ">
 						{info.fullname}
 					</p>
-					<p className="info-box__text info-box__text--sub"></p>
+					<p className="info-box__text info-box__text--sub">
+						{info.permissiongroup.name}
+					</p>
 				</div>
 				<ul className="user-menu__list">
 					<li
@@ -285,14 +287,13 @@ const Notification = ({ notifies }) => {
 	);
 };
 
-function Dashboard() {
+function Dashboard({ permissions }) {
 	const [info, setInfo] = useState({});
 	const [notifies, setNotifies] = useState([]);
 	const [isOpen, setIsOpen] = useState(false);
 	const [type, setType] = useState('');
 	const [isOpenProfile, setIsOpenProfile] = useState(false);
 	const [isOpenNotifications, setIsOpenNotifications] = useState(false);
-
 	const fetchData = async () => {
 		try {
 			const currentUser = localStorage.getItem('currentUser');
@@ -350,7 +351,6 @@ function Dashboard() {
 	};
 
 	const handleUpdate = (newInfo) => {
-		console.log(newInfo);
 		const currentUser = localStorage.getItem('currentUser');
 		fetch(`${api}/accounts/${info.account_id}/edit`, {
 			method: 'PUT',
@@ -441,7 +441,7 @@ function Dashboard() {
 											setIsOpen(!isOpen);
 											setIsOpenNotifications(false);
 										}}
-										title={info.fullName || 'Nguyen Truong Khanh Hoang'}
+										title={info.fullname || 'Nguyen Truong Khanh Hoang'}
 									>
 										{/* <div className="information">
 								 <div className="flex-center name inf-children">
@@ -477,7 +477,11 @@ function Dashboard() {
 									handleUpdate={handleUpdate}
 								/>
 							)}
-							<Outlet />
+							<Outlet
+								context={{
+									permissions: permissions.filter((x) => x.method !== 'GET'),
+								}}
+							/>
 							{/* <Teacher /> */}
 							{/* <Student idStudent={info.id} nameStudent={info.fullname} /> */}
 						</div>

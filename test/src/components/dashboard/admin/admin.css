@@ -1,415 +1,419 @@
 #admin-layout {
-   height: 100%;
+	height: 100%;
 }
 
 .gridContainer {
-   display: grid;
-   grid-template-columns: 30% 70%;
-   gap: 10px;
-   height: 100%;
-   width: 100%;
-   margin-top: 1px;
+	display: grid;
+	grid-template-columns: 30% 70%;
+	gap: 10px;
+	height: 100%;
+	width: 100%;
+	margin-top: 1px;
 }
 
 .left-item {
-   display: flex;
-   height: 100%;
-   flex-direction: column;
-   background-color: #fff;
-   padding: 10px;
-   align-items: center;
-   border-radius: 10px;
+	display: flex;
+	height: 100%;
+	flex-direction: column;
+	background-color: #fff;
+	padding: 10px;
+	align-items: center;
+	border-radius: 10px;
 }
 
 #admin-layout .save-btn {
-   background-color: #fff;
-   height: 35px;
-   position: absolute;
-   bottom: 0;
-   border-radius: 15px;
-   width: 100px;
-   font-size: 1.6rem;
-   font-weight: 600;
-   letter-spacing: 0.5px;
-   border: solid 2px var(--primary-color);
-   color: var(--primary-color);
-   margin: 20px auto;
-   transition: all.2s linear;
-   cursor: pointer;
+	background-color: #fff;
+	height: 35px;
+	position: absolute;
+	bottom: 0;
+	border-radius: 15px;
+	width: 100px;
+	font-size: 1.6rem;
+	font-weight: 600;
+	letter-spacing: 0.5px;
+	border: solid 2px var(--primary-color);
+	color: var(--primary-color);
+	margin: 20px auto;
+	transition: all.2s linear;
+	cursor: pointer;
 }
 
 #admin-layout .save-btn:hover {
-   background-color: var(--primary-color);
-   color: #fff;
+	background-color: var(--primary-color);
+	color: #fff;
 }
 
 .createNew {
-   display: flex;
-   width: 100%;
-   justify-content: center;
-   height: 35px;
-   margin: 15px 0;
+	display: flex;
+	width: 100%;
+	justify-content: center;
+	height: 35px;
+	margin: 15px 0;
 }
 
 .createNew.mobile-mode {
-   display: none;
+	display: none;
 }
 
 .createNew > button {
-   width: 90px;
-   height: 100%;
-   color: #fff;
-   background-color: var(--primary-color);
-   border: none;
-   border-radius: 0 5px 5px 0;
+	width: 90px;
+	height: 100%;
+	color: #fff;
+	background-color: var(--primary-color);
+	border: none;
+	border-radius: 0 5px 5px 0;
 }
 
 .createNew > input {
-   border-radius: 5px 0 0 5px;
-   flex: 1;
-   border-color: #bfbfbf;
-   border-width: 2px 0 2px 2px;
-   border-style: solid;
-   padding: 0 10px;
-   outline: none;
-   background-color: #f9f9f9;
-   font-size: 1.4rem;
-   color: #555;
-   letter-spacing: 0.5px;
+	border-radius: 5px 0 0 5px;
+	flex: 1;
+	border-color: #bfbfbf;
+	border-width: 2px 0 2px 2px;
+	border-style: solid;
+	padding: 0 10px;
+	outline: none;
+	background-color: #f9f9f9;
+	font-size: 1.4rem;
+	color: #555;
+	letter-spacing: 0.5px;
 }
 
 .permissionList {
-   width: 100%;
-   color: #555;
-   font-size: 1.5rem;
-   line-height: 1.6rem;
-   margin-top: 10%;
-   padding: 0 10px;
+	width: 100%;
+	color: #555;
+	font-size: 1.5rem;
+	line-height: 1.6rem;
+	margin-top: 10%;
+	padding: 0 10px;
 }
 
 .permissionList > ul {
-   font-size: 1.5rem;
-   height: fit-content;
-   max-height: 285px;
-   padding-left: 20px;
-   font-weight: 500;
-   margin-top: 7%;
-   overflow-y: scroll;
+	font-size: 1.5rem;
+	height: fit-content;
+	max-height: 285px;
+	padding-left: 20px;
+	font-weight: 500;
+	margin-top: 7%;
+	overflow-y: scroll;
 }
 
 .permission-name {
-   display: flex;
-   justify-content: space-between;
-   margin: 10px 0;
-   padding: 5px 0;
-   cursor: pointer;
+	display: flex;
+	justify-content: space-between;
+	margin: 10px 0;
+	padding: 5px 0;
+	cursor: pointer;
 }
 
 .permission-name i {
-   display: none;
-   font-size: 1.1rem;
-   margin-right: 20px;
-   color: #999;
+	display: none;
+	font-size: 1.1rem;
+	margin-right: 20px;
+	color: #999;
 }
 
 .permission-name.selected > i {
-   display: block;
+	display: block;
 }
 
 .permission-name:hover > span {
-   border-bottom: solid 1px #999;
+	border-bottom: solid 1px #999;
 }
 
 .permission-name:hover i {
-   display: block;
+	display: block;
 }
 
 .permissionList > ul::-webkit-scrollbar {
-   width: 5px;
+	width: 5px;
 }
 
 .permissionList > ul::-webkit-scrollbar-thumb {
-   background-color: #bababa;
-   border-radius: 5px;
+	background-color: #bababa;
+	border-radius: 5px;
 }
 
 .permissionList > ul::-webkit-scrollbar-track {
-   background-color: #f3f3f3;
-   border-radius: 5px;
+	background-color: #f3f3f3;
+	border-radius: 5px;
 }
 
 .right-item {
-   display: grid;
-   overflow-y: scroll;
-   width: 100%;
-   padding: 0 5px;
-   grid-template-columns: auto auto auto;
-   gap: 15px;
+	display: grid;
+	overflow-y: scroll;
+	width: 100%;
+	padding: 0 5px;
+	grid-template-columns: auto auto auto;
+	gap: 15px;
 }
 
 .permission-table {
-   background-color: var(--white-color);
-   border-radius: 10px;
-   overflow: hidden;
-   height: 180px;
-   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+	background-color: var(--white-color);
+	border-radius: 10px;
+	overflow: hidden;
+	height: 180px;
+	box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
 
 .permission-table__heading {
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   color: var(--white-color);
-   font-size: 1.5rem;
-   font-weight: 600;
-   height: 45px;
-   background-color: var(--primary-color);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: var(--white-color);
+	font-size: 1.5rem;
+	font-weight: 600;
+	height: 45px;
+	background-color: var(--primary-color);
 }
 
 .permission-list {
-   padding: 10px;
-   flex: 1;
-   display: flex;
-   flex-direction: column;
-   justify-content: center;
-   align-items: flex-start;
+	padding: 10px;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
 }
 
 .permissionList > h2 {
-   font-weight: 600;
-   font-size: 1.4rem;
+	font-weight: 600;
+	font-size: 1.4rem;
 }
 
 .permission-item {
-   display: flex;
-   justify-content: flex-start;
-   align-items: center;
-   font-size: 1.4rem;
-   color: #333;
-   font-weight: 500;
-   padding: 5px 0;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	font-size: 1.4rem;
+	color: #333;
+	font-weight: 500;
+	padding: 5px 0;
 }
 
 .permission-item > span {
-   margin-left: 10px;
+	margin-left: 10px;
 }
 
 #detail-information {
-   display: flex;
-   position: fixed;
-   height: 100vh;
-   top: 0;
-   left: 0;
-   right: 0;
+	display: flex;
+	position: fixed;
+	height: 100vh;
+	top: 0;
+	left: 0;
+	right: 0;
 }
 
 .detail-content {
-   position: relative;
-   background-color: var(--white-color);
-   width: 500px;
-   height: 430px;
-   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
-      rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-      rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
-   border-radius: 10px;
-   z-index: 99;
+	position: relative;
+	background-color: var(--white-color);
+	width: 500px;
+	height: 430px;
+	box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+		rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+		rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+	border-radius: 10px;
+	z-index: 99;
 }
 .input-list {
-   padding: 20px;
+	padding: 20px;
 }
 
 .input-item {
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   text-align: left;
-   padding: 10px 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: left;
+	padding: 10px 0;
 }
 
 .input-item > label {
-   color: #333;
-   width: 40%;
-   font-weight: 500;
+	color: #333;
+	width: 40%;
+	font-weight: 500;
 }
 
 .input-item > input {
-   width: 60%;
+	width: 60%;
 }
 
 .button-list {
-   width: 100%;
-   position: absolute;
-   bottom: 20px;
+	width: 100%;
+	position: absolute;
+	bottom: 20px;
 }
 
 #detail-information .button-list > button {
-   box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
-      rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
-   margin: 0 5px;
-   font-size: 1.6rem;
-   font-weight: 600;
-   letter-spacing: 1px;
-   text-transform: uppercase;
-   height: 35px;
-   width: 100px;
+	box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+		rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+	margin: 0 5px;
+	font-size: 1.6rem;
+	font-weight: 600;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	height: 35px;
+	width: 100px;
+	color: #fff;
+	/* background-color: ; */
+	border-radius: 15px;
+	border: none;
 }
 
 .save-btn__info {
-   background-color: var(--primary-color);
+	background-color: var(--primary-color);
 }
 
 .delete-btn__info {
-   background-color: #ff0404;
+	background-color: #ff0404;
 }
 
 .delete-btn__info > i {
-   margin-left: 10px;
+	margin-left: 10px;
 }
 
 .right-item::-webkit-scrollbar {
-   width: 5px;
-   opacity: 0.5;
+	width: 5px;
+	opacity: 0.5;
 }
 
 .right-item::-webkit-scrollbar-thumb {
-   background-color: rgba(31, 46, 201, 0.9);
-   border-radius: 5px;
+	background-color: rgba(31, 46, 201, 0.9);
+	border-radius: 5px;
 }
 
 .right-item::-webkit-scrollbar-track {
-   background-color: rgba(255, 255, 255, 0.5);
+	background-color: rgba(255, 255, 255, 0.5);
 
-   border-radius: 5px;
+	border-radius: 5px;
 }
 
 @media (min-width: 1030px) and (max-width: 1239px) {
-   .createNew {
-      height: 30px;
-      margin: 10px 0 0 0;
-   }
+	.createNew {
+		height: 30px;
+		margin: 10px 0 0 0;
+	}
 
-   .createNew > input {
-      font-size: 1.3rem;
-      letter-spacing: 0;
-   }
+	.createNew > input {
+		font-size: 1.3rem;
+		letter-spacing: 0;
+	}
 
-   .right-item {
-      max-height: 75vh;
-   }
+	.right-item {
+		max-height: 75vh;
+	}
 
-   .permission-name {
-      font-size: 1.3rem;
-   }
+	.permission-name {
+		font-size: 1.3rem;
+	}
 
-   .permission-table {
-      height: 150px;
-   }
+	.permission-table {
+		height: 150px;
+	}
 
-   .permission-table__heading {
-      font-size: 1.4rem;
-      height: 35px;
-   }
+	.permission-table__heading {
+		font-size: 1.4rem;
+		height: 35px;
+	}
 
-   .permission-item {
-      font-size: 1.3rem;
-      padding: 3px 0;
-   }
+	.permission-item {
+		font-size: 1.3rem;
+		padding: 3px 0;
+	}
 
-   #admin-layout .save-btn {
-      font-size: 1.5rem;
-   }
+	#admin-layout .save-btn {
+		font-size: 1.5rem;
+	}
 }
 
 @media (max-width: 1028px) {
-   .gridContainer {
-      grid-template-columns: 40% 60%;
-   }
+	.gridContainer {
+		grid-template-columns: 40% 60%;
+	}
 
-   .left-item {
-      max-height: 50vh;
-   }
+	.left-item {
+		max-height: 50vh;
+	}
 
-   .right-item {
-      grid-template-columns: auto auto;
-      gap: 10px;
-      max-height: 70vh;
-   }
+	.right-item {
+		grid-template-columns: auto auto;
+		gap: 10px;
+		max-height: 70vh;
+	}
 }
 
 @media (max-width: 740px) {
-   .gridContainer {
-      grid-template-columns: 45% 55%;
-      gap: 5px;
-      height: 100%;
-      width: 100%;
-      margin-top: 1px;
-   }
+	.gridContainer {
+		grid-template-columns: 45% 55%;
+		gap: 5px;
+		height: 100%;
+		width: 100%;
+		margin-top: 1px;
+	}
 
-   .left-item {
-      padding: 0;
-   }
+	.left-item {
+		padding: 0;
+	}
 
-   .right-item {
-      grid-template-columns: auto;
-      gap: 10px;
-      max-height: 80vh;
-      padding: 0 5px;
-   }
+	.right-item {
+		grid-template-columns: auto;
+		gap: 10px;
+		max-height: 80vh;
+		padding: 0 5px;
+	}
 
-   .createNew {
-      display: none;
-      height: 30px;
-      margin: 0 0 10px 0;
-   }
+	.createNew {
+		display: none;
+		height: 30px;
+		margin: 0 0 10px 0;
+	}
 
-   .createNew.mobile-mode {
-      display: flex;
-   }
+	.createNew.mobile-mode {
+		display: flex;
+	}
 
-   .createNew.mobile-mode > input {
-      font-size: 1.3rem;
-      letter-spacing: 0;
-      height: 100%;
-      flex: 1;
-   }
+	.createNew.mobile-mode > input {
+		font-size: 1.3rem;
+		letter-spacing: 0;
+		height: 100%;
+		flex: 1;
+	}
 
-   .createNew.mobile-mode > button {
-      width: 70px;
-   }
+	.createNew.mobile-mode > button {
+		width: 70px;
+	}
 
-   .permissionList > h2 {
-      font-size: 1.2rem;
-   }
+	.permissionList > h2 {
+		font-size: 1.2rem;
+	}
 
-   .permission-name {
-      font-size: 1.2rem;
-   }
+	.permission-name {
+		font-size: 1.2rem;
+	}
 
-   .permissionList > ul {
-      padding: 0;
-   }
+	.permissionList > ul {
+		padding: 0;
+	}
 
-   .permission-table {
-      height: 130px;
-   }
+	.permission-table {
+		height: 130px;
+	}
 
-   .permission-table__heading {
-      font-size: 1.3rem;
-      height: 30px;
-   }
+	.permission-table__heading {
+		font-size: 1.3rem;
+		height: 30px;
+	}
 
-   .permission-list {
-      padding: 5px;
-   }
+	.permission-list {
+		padding: 5px;
+	}
 
-   .permission-item {
-      font-size: 1.2rem;
-      padding: 2px 0;
-   }
+	.permission-item {
+		font-size: 1.2rem;
+		padding: 2px 0;
+	}
 
-   #admin-layout .save-btn {
-      font-size: 1.4rem;
-      width: 80px;
-      height: 30px;
-   }
+	#admin-layout .save-btn {
+		font-size: 1.4rem;
+		width: 80px;
+		height: 30px;
+	}
 }

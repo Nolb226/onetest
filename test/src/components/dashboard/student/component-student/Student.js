@@ -9,7 +9,7 @@ import StudentPage from './component-studentpage/StudentPage';
 import Result from './component-testpage/Result';
 
 import { useParams } from 'react-router-dom';
-import { Outlet } from 'react-router';
+import { Outlet, useOutlet, useOutletContext } from 'react-router';
 
 function Student({ idStudent, nameStudent }) {
 	//  const student = {
@@ -30,7 +30,8 @@ function Student({ idStudent, nameStudent }) {
 	//  };
 
 	const { type, id, name } = useParams();
-
+	const { permissions } = useOutletContext();
+	console.log(permissions);
 	return (
 		<>
 			{/* {type === `viewclass` && id === idStudent && name === nameStudent && <ViewClass />}
@@ -57,7 +58,7 @@ function Student({ idStudent, nameStudent }) {
         /> */}
 			{/* <Route path="/result" element={<Result />} /> */}
 
-			<Outlet />
+			<Outlet context={{ permissions }} />
 		</>
 
 		// <div id="main-layout" className="grid wide main-layout">

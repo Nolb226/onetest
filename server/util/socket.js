@@ -30,15 +30,13 @@ module.exports = {
 				methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
 				transports: ['websocket', 'polling'],
 				allowEIO3: true,
+				enabledTransports: ['ws', 'wss'],
 				// pingTimeout: 60000,
 			},
 			// maxHttpBufferSize: 1e8,
 		});
-		// instrument(io, {
-		// 	auth: false,
-		// 	mode: 'development',
-		// });
-		// io.listen(httpSever);
+
+		io.listen(httpSever);
 		io.use(async (socket, next) => {
 			try {
 				// Get the token from the handshake query parameters
@@ -95,18 +93,26 @@ module.exports = {
 		io.on('connection', (socket) => {
 			const user = socket.user;
 			const classIds = socket.classIds;
+			socket.on('join', () => {
+				socket.join(`${permissions.id}`);
+				// console.log(permissions.id);
+				classIds.forEach((classId) => {
+					// console.log(user.toJSON());
+					// console.log(classId);
+					socket.join(classId.toString());
+				});
+			});
 			const permissions = socket.permissions;
+			socket.rooms.forEach((x) => {
+				console.log(x);
+			});
+			console.log(user.firstName + JSON.stringify(socket.rooms));
 			socket.emit('user:check-permissions', permissions.functions);
+			socket.emit('user:check-permissions1', permissions.functions);
 
 			// console.log(socket.permissions);
 			// Join the socket to the rooms based on the class IDs
-			socket.join(`${permissions.id}`);
-			console.log(permissions.id);
-			classIds.forEach((classId) => {
-				// console.log(user.toJSON());
-				console.log(classId);
-				socket.join(classId.toString());
-			});
+
 			socket.on('exam:start', async (response) => {
 				try {
 					const test = await Student_Result.findByPk(response.id);
