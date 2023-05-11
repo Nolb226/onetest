@@ -1363,30 +1363,31 @@ exports.postClassStudentExam = async (req, res, _) => {
       throwError(`Could not find classroom`, 404);
     }
 
-    const { questions } = req.body;
-    const studentresults = await Student_Result.findOne({
-      where: { accountId: req.account.id, examId },
-    });
-    const exam = await Exam.findByPk(examId);
-    const { content } = studentresults;
-    let grade = 0;
-    const newContent = await Promise.all(
-      content.map(async (question) => {
-        const isIn = questions.findIndex((object) => object.id === question.id);
-        const questionInBank = await Question.findByPk(question.id, {
-          attributes: [
-            "id",
-            "correctAns",
-            "answerA",
-            "answerB",
-            "answerC",
-            "answerD",
-          ],
-        });
-        if (isIn !== -1) {
-          if (questionInBank.correctAns === questions[isIn].studentAns) {
-            grade += 10 / exam.totalQuestions;
-          }
+		const { questions } = req.body;
+		const studentresults = await Student_Result.findOne({
+			where: { accountId: req.account.id, examId },
+		});
+		const exam = await Exam.findByPk(examId);
+		const { content } = studentresults;
+		let grade = 0;
+		const newContent = await Promise.all(
+			content.map(async (question) => {
+				const isIn = questions.findIndex((object) => object.id === question.id);
+				const questionInBank = await Question.findByPk(question.id, {
+					attributes: [
+						'id',
+						'correctAns',
+						'description',
+						'answerA',
+						'answerB',
+						'answerC',
+						'answerD',
+					],
+				});
+				if (isIn !== -1) {
+					if (questionInBank.correctAns === questions[isIn].studentAns) {
+						grade += 10 / exam.totalQuestions;
+					}
 
           console.log(questionInBank.toJSON());
           return {
@@ -1498,17 +1499,17 @@ exports.postExamPDF = async (req, res, _) => {
       ];
     });
 
-    const docDef = {
-      watermark: {
-        text: `Best of Test - BoT`,
-        color: "#161F80",
-        opacity: 0.2,
-        bold: true,
-      },
-      header: "",
-      footer: {
-        width: "100%",
-        background: "#161F80",
+		const docDef = {
+			watermark: {
+				text: `Best of Test - BoT`,
+				color: '#161F80',
+				opacity: 0.1,
+				bold: true,
+			},
+			header: '',
+			footer: {
+				width: '100%',
+				background: '#161F80',
 
         columns: [
           {

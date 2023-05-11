@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router';
 import api from '../../../../../config/config';
+import { Link } from 'react-router-dom';
 
 function ConfirmModel({
 	setIsOpen,
@@ -59,7 +60,9 @@ function ConfirmModel({
 						<button
 							className="confirm-btn form-btn"
 							form="answerform"
-							onClick={() => {}}
+							onClick={() => {
+								setTimeout(() => navigator('../'), 1000);
+							}}
 						>
 							Xác nhận nộp
 						</button>
