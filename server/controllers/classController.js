@@ -113,39 +113,40 @@ exports.getManageClasses = async (req, res, _) => {
 		if (search && search !== '') {
 			const page = req.query.page || 1;
 			const pageSize = 10;
+			const { account } = req;
 			// console.log(req.query.search);
-			const classrooms = await req.account.getClasses({
-				where: {
-					[Op.or]: [
-						{
-							id: {
-								[Op.like]: search + '%',
-							},
-						},
-						{
-							name: {
-								[Op.like]: search + ' %',
-							},
-						},
-					],
-				},
-				include: [
-					{ model: Account, attributes: ['id', 'firstName', 'lastName'] },
-					{ model: Lecture, attributes: ['id', 'name'] },
-				],
-				attributes: ['id', 'name', 'isLock'],
-				offset: pageSize * (page - 1),
-				limit: pageSize,
-			});
-			successResponse(res, 200, classrooms);
-		}
-		const page = req.query.page || 1;
-		const pageSize = 10;
+			const classes = await sequelize.query(
+				`
+			SELECT	classes.id,
+					classes.name,
+					classes.isLock,
+					totalStudent,
+					lectures.id 									AS lecture_id,
+					lectures.name 									AS lecture_name
 
-		const { account } = req;
+			FROM	classes
+			JOIN 	lectures ON lectures.id 						= classes.lectureId
+			WHERE	classes.accountId			 						= "${account.id}"
+			AND (classes.id LIKE '%${search}%' OR classes.name LIKE '%${search}%')
+			LIMIT ${(page - 1) * pageSize} ,${pageSize}`,
+				{
+					type: QueryTypes.SELECT,
+				}
+			);
+			// const teacher = await Account.findByPk(class {});
+			const result = {
+				data: classes,
+				total: classes.length,
+			};
+			successResponse(res, 200, result);
+		} else {
+			const page = req.query.page || 1;
+			const pageSize = 10;
 
-		const classes = await sequelize.query(
-			`
+			const { account } = req;
+
+			const classes = await sequelize.query(
+				`
 			SELECT	classes.id,
 					classes.name,
 					classes.isLock,
@@ -157,16 +158,17 @@ exports.getManageClasses = async (req, res, _) => {
 			JOIN 	lectures ON lectures.id 						= classes.lectureId
 			WHERE	classes.accountId			 						= "${account.id}"
 			LIMIT ${(page - 1) * pageSize} ,${pageSize}`,
-			{
-				type: QueryTypes.SELECT,
-			}
-		);
-		// const teacher = await Account.findByPk(class {});
-		const result = {
-			data: classes,
-			total: classes.length,
-		};
-		successResponse(res, 200, result);
+				{
+					type: QueryTypes.SELECT,
+				}
+			);
+			// const teacher = await Account.findByPk(class {});
+			const result = {
+				data: classes,
+				total: classes.length,
+			};
+			successResponse(res, 200, result);
+		}
 	} catch (error) {
 		console.log(error);
 		errorResponse(res, error, [{}]);
@@ -756,28 +758,23 @@ exports.postClass = async (req, res, _) => {
 					const month = cuttedDOB[1];
 					const day = cuttedDOB[0];
 					console.log(student['Mã lớp'].slice(0, 3));
-					const studentInDB = await Account.findOrCreate(
-						{
-							where: {
-								account_id: InDB['MSSV'] || student['Mã sinh viên'],
-							},
+					const studentInDB = await Account.findOrCreate({
+						where: {
+							account_id: student['MSSV'] || student['Mã sinh viên'],
 						},
-
-						{
-							defaults: {
-								password: await bycrypt.hash(accountpassword, 10),
-								account_id: student['MSSV'] || student['Mã sinh viên'],
-								dob: new Date(year, month, day) || new Date(),
-								firstName: student['Tên'],
-								lastName: student['Họ lót'],
-								type: 'SV',
-								majorId:
-									student['chuyên ngành'] ||
-									student['Chuyên ngành'] ||
-									student['Mã lớp'].slice(0, 3),
-							},
-						}
-					);
+						defaults: {
+							password: await bycrypt.hash(accountpassword, 10),
+							account_id: student['MSSV'] || student['Mã sinh viên'],
+							dob: new Date(year, month, day) || new Date(),
+							firstName: student['Tên'],
+							lastName: student['Họ lót'],
+							type: 'SV',
+							majorId:
+								student['chuyên ngành'] ||
+								student['Chuyên ngành'] ||
+								student['Mã lớp'].slice(0, 3),
+						},
+					});
 					newClass.addAccount(studentInDB);
 				})
 			);
@@ -1824,7 +1821,6 @@ exports.postClassToGetExcel = async (req, res, _) => {
 		titleRow.alignment = { vertical: 'middle', horizontal: 'center' };
 		titleRow.height = 20;
 
-		worksheet.addRow([]);
 		const classInfoRow = worksheet.addRow([
 			'',
 			`Giảng viên: ${teacher.lastName + ' ' + teacher.firstName}`,

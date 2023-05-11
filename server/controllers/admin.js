@@ -1,10 +1,10 @@
-const { validationResult } = require('express-validator');
-const Account = require('../models/account');
-const Class = require('../models/class');
-const Exam = require('../models/exam');
-const Permission_Group = require('../models/permission_group');
+const { validationResult } = require("express-validator");
+const Account = require("../models/account");
+const Class = require("../models/class");
+const Exam = require("../models/exam");
+const Permission_Group = require("../models/permission_group");
 
-const sequelize = require('../util/database');
+const sequelize = require("../util/database");
 const {
 	throwError,
 	errorResponse,
@@ -131,36 +131,59 @@ const { getIO } = require('../util/socket');
 // 	}
 // };
 exports.getAllAccounts = async (req, res, _) => {
-	try {
-		const page = req.query.page || 1;
-		const perPage = 10;
-		const accounts = await sequelize.query(
-			`SELECT
+  try {
+    const search = req.query.search;
+    const page = req.query.page || 1;
+    if (search && search !== "") {
+      const perPage = 10;
+      const accounts = await sequelize.query(
+        `SELECT
 			account_id,
 			CONCAT(lastName, ' ', firstName) as fullname,
 			email,
-      createdAt,
+      		createdAt,
+			accounts.type,
+			isActive
+			FROM
+			accounts
+			WHERE account_id LIKE '%${search}%'
+			LIMIT ${(page - 1) * perPage} ,${perPage};`,
+        { type: sequelize.QueryTypes.SELECT }
+      );
+    //   console.log(accounts);
+      const totalAccount = await accounts.length;
+      successResponse(res, 200, { accounts, totalAccount }, req.method);
+    } else {
+      const perPage = 10;
+      const accounts = await sequelize.query(
+        `SELECT
+			account_id,
+			CONCAT(lastName, ' ', firstName) as fullname,
+			email,
+      		createdAt,
 			accounts.type,
 			isActive
 			FROM
 			accounts
 			WHERE account_id != '0' AND accounts.id !="0"
 			LIMIT ${(page - 1) * perPage} ,${perPage};`,
-			{ type: sequelize.QueryTypes.SELECT }
-		);
-		const totalAccount = await Account.count();
-		successResponse(res, 200, { accounts, totalAccount }, req.method);
-	} catch (error) {
-		errorResponse(res, error);
-	}
+        { type: sequelize.QueryTypes.SELECT }
+      );
+      const totalAccount = await Account.count();
+      successResponse(res, 200, { accounts, totalAccount }, req.method);
+    }
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, error);
+  }
 };
 
 exports.getAccount = async (req, res, _) => {
-	try {
-		const { accountId } = req.params;
-		// const { type } = req.query;
-		const account = await sequelize.query(
-			`SELECT
+  try {
+    const { accountId } = req.params;
+    // const { type } = req.query;
+    const account = await sequelize.query(
+      `SELECT
 			accounts.account_id,
 			CONCAT(lastName, ' ', firstName) AS fullname,
 			accounts.dob,
@@ -176,127 +199,137 @@ exports.getAccount = async (req, res, _) => {
       LEFT JOIN majors ON accounts.majorId = majors.id
       LEFT JOIN departments ON accounts.departmentId = departments.id
 			WHERE		account_id = "${accountId}"`,
-			{ type: sequelize.QueryTypes.SELECT }
-		);
+      { type: sequelize.QueryTypes.SELECT }
+    );
 
-		if (!account[0]) {
-			throwError(`Could not find account`, 404);
-		}
-		successResponse(res, 200, account[0], req.method);
-	} catch (error) {
-		errorResponse(res, error);
-	}
+    if (!account[0]) {
+      throwError(`Could not find account`, 404);
+    }
+    successResponse(res, 200, account[0], req.method);
+  } catch (error) {
+    errorResponse(res, error);
+  }
 };
 
 exports.getAllPermissions = async (req, res, _) => {
-	try {
-		// const { type } = req.query;
-		const permissions = await sequelize.query(
-			`SELECT * FROM permissiongroups WHERE 1`,
-			{ type: sequelize.QueryTypes.SELECT }
-		);
+  try {
+    // const { type } = req.query;
+    const permissions = await sequelize.query(
+      `SELECT * FROM permissiongroups WHERE 1`,
+      { type: sequelize.QueryTypes.SELECT }
+    );
 
-		Permission_Group.findAll();
+    Permission_Group.findAll();
 
-		if (!permissions[0]) {
-			throwError(`Could not find permissions`, 404);
-		}
-		successResponse(res, 200, permissions, req.method);
-	} catch (error) {
-		errorResponse(res, error);
-	}
+    if (!permissions[0]) {
+      throwError(`Could not find permissions`, 404);
+    }
+    successResponse(res, 200, permissions, req.method);
+  } catch (error) {
+    errorResponse(res, error);
+  }
 };
 
 exports.getFuntionOfPermission = async (req, res, _) => {
-	try {
-		const { permissionId } = req.params;
-		const permission = await Permission_Group.findByPk(permissionId);
-		if (!permission) {
-			throwError(`Could not find permissions`, 404);
-		}
-		const functions = await permission.getFunctions({
-			attributes: ['id'],
-			raw: true,
-		});
-		// console.log(functions.toJSON());
+  try {
+    const { permissionId } = req.params;
+    const permission = await Permission_Group.findByPk(permissionId);
+    if (!permission) {
+      throwError(`Could not find permissions`, 404);
+    }
+    const functions = await permission.getFunctions({
+      attributes: ["id"],
+      raw: true,
+    });
+    // console.log(functions.toJSON());
 
-		successResponse(res, 200, functions, req.method);
-	} catch (error) {
-		errorResponse(res, error);
-	}
+    successResponse(res, 200, functions, req.method);
+  } catch (error) {
+    errorResponse(res, error);
+  }
 };
 
 exports.putAcount = async (req, res, _) => {
-	try {
-		const { accountId } = req.params;
-		const accountFounded = await Account.findOne({
-			where: {
-				account_id: accountId,
-			},
-		});
+  try {
+    const { accountId } = req.params;
+    const accountFounded = await Account.findOne({
+      where: {
+        account_id: accountId,
+      },
+    });
 
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			throwError(errors.array(), 409);
-		}
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      throwError(errors.array(), 409);
+    }
 
-		const {
-			account_id,
-			firstName,
-			lastName,
-			dob,
-			departmentId,
-			majorId,
-			isActive,
-			type,
-		} = req.body;
-		if (!accountFounded) {
-			throwError('Account not found', 404);
-		}
-		console.log(departmentId);
-		const account = await sequelize.query(
-			`UPDATE accounts SET account_id="${account_id}",firstName="${firstName}",lastName="${lastName}", dob="${dob}",departmentId=${
-				departmentId == 'NULL' ? 'NULL' : "'" + departmentId + "'"
-			},majorId=${
-				majorId == 'NULL' ? 'NULL' : "'" + majorId + "'"
-			},isActive="${isActive}",type=${
-				type == 'NULL' ? 'NULL' : "'" + type + "'"
-			} WHERE account_id = "${accountId}"`,
-			{ type: sequelize.QueryTypes.UPDATE }
-		);
+    const {
+      account_id,
+      firstName,
+      lastName,
+      dob,
+      departmentId,
+      majorId,
+      isActive,
+      type,
+    } = req.body;
+    if (!accountFounded) {
+      throwError("Account not found", 404);
+    }
+    console.log(departmentId);
+    const account = await sequelize.query(
+      `UPDATE accounts SET account_id="${account_id}",firstName="${firstName}",lastName="${lastName}", dob="${dob}",departmentId=${
+        departmentId == "NULL" ? "NULL" : "'" + departmentId + "'"
+      },majorId=${
+        majorId == "NULL" ? "NULL" : "'" + majorId + "'"
+      },isActive="${isActive}",type=${
+        type == "NULL" ? "NULL" : "'" + type + "'"
+      } WHERE account_id = "${accountId}"`,
+      { type: sequelize.QueryTypes.UPDATE }
+    );
+    // await accountFounded.update({
+    // 	account_id,
+    // 	firstName,
+    // 	lastName,
+    // 	dob,
+    // 	departmentId,
+    // 	majorId,
+    // 	isActive,
+    // 	type,
+    // });
 
-		successResponse(res, 201, account, 'PUT');
-	} catch (error) {
-		errorResponse(res, error);
-	}
+    successResponse(res, 201, account, "PUT");
+  } catch (error) {
+    errorResponse(res, error);
+  }
 };
 
 exports.patchAccount = async (req, res, _) => {
-	try {
-		const { accountId } = req.params;
-		const accountFounded = await Account.findOne({
-			where: {
-				account_id: accountId,
-			},
-		});
+  try {
+    const { accountId } = req.params;
+    const accountFounded = await Account.findOne({
+      where: {
+        account_id: accountId,
+      },
+    });
 
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			throwError(errors.array(), 409);
-		}
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      throwError(errors.array(), 409);
+    }
 
-		const { isActive } = req.body;
-		if (!accountFounded) {
-			throwError('Account not found', 404);
-		}
-		await accountFounded.update({
-			isActive,
-		});
+    const { isActive } = req.body;
+    if (!accountFounded) {
+      throwError("Account not found", 404);
+    }
+    await accountFounded.update({
+      isActive,
+    });
 
-		successResponse(res, 201, accountFounded, 'PATCH');
-	} catch (error) {
-		errorResponse(res, error);
-	}
+    successResponse(res, 201, accountFounded, "PATCH");
+  } catch (error) {
+    errorResponse(res, error);
+  }
 };
 
 exports.putFuntionOfPermission = async (req, res, _) => {
@@ -333,25 +366,25 @@ exports.putFuntionOfPermission = async (req, res, _) => {
 };
 
 exports.postPermission = async (req, res, _) => {
-	try {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			throwError();
-		}
-		const { id, name } = req.body;
-		console.log(req.body);
-		const permission = await Permission_Group.create({
-			id,
-			name,
-		});
-		// const inFunc = await Promise.all(
-		// 	functions.map(async (x) => await Functions.findByPk(x.id))
-		// );
-		// await permission.addFunctions(inFunc);
-		successResponse(res, 201, permission, 'POST');
-	} catch (error) {
-		errorResponse(res, error, {});
-	}
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      throwError();
+    }
+    const { id, name } = req.body;
+    console.log(req.body);
+    const permission = await Permission_Group.create({
+      id,
+      name,
+    });
+    // const inFunc = await Promise.all(
+    // 	functions.map(async (x) => await Functions.findByPk(x.id))
+    // );
+    // await permission.addFunctions(inFunc);
+    successResponse(res, 201, permission, "POST");
+  } catch (error) {
+    errorResponse(res, error, {});
+  }
 };
 
 exports.deleteAccount = async (req, res, _) => {
