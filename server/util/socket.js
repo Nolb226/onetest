@@ -119,13 +119,12 @@ module.exports = {
 					const exam = await Exam.findByPk(test.examId);
 					const timeEnd = new Date(exam.timeEnd);
 					const { duration } = test;
-					// const
+
 					let timer;
 					let click = test.clickedOutside;
 					const currentTime = new Date();
 					const countDownDuration = () => {
 						const timeLeft = timeEnd - currentTime;
-						console.log(timeLeft);
 
 						const hours = String(parseInt(time / 3600, 10)).padStart(2, '0');
 						const others = String(parseInt(time % 3600, 10)).padStart(2, '0');

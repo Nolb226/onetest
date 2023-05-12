@@ -6,42 +6,39 @@ import api from '../../../../config/config';
 import { Outlet, useOutlet, useSearchParams } from 'react-router-dom';
 
 function Classes(prop) {
-   const [classes, setClasses] = useState([]);
-   const [page, setPage] = useState(1);
-   const [totalPage, setTotalPage] = useState(1);
-   const [search, setSearch] = useState("");
-   // const [searchParams, setSearchParams] = useSearchParams({ search: "" });
-   const outlet = useOutlet();
+	const [classes, setClasses] = useState([]);
+	const [page, setPage] = useState(1);
+	const [totalPage, setTotalPage] = useState(1);
+	const [search, setSearch] = useState('');
+	// const [searchParams, setSearchParams] = useSearchParams({ search: "" });
+	const outlet = useOutlet();
 
 	const { permissions } = useOutletContext();
 
 	const isAllowedToLock = permissions.find((x) => x.id === 23);
 
-   const handleClasses = (value) => {
-      const currentUser = localStorage.getItem(`currentUser`);
-      fetch(
-         `${api}/classes/manage?search=${search}&page=${page}`,
-         {
-            method: "GET",
-            headers: {
-               Authorization: "Bearer " + currentUser,
-            },
-         }
-      )
-         .then((res) => res.json())
-         .then((classes) => {
-            console.log(classes);
-            setClasses(classes.data.data);
-            setTotalPage(Math.ceil(classes.data.total / 10));
-            // console.log(classes.data.total);
-         });
-   };
+	const handleClasses = (value) => {
+		const currentUser = localStorage.getItem(`currentUser`);
+		fetch(`${api}/classes/manage?search=${search}&page=${page}`, {
+			method: 'GET',
+			headers: {
+				Authorization: 'Bearer ' + currentUser,
+			},
+		})
+			.then((res) => res.json())
+			.then((classes) => {
+				console.log(classes);
+				setClasses(classes.data.data);
+				setTotalPage(Math.ceil(classes.data.total / 10));
+				// console.log(classes.data.total);
+			});
+	};
 
-   useEffect(() => {
-      // const search_input = document.querySelector(".search-input");
-      // handleClasses(search_input.value);
-      handleClasses();
-   }, [page, search]);
+	useEffect(() => {
+		// const search_input = document.querySelector(".search-input");
+		// handleClasses(search_input.value);
+		handleClasses();
+	}, [page, search]);
 
 	const handlePageChange = (newPage) => {
 		setPage(newPage);
@@ -79,31 +76,27 @@ function Classes(prop) {
 		update(Class);
 	};
 
-   const handleSearch = () =>{
-      const search_input = document.querySelector('.search-input')
-      if(search_input){
-        search_input.addEventListener("keyup", function(event) {
-          if (event.key === "Enter") {
-            setSearch(search_input.value)
-          }
-      })
-      }
-      
-    }
-  
-    handleSearch()
+	const handleSearch = () => {
+		const search_input = document.querySelector('.search-input');
+		if (search_input) {
+			search_input.addEventListener('keyup', function (event) {
+				if (event.key === 'Enter') {
+					setSearch(search_input.value);
+					setPage(1);
+				}
+			});
+		}
+	};
 
-   return (
-      <>
-         {outlet || (
-            <>
-               <div class="flex-center search-bar">
-                  <input
-                     type="text"
-                     class="search-input"
-                     placeholder="Nhập mã lớp"
-                  />
-                  {/* <button
+	handleSearch();
+
+	return (
+		<>
+			{outlet || (
+				<>
+					<div class="flex-center search-bar">
+						<input type="text" class="search-input" placeholder="Nhập mã lớp" />
+						{/* <button
                      className="search-class-btn"
                      onClick={(e) => {
                         e.preventDefault();
@@ -116,7 +109,7 @@ function Classes(prop) {
 							to={`create`}
 							relative="path"
 							style={{ padding: '0', filter: 'none' }}
-							target="_blank"
+							// target="_blank"
 						>
 							<button
 								class="flex-center join-button"

@@ -2,13 +2,18 @@ import { useEffect, useState } from 'react';
 import api from '../../../../config/config';
 import { useNavigate, useOutletContext } from 'react-router';
 import LoadingData from '../../../loadingAnimation/LoadingData';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import socket from '../../../../util/socket';
+import Paginator from '../Class/Paginator';
 
 function ExamList() {
 	const currentUser = localStorage.getItem('currentUser');
 	const navigator = useNavigate();
 	const [examData, setExamData] = useState([]);
+	const [total, setTotal] = useState(1);
+	const [page, setPage] = useState(1);
+	const [searchParams, setSearchParams] = useSearchParams({ search: '' });
+
 	const [isLoadingData, setIsLoadingData] = useState(false);
 	const [errorLoadingData, setErrorLoadingData] = useState('');
 
@@ -19,14 +24,20 @@ function ExamList() {
 
 	const getExamData = async () => {
 		setIsLoadingData(true);
-		await fetch(`${api}/classes/exams`, {
-			headers: {
-				Authorization: 'Bearer ' + currentUser,
-			},
-		})
+		await fetch(
+			`${api}/classes/exams?search=${
+				searchParams.get('search') || ''
+			}&page=${page}`,
+			{
+				headers: {
+					Authorization: 'Bearer ' + currentUser,
+				},
+			}
+		)
 			.then((data) => data.json())
 			.then((data) => {
-				setExamData(data.data);
+				setExamData(data.data.data);
+				setTotal(Math.ceil(data.data.total / 10));
 				setIsLoadingData(false);
 			})
 			.catch(() => {
@@ -37,7 +48,7 @@ function ExamList() {
 
 	useEffect(() => {
 		getExamData();
-	}, []);
+	}, [page, searchParams]);
 
 	const handleLock = (classID, exam) => {
 		fetch(`${api}/classes/${classID}/exams/${exam.id}`, {
@@ -64,6 +75,11 @@ function ExamList() {
 		});
 	};
 
+	const handlePageChange = (newPage) => {
+		setPage(newPage);
+		console.log(newPage);
+	};
+
 	return (
 		<>
 			<div className="flex-center search-bar">
@@ -71,6 +87,17 @@ function ExamList() {
 					type="text"
 					className="search-input"
 					placeholder="Nhập mã đề thi"
+					onKeyDown={(e) => {
+						if (e.key === 'Enter') {
+							e.preventDefault();
+							setSearchParams({ search: e.target.value });
+							setPage(1);
+						}
+					}}
+					onBlur={(e) => {
+						setSearchParams({ search: e.target.value });
+						setPage(1);
+					}}
 				/>
 				{isAllowedToPost && (
 					<button
@@ -190,6 +217,11 @@ function ExamList() {
 							);
 						})}
 					</div>
+					<Paginator
+						handlePageChange={handlePageChange}
+						page={page}
+						totalPage={total}
+					/>
 				</div>
 
 				<div className="mobile-table-content">

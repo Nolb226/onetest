@@ -24,7 +24,7 @@ function StatisticExamList() {
 		})
 			.then((data) => data.json())
 			.then((data) => {
-				setExamData(data.data);
+				setExamData(data.data.data);
 				setIsLoadingData(false);
 				setTotalPage(Math.ceil(data.data.total / 10));
 			})
@@ -161,11 +161,11 @@ function StatisticExamList() {
 							);
 						})}
 					</div>
-					{/* <Paginator
+					<Paginator
 						handlePageChange={handlePageChange}
 						page={page}
 						totalPage={totalPage}
-					/> */}
+					/>
 				</div>
 
 				<div className="mobile-table-content">
@@ -208,6 +208,11 @@ function StatisticExamList() {
 						);
 					})}
 				</div>
+				<Paginator
+					handlePageChange={handlePageChange}
+					page={page}
+					totalPage={totalPage}
+				/>
 			</div>
 		</>
 	);

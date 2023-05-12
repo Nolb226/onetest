@@ -66,7 +66,13 @@ exports.getClasses = async (req, res, _) => {
 				offset: pageSize * (page - 1),
 				limit: pageSize,
 			});
-			successResponse(res, 200, classrooms);
+
+			const result = {
+				data: classrooms,
+				total: 0,
+			};
+
+			return successResponse(res, 200, result);
 		}
 		const page = req.query.page || 1;
 		const pageSize = 10;
@@ -90,17 +96,25 @@ exports.getClasses = async (req, res, _) => {
 			JOIN 	accounts 										AS teacher
 			ON		classes.accountId 								= teacher.id
 			WHERE	student.id			 							= "${account.id}"
+			 
+			LIMIT ${(page - 1) * pageSize},	${pageSize}
 			`,
 			{
 				type: QueryTypes.SELECT,
 			}
 		);
-		// const teacher = await Account.findByPk(class {});
+
+		const newTotal = await classDetails.count({
+			where: {
+				accountId: account.id,
+			},
+		});
+
 		const result = {
 			data: classes,
-			total: 0,
+			total: newTotal,
 		};
-		successResponse(res, 200, result);
+		return successResponse(res, 200, result);
 	} catch (error) {
 		console.log(error);
 		errorResponse(res, error, [{}]);
@@ -134,9 +148,27 @@ exports.getManageClasses = async (req, res, _) => {
 				}
 			);
 			// const teacher = await Account.findByPk(class {});
+
+			const newTotal = await Class.count({
+				where: {
+					[Op.or]: [
+						{
+							id: {
+								[Op.like]: search + '%',
+							},
+						},
+						{
+							name: {
+								[Op.like]: search + ' %',
+							},
+						},
+					],
+				},
+			});
+
 			const result = {
 				data: classes,
-				total: classes.length,
+				total: newTotal,
 			};
 			successResponse(res, 200, result);
 		} else {
@@ -162,10 +194,16 @@ exports.getManageClasses = async (req, res, _) => {
 					type: QueryTypes.SELECT,
 				}
 			);
-			// const teacher = await Account.findByPk(class {});
+
+			const newTotal = await Class.count({
+				where: {
+					accountId: account.id,
+				},
+			});
+
 			const result = {
 				data: classes,
-				total: classes.length,
+				total: newTotal,
 			};
 			successResponse(res, 200, result);
 		}
@@ -404,6 +442,7 @@ exports.getClassesExams = async (req, res, _) => {
 	try {
 		const page = req.query.page || 1;
 		const perPage = 10;
+		const search = req.query.search || '';
 		const exams = await sequelize.query(
 			`
 			SELECT   	classes.id as class_id,
@@ -419,13 +458,15 @@ exports.getClassesExams = async (req, res, _) => {
 			JOIN      	lectures
 			ON 			classes.lectureId = lectures.id
 			WHERE 		classes.accountId = "${req.account.id}"
+			${search !== '' ? `AND exams.examId ="${search}"` : ''}
+			LIMIT ${(page - 1) * perPage},${perPage}
 
 		`,
 			{
 				type: sequelize.QueryTypes.SELECT,
 			}
 		);
-		const result = await Promise.all(
+		const total = await Promise.all(
 			exams.map(async (exam) => {
 				const totals = await Student_Result.count({
 					where: { [Op.and]: [{ examId: exam.id }, { isDone: true }] },
@@ -433,6 +474,28 @@ exports.getClassesExams = async (req, res, _) => {
 				return { ...exam, totals };
 			})
 		);
+
+		const [count] = await sequelize.query(
+			`
+			SELECT
+    COUNT(*) AS number_of_rows
+FROM
+    classes
+JOIN exams ON classes.id = exams.classId
+JOIN lectures ON classes.lectureId = lectures.id
+WHERE
+    classes.accountId = "${req.account.id}"
+	${search !== '' ? `AND exams.examId ="${search}"` : ''}
+			`,
+			{
+				type: QueryTypes.SELECT,
+			}
+		);
+
+		const result = {
+			data: total,
+			total: count.number_of_rows,
+		};
 
 		successResponse(res, 200, result);
 	} catch (error) {
@@ -725,12 +788,13 @@ exports.postClass = async (req, res, _) => {
 		const { account } = req;
 		const { id, name, password, year, semester, lectureId, accountpassword } =
 			req.body;
-		const newClass = await account.createClass({
+		const newClass = await Class.create({
 			name,
 			password,
 			semester,
 			year,
 			lectureId,
+			accountId: account.id,
 		});
 
 		// sequelize.query(`INSERT INTO classes VALUES (${},${})`)
@@ -750,15 +814,14 @@ exports.postClass = async (req, res, _) => {
 				workbook.Sheets[workbook.SheetNames[0]]
 			);
 
-			console.log(data);
 			await Promise.all(
 				data.map(async (student, number) => {
 					const cuttedDOB = student['ngày sinh']?.split('/') || new Date();
 					const year = cuttedDOB[2];
 					const month = cuttedDOB[1];
 					const day = cuttedDOB[0];
-					console.log(student['Mã lớp'].slice(0, 3));
-					const studentInDB = await Account.findOrCreate({
+					// console.log(student['Mã lớp'].slice(0, 3));
+					const [studentInDB, created] = await Account.findOrCreate({
 						where: {
 							account_id: student['MSSV'] || student['Mã sinh viên'],
 						},
@@ -782,6 +845,7 @@ exports.postClass = async (req, res, _) => {
 			const newTotal = await classDetails.count({
 				where: { classId: newClass.id },
 			});
+			console.log(newTotal, newClass.id);
 			await newClass.update({
 				totalStudent: newTotal,
 			});
@@ -1820,7 +1884,6 @@ exports.postClassToGetExcel = async (req, res, _) => {
 		};
 		titleRow.alignment = { vertical: 'middle', horizontal: 'center' };
 		titleRow.height = 20;
-
 		const classInfoRow = worksheet.addRow([
 			'',
 			`Giảng viên: ${teacher.lastName + ' ' + teacher.firstName}`,
@@ -1828,7 +1891,7 @@ exports.postClassToGetExcel = async (req, res, _) => {
 			`Sỉ số: ${students.length}`,
 		]);
 
-		worksheet.getCell('B3').border = {
+		worksheet.getCell('B2').border = {
 			bottom: {
 				style: 'thin',
 				color: {
@@ -1837,7 +1900,7 @@ exports.postClassToGetExcel = async (req, res, _) => {
 			},
 		};
 
-		worksheet.getCell('C3').border = {
+		worksheet.getCell('C2').border = {
 			bottom: {
 				style: 'thin',
 				color: {
@@ -1845,7 +1908,7 @@ exports.postClassToGetExcel = async (req, res, _) => {
 				},
 			},
 		};
-		worksheet.getCell('D3').border = {
+		worksheet.getCell('D2').border = {
 			bottom: {
 				style: 'thin',
 				color: {
@@ -1860,6 +1923,7 @@ exports.postClassToGetExcel = async (req, res, _) => {
 				argb: '808080',
 			},
 		};
+		worksheet.addRow([], 'i+');
 		worksheet.addRow(
 			[
 				null,
@@ -1977,7 +2041,7 @@ exports.postClassToGetExcel = async (req, res, _) => {
 			const studentJSON = student.toJSON();
 			const studentRefactor = {
 				...studentJSON,
-				dob: vietNamFomatter.format(new Date(student.dob)),
+				dob: vietNamFomatter.format(new Date(student.dob || '')),
 			};
 
 			const student_arr = Object.values(studentRefactor);
