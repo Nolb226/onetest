@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import socket from '../../util/socket.js';
 
 const UserMenu = ({ info, setIsOpenProfile, setType }) => {
+	console.log(info);
 	return (
 		<>
 			<div className="user-menu" onClick={(e) => e.stopPropagation()}>
@@ -66,6 +67,7 @@ const UserModel = ({ setIsOpenProfile, info, type, handleUpdate }) => {
 	const [user, setUser] = useState({ ...info });
 	const [oldPass, setOldPass] = useState('');
 	const [password, setPassword] = useState('');
+	console.log(user);
 	const vietNamFomatter = new Intl.DateTimeFormat('vi-VN', {
 		year: 'numeric',
 		month: 'long',
@@ -125,7 +127,7 @@ const UserModel = ({ setIsOpenProfile, info, type, handleUpdate }) => {
 									type="text"
 									className=""
 									name="fullName"
-									value={user.fullName}
+									value={user.fullname}
 									onChange={(e) => handleUser(e)}
 								/>
 								{/* {info.fullname} */}
