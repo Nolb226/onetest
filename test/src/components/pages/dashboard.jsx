@@ -97,6 +97,7 @@ const UserModel = ({ setIsOpenProfile, info, type, handleUpdate }) => {
 			}).then((response) => {
 				if (response.ok) {
 					alert('Cập nhật mat khau thành công');
+					setIsOpenProfile(false);
 				} else {
 					alert('Cập nhật mat khau thất bại');
 				}
