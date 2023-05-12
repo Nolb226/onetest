@@ -71,8 +71,11 @@ function ViewClass() {
 						placeholder="Nhập mã lớp"
 						onChange={(e) => setSearch(e.target.value)}
 						onKeyDown={(e) => {
-							e.preventDefault();
-							setSearchParams({ search });
+							if (e.key === 'Enter') {
+								e.preventDefault();
+								setSearchParams({ search });
+							}
+							// e.preventDefault();
 						}}
 					/>
 					{/* <button
