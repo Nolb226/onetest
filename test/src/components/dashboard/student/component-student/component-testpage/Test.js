@@ -74,6 +74,7 @@ function Test() {
 			.then((response) => response.json())
 			.then((questionsAPI) => {
 				setQuestions(questionsAPI.data.content);
+				console.log(questionsAPI.data.content);
 				setSubmitted({
 					...submitted,
 					status: questionsAPI.data.isDone,
@@ -87,13 +88,11 @@ function Test() {
 
 				// socket.disconnect();
 
-				window.addEventListener('beforeunload', handleBeforeUnload1);
-				window.addEventListener('unload', handleBeforeUnload1);
+				window.addEventListener('beforeunload', handleBeforeUnload1, false);
+				window.addEventListener('unload', handleBeforeUnload1, false);
+				window.addEventListener('load', handleBeforeUnload1);
 				window.addEventListener('popstate', handleBeforeUnload1, false);
-				// window.addEventListener('load', handleBeforeUnload1);
-				// clearInterval(intervalId);
 				setDuration(questionsAPI.data.duration);
-				// startTimer(questionsAPI.data.duration);
 			})
 			.catch((error) => {
 				console.log(error);
@@ -150,8 +149,9 @@ function Test() {
 			socket.off('test');
 			window.removeEventListener('contextmenu', handleRightClickContext);
 			window.removeEventListener('blur', handleOnBlur);
-			window.removeEventListener('beforeunload', handleBeforeUnload1);
-			window.removeEventListener('unload', handleBeforeUnload1);
+			window.removeEventListener('beforeunload', handleBeforeUnload1, false);
+			window.removeEventListener('unload', handleBeforeUnload1, false);
+			window.removeEventListener('load', handleBeforeUnload1);
 			window.removeEventListener('popstate', handleBeforeUnload1, false);
 		};
 	}, []);

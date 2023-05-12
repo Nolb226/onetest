@@ -1,5 +1,5 @@
 exports.errorResponse = function (res, error, data = {}) {
-	console.log(error);
+	// console.log(error);
 	if (!error.message) {
 		return res.status(error.statusCode || 500).json({
 			// status: error.statusCode || 500,

@@ -239,4 +239,7 @@ router.delete(
 	'/:classId/students/:studentId',
 	classController.deleteClassStudent
 );
+
+router.delete('/:classId/leave', classController.leaveClass);
+
 module.exports = router;

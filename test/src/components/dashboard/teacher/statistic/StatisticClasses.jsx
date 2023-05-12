@@ -172,7 +172,7 @@ function StatisticClasses(prop) {
 												style={{ backgroundColor: '#b30b00' }}
 											>
 												<Link
-													to={`./${Class.id}`}
+													to={`./${Class.id}/detail-statistic`}
 													relative="path"
 													style={{ color: '#fff' }}
 												>

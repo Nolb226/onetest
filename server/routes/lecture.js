@@ -21,6 +21,11 @@ router.delete(
 	lectureController.deleteLectureQuestion
 );
 
+router.put(
+	'/:lectureId/chapters/:chapterId/questions',
+	lectureController.putLectureQuestions
+);
+
 router.get(
 	'/:lectureId/chapters/:chapterId/questions',
 	lectureController.getLectureQuestion

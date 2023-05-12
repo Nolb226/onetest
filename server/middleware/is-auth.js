@@ -34,6 +34,13 @@ module.exports.isAuth = async (req, res, next) => {
 		req.permissions = JSON.stringify(permissions.toJSON().functions);
 		next();
 	} catch (error) {
+		if (
+			error instanceof jwt.JsonWebTokenError ||
+			error instanceof jwt.JsonWebTokenError
+		) {
+			console.log('|||||||||| ERROR');
+			// socket.getIO().emit('jwt:expired', 123);
+		}
 		errorResponse(res, error);
 	}
 };

@@ -164,8 +164,8 @@ exports.putLectureQuestions = async (req, res, _) => {
 	try {
 		const { lectureId, chapterId } = req.params;
 		const lecture = await Lecture.findByPk(lectureId);
-		const { questions } = req.body;
-
+		const questions = req.body;
+		console.log(questions);
 		await Promise.all(
 			questions.map(async (question) => {
 				try {

@@ -1416,19 +1416,22 @@ exports.postClassStudent = async (req, res, _) => {
 		// console.log(exams);
 		await Promise.all(
 			exams.map(async (exam) => {
-				console.log(exam.toJSON());
 				if (exams.type != 3) {
 					const studentDumb = await Student_Result.findOne({
 						where: {
 							accountId: 0,
+							examId: exam.id,
 						},
 					});
+					console.log('|||||||');
+
+					console.log(JSON.parse(studentDumb.content));
 					console.log('|||||||');
 					const duration = exam.duration * 60;
 					return await req.account.addExam(exam, {
 						through: {
 							duration,
-							content: studentDumb.content,
+							content: JSON.parse(studentDumb.content),
 						},
 					});
 				} else {
@@ -1438,57 +1441,48 @@ exports.postClassStudent = async (req, res, _) => {
 						.join('" OR chapters.id = "');
 					const content = await sequelize.query(
 						`
-					SELECT * FROM (
-						(
-							SELECT  questions.id,
+						SELECT	*
+						FROM
+							(
+								(
+								SELECT	questions.id,
+										description,
+										answerA,
+										answerB,
+										answerC,
+										answerD
+								FROM	exams
+								JOIN 	classes ON exams.classId 					= classes.id
+								JOIN 	lectures ON lectures.id 					= classes.lectureId
+								JOIN 	chapters ON lectures.id 					= chapters.lectureId
+								JOIN 	questions ON chapters.id 					= questions.chapterId
+								WHERE	(questions.chapterId 						= "${classroom.lectureId}-${query}") 
+								AND		questions.level 							= 0 
+								AND 	questions.deletedAt IS NULL and exams.id 	= ${exam.id}
+								ORDER BY
+							RAND()
+								LIMIT ${exam.easy}
+							)
+						UNION ALL
+							(
+							SELECT	questions.id,
 									description,
 									answerA,
 									answerB,
 									answerC,
-									answerD,
-									difficulty
-
+									answerD
 							FROM	exams
-							JOIN	classes
-							ON		exams.classId 			= classes.id
-							JOIN	lectures
-							ON		lectures.id 			= classes.lectureId
-							JOIN	chapters
-							ON		lectures.id 			= chapters.lectureId
-							JOIN	questions
-							ON		chapters.id 			= questions.chapterId
-							WHERE	chapters.id 			= "${query}"
-							AND		questions.level 		= 0
-							AND		questions.deletedAt	IS NULL
-							LIMIT	${exam.easy}
-
+							JOIN 	classes ON exams.classId 										= classes.id
+							JOIN 	lectures ON lectures.id 										= classes.lectureId
+							JOIN 	chapters ON lectures.id 										= chapters.lectureId
+							JOIN 	questions ON chapters.id 										= questions.chapterId
+							WHERE	(questions.chapterId											= "${classroom.lectureId}-${query}") 
+							AND 
+								questions.level = 1 AND questions.deletedAt IS NULL and exams.id 	= ${exam.id}
+							ORDER BY RAND()
+							LIMIT ${exam.hard}
 						)
-							UNION ALL
-						(
-							SELECT  questions.id,
-									description,
-									answerA,
-									answerB,
-									answerC,
-									answerD,
-									difficulty
-
-							FROM	exams
-							JOIN	classes
-							ON		exams.classId 			= classes.id
-							JOIN	lectures
-							ON		lectures.id 			= classes.lectureId
-							JOIN	chapters
-							ON		lectures.id 			= chapters.lectureId
-							JOIN	questions
-							ON		chapters.id 			= questions.chapterId
-							WHERE	chapters.id 			= "${query}"
-							AND		questions.level	 		= 1
-							AND		questions.deletedAt	IS NULL
-							LIMIT	${exam.hard}
-						)
-					) as q
-					ORDER BY RAND()
+							) AS q
 
 					`,
 						{ type: sequelize.QueryTypes.SELECT }
@@ -1529,7 +1523,7 @@ exports.postClassStudentExam = async (req, res, _) => {
 		const { content } = studentresults;
 		let grade = 0;
 		const newContent = await Promise.all(
-			content.map(async (question) => {
+			JSON.parse(content).map(async (question) => {
 				const isIn = questions.findIndex((object) => object.id === question.id);
 				const questionInBank = await Question.findByPk(question.id, {
 					attributes: [
@@ -2238,6 +2232,20 @@ exports.deleteClassStudent = async (req, res, _) => {
 			throwError(`Student not found:`, 404);
 		}
 		await classroom.removeAccount(student);
+		successResponse(res, 200, _, req.method);
+	} catch (error) {
+		errorResponse(res, error);
+	}
+};
+
+exports.leaveClass = async (req, res, _) => {
+	try {
+		const { classId } = req.params;
+		const classroom = await Class.findByPk(classId);
+		if (!classroom) {
+			throwError(`Classroom not found`, 404);
+		}
+		await classroom.removeAccount(req.account);
 		successResponse(res, 200, _, req.method);
 	} catch (error) {
 		errorResponse(res, error);

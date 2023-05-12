@@ -45,6 +45,10 @@ module.exports = {
 				// Verify and decode the JWT token
 				const decoded = jwt.verify(token, 'group5'); // Replace 'your-secret-key' with your actual secret key
 
+				console.log('===========');
+				console.log(decoded);
+				console.log('===========');
+
 				// Retrieve the user and associated classes
 				const user = await Account.findByPk(decoded.id);
 				const classes = await sequelize.query(
