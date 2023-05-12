@@ -1,134 +1,143 @@
-import api from '../../../config/config.js';
+import api from "../../../config/config.js";
 
 function validator(formSelector) {
-	let formElement = document.querySelector(formSelector);
+   let formElement = document.querySelector(formSelector);
 
-	let formRules = {};
+   let formRules = {};
 
-	const getParentElement = (childElement, parentSelector) => {
-		while (childElement.parentElement) {
-			if (childElement.parentElement.matches(parentSelector)) {
-				return childElement.parentElement;
-			}
-			childElement = childElement.parentElement;
-		}
-	};
+   const getParentElement = (childElement, parentSelector) => {
+      while (childElement.parentElement) {
+         if (childElement.parentElement.matches(parentSelector)) {
+            return childElement.parentElement;
+         }
+         childElement = childElement.parentElement;
+      }
+   };
 
-	var validatorRules = {
-		require: (value) => {
-			return value ? undefined : 'Vui lòng nhập thông tin';
-		},
+   var validatorRules = {
+      require: (value) => {
+         return value ? undefined : "Vui lòng nhập thông tin";
+      },
 
-		dateOfBirth: (value) => {
-			return value ? undefined : 'Vui lòng chọn ngày tháng năm sinh';
-		},
+      dateOfBirth: (value) => {
+         return value ? undefined : "Vui lòng chọn ngày tháng năm sinh";
+      },
 
-		major: (value) => {
-			return value !== 'Ngành' ? undefined : 'Vui lòng chọn ngành học';
-		},
+      major: (value) => {
+         return value !== "Ngành" ? undefined : "Vui lòng chọn ngành học";
+      },
 
-		min: (min) => {
-			return (value) =>
-				value.length >= min ? undefined : `Tối thiểu ${min} kí tự`;
-		},
+      min: (min) => {
+         return (value) =>
+            value.length >= min ? undefined : `Tối thiểu ${min} kí tự`;
+      },
 
-		max: (max) => {
-			return (value) =>
-				value.length <= max ? undefined : `Tối đa ${max} kí tự`;
-		},
-	};
+      max: (max) => {
+         return (value) =>
+            value.length <= max ? undefined : `Tối đa ${max} kí tự`;
+      },
 
-	if (formElement) {
-		var inputs = formElement.querySelectorAll('[name][rules]');
+      confirmPass: (value) => {
+         return value == document.getElementById("password").value
+            ? undefined
+            : "Mật khẩu không trùng khớp";
+      },
+   };
 
-		const clearErrorMessage = (event) => {
-			let parentElement = getParentElement(event.target, '.form-group');
-			parentElement.classList.remove('invalid');
-			parentElement.querySelector('.form-message').innerText = '';
-		};
+   if (formElement) {
+      var inputs = formElement.querySelectorAll("[name][rules]");
 
-		// Lắng nghe sự kiện trên từng thẻ input
-		const handelValidate = (event) => {
-			var rules = formRules[event.target.name];
-			var errorMessage;
+      const clearErrorMessage = (event) => {
+         let parentElement = getParentElement(event.target, ".form-group");
+         parentElement.classList.remove("invalid");
+         parentElement.querySelector(".form-message").innerText = "";
+      };
 
-			rules.find(function (rule) {
-				errorMessage = rule(event.target.value);
-				return errorMessage;
-			});
+      // Lắng nghe sự kiện trên từng thẻ input
+      const handelValidate = (event) => {
+         var rules = formRules[event.target.name];
+         var errorMessage;
 
-			let parentElement = getParentElement(event.target, '.form-group');
+         rules.find(function (rule) {
+            errorMessage = rule(event.target.value);
+            return errorMessage;
+         });
 
-			if (errorMessage) {
-				parentElement.classList.add('invalid');
-				parentElement.querySelector(
-					'.form-message'
-				).innerText = `* ${errorMessage}`;
-			}
+         let parentElement = getParentElement(event.target, ".form-group");
 
-			return !errorMessage;
-		};
+         if (errorMessage) {
+            parentElement.classList.add("invalid");
+            parentElement.querySelector(
+               ".form-message"
+            ).innerText = `* ${errorMessage}`;
+         }
 
-		// Lặp và gán function validator cho từng thẻ input
-		inputs.forEach((input) => {
-			var rules = input.getAttribute('rules').split('|');
+         return !errorMessage;
+      };
 
-			rules.forEach((rule) => {
-				var ruleFunction;
-				ruleFunction = validatorRules[rule];
+      // Lặp và gán function validator cho từng thẻ input
+      inputs.forEach((input) => {
+         var rules = input.getAttribute("rules").split("|");
 
-				if (rule.includes(':')) {
-					// rule = "min:8"
-					var temp = rule.split(':'); // temp[0] = "min", temp[1] = "8"
-					rule = temp[0]; // rule = "min"
-					ruleFunction = validatorRules[rule]; // ruleFunction = min()
-					ruleFunction = ruleFunction(temp[1]); // ruleFunction =  min(8) return (value) =>  value.length > min ? undefined : `Tối thiểu ${8} kí tự`;
-				}
+         rules.forEach((rule) => {
+            var ruleFunction;
+            ruleFunction = validatorRules[rule];
 
-				if (Array.isArray(formRules[input.name]))
-					formRules[input.name].push(ruleFunction);
-				else formRules[input.name] = [ruleFunction];
-			});
+            if (rule.includes(":")) {
+               // rule = "min:8"
+               var temp = rule.split(":"); // temp[0] = "min", temp[1] = "8"
+               rule = temp[0]; // rule = "min"
+               ruleFunction = validatorRules[rule]; // ruleFunction = min()
+               ruleFunction = ruleFunction(temp[1]); // ruleFunction =  min(8) return (value) =>  value.length > min ? undefined : `Tối thiểu ${8} kí tự`;
+            }
 
-			input.onblur = handelValidate;
-			input.oninput = clearErrorMessage;
-		});
+            if (Array.isArray(formRules[input.name]))
+               formRules[input.name].push(ruleFunction);
+            else formRules[input.name] = [ruleFunction];
+         });
 
-		// Sign up new account
-		if (formSelector === '#form-register') {
-			formElement.onsubmit = (event) => {
-				event.preventDefault();
-				var isValid = true;
-				let formData = new FormData();
+         input.onblur = handelValidate;
+         input.oninput = clearErrorMessage;
+      });
 
-				inputs.forEach((input) => {
-					if (!handelValidate({ target: input })) {
-						isValid = false;
-					}
-				});
+      // Sign up new account
+      if (formSelector === "#form-register") {
+         formElement.onsubmit = (event) => {
+            event.preventDefault();
+            var isValid = true;
+            let formData = new FormData();
 
-				if (isValid) {
-					let typeName = formElement.querySelector('.type');
-					formData.append('type', typeName.getAttribute('name'));
+            inputs.forEach((input) => {
+               if (!handelValidate({ target: input })) {
+                  isValid = false;
+               }
+            });
 
-					inputs.forEach((input) => {
-						formData.append(input.name, input.value);
-					});
-					fetch(`${api}/auth/signup`, {
-						body: formData,
-						method: 'post',
-					}).then((res) => {
-						if (res.ok) {
-							alert('Tạo tài khoản thành công');
-							window.location.reload();
-						} else {
-							alert('Tạo tài khoản thất bại');
-						}
-					});
-				}
-			};
-		}
-	}
+            if (isValid) {
+               let typeName = formElement.querySelector(".type");
+               formData.append("type", typeName.getAttribute("name"));
+
+               inputs.forEach((input) => {
+                  formData.append(input.name, input.value);
+               });
+               document.body.style.cursor = "wait";
+               fetch(`${api}/auth/signup`, {
+                  body: formData,
+                  method: "post",
+               }).then((res) => {
+                  if (res.ok) {
+                     document.body.style.cursor = "default";
+                     alert("Tạo tài khoản thành công");
+                     window.location.reload();
+                  } else {
+                     document.body.style.cursor = "default";
+                     alert("Tạo tài khoản thất bại");
+                  }
+               });
+            }
+         };
+      }
+   }
 }
 
 export default validator;
