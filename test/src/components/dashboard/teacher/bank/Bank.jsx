@@ -158,8 +158,8 @@ function Question({ questionObject, isAllowedToPut }) {
                >
                   <input
                      type="radio"
-                     name={questionObject.id + "correct"}
-                     className={questionObject.id + "correct"}
+                     name={questionObject.id + "-correct"}
+                     className={questionObject.id + "-correct"}
                      value="A"
                      style={{
                         margin: "0",
@@ -180,8 +180,8 @@ function Question({ questionObject, isAllowedToPut }) {
                >
                   <input
                      type="radio"
-                     name={questionObject.id + "correct"}
-                     className={questionObject.id + "correct"}
+                     name={questionObject.id + "-correct"}
+                     className={questionObject.id + "-correct"}
                      value="B"
                      style={{
                         margin: "0",
@@ -202,8 +202,8 @@ function Question({ questionObject, isAllowedToPut }) {
                >
                   <input
                      type="radio"
-                     name={questionObject.id + "correct"}
-                     className={questionObject.id + "correct"}
+                     name={questionObject.id + "-correct"}
+                     className={questionObject.id + "-correct"}
                      value="C"
                      style={{
                         margin: "0",
@@ -224,8 +224,8 @@ function Question({ questionObject, isAllowedToPut }) {
                >
                   <input
                      type="radio"
-                     name={questionObject.id + "correct"}
-                     className={questionObject.id + "correct"}
+                     name={questionObject.id + "-correct"}
+                     className={questionObject.id + "-correct"}
                      value="D"
                      style={{
                         margin: "0",
@@ -470,8 +470,8 @@ function Bank() {
             setIsLoading(false);
             alert("Thay đổi không thành công! Vui lòng thử lại.");
          } else if (res.ok) {
-            alert("Thay đổi thành công!");
             setIsLoading(false);
+            alert("Thay đổi thành công!");
          }
       });
    }
@@ -493,15 +493,14 @@ function Bank() {
             .querySelectorAll('input[type="radio"]:checked')
             .forEach((input) => {
                console.log(input.name, input.value);
-               tempQuestion[input.name] = input.value;
-
-               // tempQuestion.push(`${input.name}: ${input.value}`);
+               const myArray = input.name.split("-");
+               console.log(myArray);
+               tempQuestion[myArray[1]] = input.value;
             });
+         tempQuestion["id"] = item;
 
          const levelSelect = questionBox.querySelector("select");
-         console.log(levelSelect.name, levelSelect.value);
          tempQuestion[levelSelect.name] = levelSelect.value;
-         // tempQuestion.push(`${input.name}: ${input.value}`)
 
          editedQuestion.push(tempQuestion);
       });
@@ -510,7 +509,7 @@ function Bank() {
 
       fetch(`${api}/lectures/841109/chapters/${chapters}/questions`, {
          body: JSON.stringify(editedQuestion),
-         method: "POST",
+         method: "PUT",
          headers: {
             Authorization: "Bearer " + currentUser,
          },
@@ -521,6 +520,7 @@ function Bank() {
          } else if (res.ok) {
             alert("Thay đổi thành công!");
             setIsLoading(false);
+            window.location.reload();
          }
       });
    }
@@ -576,32 +576,11 @@ function Bank() {
                               <div
                                  style={{
                                     flex: "1",
-                                    // width: "50%",
                                     display: "flex",
                                     flexDirection: "column",
                                     justifyContent: "flex-start",
                                  }}
                               >
-                                 {/* <input
-                                    className="form-control"
-                                    type="text"
-                                    name="examId"
-                                    id="examId"
-                                    placeholder="Nhập mã môn học"
-                                    style={{
-                                       fontSize: "1.4rem",
-                                       paddingLeft: "10px",
-                                       flex: "1",
-                                       height: "30px",
-                                       outline: "none",
-                                       borderRadius: "4px",
-                                       border: "solid 2px #BFBFBF",
-                                    }}
-                                    onChange={(e) =>
-                                       setLectureId(e.target.value)
-                                    }
-                                 /> */}
-
                                  <select
                                     className="form-control"
                                     type="text"
