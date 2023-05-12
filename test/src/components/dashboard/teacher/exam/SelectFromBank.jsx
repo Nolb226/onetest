@@ -370,8 +370,8 @@ function validator(formSelector, setIsLoading, classId, navigate) {
                } else if (res.ok) {
                   console.log("nav");
                   alert("Tạo đề thành công! Click để quay lại trang chính.");
-                  setIsLoading(false);
                   navigate(-1);
+                  setIsLoading(false);
                }
             });
          };

@@ -50,11 +50,9 @@ function ViewClass() {
 
 	const handlePageChange = (newPage) => {
 		setPage(newPage);
-		console.log(newPage);
 	};
 
 	const isAllowed = permissions.find((x) => x.id === 6);
-	console.log(isAllowed);
 
 	useEffect(() => {
 		// handleClass(page);

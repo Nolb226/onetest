@@ -166,10 +166,6 @@ a {
    box-shadow: inset 0px 0px 0px 1px #888;
 }
 
-/* .custom-select:hover .custom-select__option-list{
-    display: flex;
-} */
-
 .custom-select__option-list {
    display: flex;
    margin-top: 1.2rem;
@@ -983,15 +979,12 @@ header .navigation {
    display: flex;
    flex-direction: column;
    gap: 0.6rem;
-
    position: absolute;
    top: 30px;
-
    border-radius: 5px;
    border: 1px solid #f5f5f7;
-
    background-color: #fff;
-   z-index: 1;
+   z-index: 99;
    box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px 0px,
       rgba(0, 0, 0, 0.5) 0px 0px 1px 0px;
 }
@@ -1143,7 +1136,9 @@ header .navigation {
    box-shadow: inset 0px 0px 0px 2px #cc2424;
    color: #cc2424;
    font-weight: 600;
-   /* opacity: 0.5; */
+   border-radius: 5px;
+   height: 30px;
+   opacity: 0.8;
    background-color: #fff;
 }
 
@@ -1190,43 +1185,6 @@ header .navigation {
    padding: 1.2rem 1.4rem;
 }
 
-.detail__header {
-}
-
-.detail-layer {
-   height: 20rem;
-   background-color: #121966;
-   background-image: linear-gradient(to bottom, #00000023, #ffffff2e),
-      url("./../../../image/Online\ learning-amico.svg");
-   background-repeat: no-repeat;
-   background-position: center;
-   border-radius: 0 8px 8px 8px;
-}
-
-.detail__text-box {
-   font-size: 1.2rem;
-   width: 10rem;
-   height: 5rem;
-   font-weight: 600;
-   background-color: #fff;
-   border-radius: 8px;
-   font-size: clamp(1rem, 0.95rem + 0.25vw, 1.25rem);
-}
-
-.detail__text-box--second {
-   width: 25rem;
-
-   background: none;
-}
-
-.text-box__body {
-   text-align: center;
-   font-size: 1.5rem;
-}
-
-.detail__body {
-}
-
 .answer-control {
    display: none;
 }
@@ -1254,39 +1212,6 @@ header .navigation {
 
 /* Tablet */
 @media (min-width: 768px) {
-   .detail-layer {
-      height: 50rem;
-   }
-
-   .class-detail-content {
-      overflow-y: hidden;
-   }
-
-   .detail__text-box {
-      position: absolute;
-      top: max(15%, 10vh);
-      left: 4%;
-      height: 10rem;
-      width: 24rem;
-      /* border: 2px double #04061a; */
-   }
-
-   .detail__text-box--second {
-      top: max(36%, 15vh);
-      padding: 1rem;
-      left: 9%;
-
-      color: #fff;
-   }
-
-   .detail-heading {
-      color: #04061a;
-   }
-
-   .text-box__body {
-      font-size: 1.5rem;
-   }
-
    .answer-grid {
       grid-template-columns: repeat(4, 1fr);
    }
@@ -1401,6 +1326,13 @@ header .navigation {
    .question-item-content,
    .content-suggest {
       font-size: 1.3rem;
+   }
+
+   .inf-btn.exam-lock {
+      color: #fff;
+      background-color: #cc2424;
+      height: 25px;
+      border-radius: 15px;
    }
 }
 
