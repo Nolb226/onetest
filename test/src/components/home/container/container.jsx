@@ -19,8 +19,6 @@ function Container() {
                </span>
 
                <h1 className="container__content--heading">Best Of Test</h1>
-
-               <button className="container__btn--start">Bắt đầu</button>
             </div>
 
             <div className="container__knowledge-img position-absolute">
@@ -64,7 +62,7 @@ function Container() {
                            <span className="feature__content--description">
                               Nhóm học, bài thi cấu trúc phân loại. Thống kê và
                               chấm điểm tự động qua Excel. Dễ dàng quản lí, theo
-                              dõi tình hình lớp.
+                              dõi lớp.
                            </span>
                         </div>
                      </div>

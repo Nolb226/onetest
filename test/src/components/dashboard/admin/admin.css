@@ -221,6 +221,8 @@
 }
 
 .input-item {
+   font-size: 1.4rem;
+   z-index: 100;
    display: flex;
    justify-content: center;
    align-items: center;
@@ -235,7 +237,12 @@
 }
 
 .input-item > input {
+   height: 30px;
    width: 60%;
+}
+
+.input-item > input[type="checkbox" i] {
+   height: 20px;
 }
 
 .button-list {
@@ -493,5 +500,13 @@
 
    .subject {
       margin-bottom: 2px;
+   }
+
+   .detail-content {
+      width: 95vw;
+   }
+
+   .input-item {
+      font-size: 1.2rem;
    }
 }

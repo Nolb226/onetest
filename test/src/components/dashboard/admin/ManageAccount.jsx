@@ -285,7 +285,6 @@ function ManageAccount() {
                                  style={{
                                     height: "25px",
                                     width: "25px",
-                                    zIndex: "2",
                                     marginRight: "5px",
                                     borderRadius: "3px",
                                     backgroundColor: "#1f2ec9",
@@ -296,7 +295,6 @@ function ManageAccount() {
                                  style={{
                                     width: "25px",
                                     height: "25px",
-                                    border: "none",
                                     borderRadius: "3px",
                                     padding: "0",
                                  }}
