@@ -18,7 +18,10 @@ exports.getUserAccount = async (req, res, _) => {
 						sequelize.col('firstName')
 					),
 					'fullname',
+					
 				],
+				'account_id',
+				'dob'
 			],
 			include: [
 				{
