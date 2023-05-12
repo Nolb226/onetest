@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router";
 
-function ExamButton({ classId, exam, isDone, isLock }) {
+function ExamButton({ classId, exam, isDone, isLock, timeStart }) {
+   const navigate = useNavigate();
+
    /* 
 		Button_Status :
 		- "Done" but not "Lock"
@@ -33,18 +36,45 @@ function ExamButton({ classId, exam, isDone, isLock }) {
 
       return <button class="inf-btn exam-lock">Đã khóa</button>;
    }
+
+   function handleTime(e, exam) {
+      // navigate(`../${classId}/exam/${exam}`);
+
+      const date = new Date();
+      const start = new Date(timeStart);
+      if (date - start <= 0) {
+         // e.stopPropagation();
+         alert("Chưa tới thời gian làm bài");
+      } else {
+         navigate(`../../../exam/${exam}`, {
+            replace: true,
+            relative: "path",
+            state: { classId, isDone: false },
+         });
+         console.log(123);
+      }
+   }
+
    return (
-      <>
-         <Link
-            to={`../../../exam/${exam}`}
+      <div>
+         <div
             state={{ classId, isDone: false }}
-            relative="path"
+            // relative="path"
+            // to={`../../../exam/${exam}`}
          >
-            <button class="view-btn" style={{ backgroundColor: "#161f89" }}>
+            <button
+               class="view-btn"
+               style={{ backgroundColor: "#161f89" }}
+               onClick={(e) => {
+                  // navigate("../");
+
+                  handleTime(e, exam);
+               }}
+            >
                Làm
             </button>
-         </Link>
-      </>
+         </div>
+      </div>
    );
 }
 
@@ -61,6 +91,16 @@ function ExamItem({
    isLock,
    exam,
 }) {
+   const vietNamFomatter = new Intl.DateTimeFormat("vi-VN", {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+      hour12: false,
+      timeZone: "America/Los_Angeles",
+   });
    return (
       <ul
          className="flex-center table__content--item"
@@ -82,13 +122,13 @@ function ExamItem({
          </li>
 
          <li className="flex-center column-text">
-            {/* <h3>{vietNamFomatter.format(new Date(timeStart))}</h3> */}
-            <h3>{timeStart}</h3>
+            <h3>{vietNamFomatter.format(new Date(timeStart))}</h3>
+            {/* <h3>{timeStart}</h3> */}
          </li>
 
          <li className="flex-center column-text">
-            {/* <h3>{vietNamFomatter.format(new Date(timeEnd))}</h3> */}
-            <h3>{timeEnd}</h3>
+            <h3>{vietNamFomatter.format(new Date(timeEnd))}</h3>
+            {/* <h3>{timeEnd}</h3> */}
          </li>
 
          <li className="flex-center column-text">
@@ -102,6 +142,7 @@ function ExamItem({
                exam={exam}
                isDone={isDone}
                isLock={isLock}
+               timeStart={timeStart}
             />
          </li>
       </ul>

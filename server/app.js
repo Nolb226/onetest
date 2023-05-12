@@ -182,6 +182,7 @@ const teachRoutes = require('./routes/teach');
 const { checkPermission } = require('./middleware/check-permission');
 const { errorResponse, throwError } = require('./util/helper');
 //Middleware
+app.use(cors());
 
 app.use(bodyParser.json());
 app.use(multer({ storage, fileFilter }).single('classExcel'));
@@ -197,7 +198,6 @@ app.use((req, res, next) => {
 });
 //Routes seperate paths
 
-app.use(cors());
 app.use('/auth', authRoutes);
 app.use('/accounts', accountRoutes);
 // app.use('/students', studentRoutes);

@@ -14,7 +14,7 @@ import { Outlet, useOutlet, useOutletContext } from "react-router";
 function Student({ idStudent, nameStudent }) {
    const { type, id, name } = useParams();
    const { permissions } = useOutletContext();
-   console.log(permissions);
+   // console.log(permissions);
    return (
       <>
          <Outlet context={{ permissions }} />

@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router';
 import api from '../../../../../config/config';
+import { Link } from 'react-router-dom';
+import socket from '../../../../../util/socket';
 
 function ConfirmModel({
 	setIsOpen,
@@ -9,6 +11,17 @@ function ConfirmModel({
 	type,
 	setType,
 }) {
+	function closeFullscreen() {
+		if (document.exitFullscreen) {
+			document.exitFullscreen();
+		} else if (document.webkitExitFullscreen) {
+			/* Safari */
+			document.webkitExitFullscreen();
+		} else if (document.msExitFullscreen) {
+			/* IE11 */
+			document.msExitFullscreen();
+		}
+	}
 	const navigator = useNavigate();
 	// const sendResult = () => {
 	//    const answer = JSON.stringify(result);
@@ -59,7 +72,12 @@ function ConfirmModel({
 						<button
 							className="confirm-btn form-btn"
 							form="answerform"
-							onClick={() => {}}
+							onClick={(e) => {
+								socket.emit('exam:leave');
+								closeFullscreen();
+								e.target.style.cursor = 'wait';
+								setTimeout(() => navigator('../'), 1000);
+							}}
 						>
 							Xác nhận nộp
 						</button>
@@ -108,6 +126,8 @@ function ConfirmModel({
 							className="confirm-btn form-btn"
 							form="answerform"
 							onClick={() => {
+								closeFullscreen();
+
 								setIsOpen(!isOpen);
 								navigator('../');
 							}}

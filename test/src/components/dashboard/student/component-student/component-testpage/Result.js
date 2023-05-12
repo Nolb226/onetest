@@ -26,7 +26,7 @@ function Result() {
 						<div className="title flex-center">NỘP BÀI THÀNH CÔNG</div>
 						<div className="score flex-center">
 							<p className="score1">Điểm đạt được:</p>
-							<p className="score2">{data?.grade}/10</p>
+							<p className="score2">{data?.grade?.toFixed(2)}/10</p>
 						</div>
 					</header>
 					<div className="result-subject flex-center">

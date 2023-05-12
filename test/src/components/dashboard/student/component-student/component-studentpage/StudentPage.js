@@ -33,25 +33,25 @@ function StudentPage() {
             console.log(error);
          });
    }, [searchParams]);
-   console.log(searchParams);
+   // console.log(searchParams);
 
    useEffect(() => {
       // socket.connect();
       socket.on("exam:lock", (examId, lockState) => {
-         console.log(exams, examId, lockState);
+         // console.log(exams, examId, lockState);
          const list = exams.map((exam) => {
-            console.log(exam.id);
+            // console.log(exam.id);
             if (exam.id === examId) {
                return { ...exam, isLock: lockState };
             }
             return exam;
          });
-         console.log(list);
+         // console.log(list);
          setExams(list);
       });
 
       socket.on("exam:created", (exam, lecture_name) => {
-         console.log(lecture_name);
+         // console.log(lecture_name);
 
          // if (exams.length < 10) {
          const list = [
@@ -149,12 +149,8 @@ function StudentPage() {
                               nameExam={item.exam_name}
                               subject={item.lecture_name}
                               time={item.duration}
-                              timeStart={vietNamFomatter.format(
-                                 new Date(item.timeStart)
-                              )}
-                              timeEnd={vietNamFomatter.format(
-                                 new Date(item.timeEnd)
-                              )}
+                              timeStart={item.timeStart}
+                              timeEnd={new Date(item.timeEnd)}
                               totalQuestions={item.totalQuestions}
                               isDone={item.isDone}
                               isLock={item.isLock}

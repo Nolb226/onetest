@@ -12,7 +12,25 @@ function ManageAccount() {
    const [page, setPage] = useState(1);
    const [totalPage, setTotalPage] = useState(1);
    const [change, setChange] = useState(false);
+   const [search, setSearch] = useState("");
 
+   useEffect(() => {
+      const getAccountData = async () => {
+         const userreq = await fetch(
+            `${api}/admin/accounts?search=${search}&page=${page}`,
+            {
+               headers: {
+                  Authorization: "Bearer " + currentUser,
+               },
+            }
+         );
+         const data = await userreq.json();
+         console.log(data);
+         setAccountList(data.data.accounts);
+         setTotalPage(Math.ceil((data.data.totalAccount - 1) / 10));
+      };
+      getAccountData();
+   }, [page, change, search]);
    const { permissions } = useOutletContext();
 
    const isAllowedToPut = permissions.find((x) => x.id === 17);
@@ -74,6 +92,19 @@ function ManageAccount() {
    const deleteAccount = (id) => {
       page == 1 ? setChange(!change) : setPage(1);
    };
+
+   const handleSearch = () => {
+      const search_input = document.querySelector(".search-input");
+      if (search_input) {
+         search_input.addEventListener("keyup", function (event) {
+            if (event.key === "Enter") {
+               setSearch(search_input.value);
+            }
+         });
+      }
+   };
+
+   handleSearch();
 
    return (
       <>
