@@ -149,13 +149,10 @@ function Test() {
 			socket.off('exam:expired');
 			socket.off('test');
 			window.removeEventListener('contextmenu', handleRightClickContext);
-			// window.removeEventListener('keydown', handleKeyPress, false);
 			window.removeEventListener('blur', handleOnBlur);
 			window.removeEventListener('beforeunload', handleBeforeUnload1);
 			window.removeEventListener('unload', handleBeforeUnload1);
-			// window.removeEventListener('load', handleBeforeUnload1);
 			window.removeEventListener('popstate', handleBeforeUnload1, false);
-			// socket.disconnect();
 		};
 	}, []);
 
@@ -213,37 +210,7 @@ function Test() {
 			};
 		}
 	}, []);
-	// const handleBeforeUnload = (e) => {
-	// 	e.preventDefault();
-	// 	setIsOpen(true);
-	// 	console.log(1);
-	// 	clearInterval(intervalId);
-	// 	e.returnValue = '';
-	// 	return '';
-	// 	//
-	// };
 
-	// useEffect(() => {
-	// 	const handleOnBlur = (e) => {
-	// 		setClickedOutside((prev) => prev + 1);
-	// 	};
-
-	// 	const handleBeforeUnload = (e) => {
-	// 		e.preventDefault();
-	// 		e.returnValue = '';
-	// 		setIsOpen(true);
-	// 		return '';
-	// 	};
-
-	// 	window.addEventListener('blur', handleOnBlur);
-	// 	window.addEventListener('beforeunload', handleBeforeUnload);
-	// 	window.addEventListener('popstate', handleBeforeUnload);
-	// 	return () => {
-	// 		window.removeEventListener('blur', handleOnBlur);
-	// 		window.removeEventListener('beforeunload', handleBeforeUnload);
-	// 		window.removeEventListener('popstate', handleBeforeUnload);
-	// 	};
-	// }, []);
 	const handleSubmit = () => {
 		setSubmitted({
 			text: 'Xem điểm',
