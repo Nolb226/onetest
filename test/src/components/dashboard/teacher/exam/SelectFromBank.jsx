@@ -368,10 +368,9 @@ function validator(formSelector, setIsLoading, classId, navigate) {
                   setIsLoading(false);
                   alert("Tạo đề không thành công! Vui lòng thử lại.");
                } else if (res.ok) {
-                  console.log("nav");
+                  setIsLoading(false);
                   alert("Tạo đề thành công! Click để quay lại trang chính.");
                   navigate(-1);
-                  setIsLoading(false);
                }
             });
          };

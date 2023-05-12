@@ -26,7 +26,6 @@ function Header() {
             <div className="header__btn flex-center flex-direction-row">
                <button className="btn__sign-in" onClick={() => handleSignIn()}>
                   <span>Đăng nhập</span>
-                  {/* <a href="student.html"></a> */}
                </button>
 
                <button className="btn__sign-up" onClick={() => handleSignUp()}>

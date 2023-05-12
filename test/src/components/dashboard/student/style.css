@@ -1281,15 +1281,15 @@ header .navigation {
    }
 
    .answer-control .to-submit {
-      background-color: transparent;
-      color: var(--highlight-color);
+      background-color: transparent !important;
+      color: var(--highlight-color) !important;
       width: 100px !important;
       font-size: 1.6rem;
       font-weight: 600;
    }
 
    .answer-control .test-submit {
-      border: 0;
+      border: none !important;
    }
 
    .answer-control > .answerform-mobile.display-grid {
@@ -1333,6 +1333,18 @@ header .navigation {
       background-color: #cc2424;
       height: 25px;
       border-radius: 15px;
+   }
+
+   .result-container {
+      width: 90vw;
+   }
+
+   .result-header {
+      width: 100%;
+   }
+
+   .result-content-child {
+      padding: 0 10px;
    }
 }
 

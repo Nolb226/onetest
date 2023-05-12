@@ -194,9 +194,8 @@ function validator(formSelector, setIsLoading, classId, navigate) {
                   setIsLoading(false);
                   alert("Tạo đề không thành công! Vui lòng thử lại.");
                } else if (res.ok) {
-                  console.log("nav");
-                  alert("Tạo đề thành công! Click để quay lại trang chính.");
                   setIsLoading(false);
+                  alert("Tạo đề thành công! Click để quay lại trang chính.");
                   navigate(-1);
                }
             });
@@ -454,6 +453,44 @@ function Handicraft() {
                   <div className="info-item form-group">
                      <label
                         className="form-label"
+                        htmlFor="duration"
+                        style={{
+                           color: "#222",
+                           fontSize: "1.3rem",
+                           fontWeight: "600",
+                           width: "160px",
+                        }}
+                     >
+                        Thời gian làm bài
+                     </label>
+
+                     <input
+                        rules="require"
+                        className="form-control"
+                        type="text"
+                        name="duration"
+                        id="duration"
+                        placeholder="Nhập số phút"
+                        style={{
+                           fontSize: "1.4rem",
+                           paddingLeft: "10px",
+                           height: "30px",
+                           outline: "none",
+                           borderRadius: "5px",
+                           border: "solid 2px #BFBFBF",
+                           width: "100%",
+                        }}
+                     />
+                     <label
+                        htmlFor="duration"
+                        className="form-message"
+                        style={{ height: "16px" }}
+                     ></label>
+                  </div>
+
+                  <div className="info-item form-group">
+                     <label
+                        className="form-label"
                         htmlFor="timeStart"
                         style={{
                            color: "#222",
@@ -520,44 +557,6 @@ function Handicraft() {
                      />
                      <label
                         htmlFor="timeEnd"
-                        className="form-message"
-                        style={{ height: "16px" }}
-                     ></label>
-                  </div>
-
-                  <div className="info-item form-group">
-                     <label
-                        className="form-label"
-                        htmlFor="duration"
-                        style={{
-                           color: "#222",
-                           fontSize: "1.3rem",
-                           fontWeight: "600",
-                           width: "160px",
-                        }}
-                     >
-                        Thời gian làm bài
-                     </label>
-
-                     <input
-                        rules="require"
-                        className="form-control"
-                        type="text"
-                        name="duration"
-                        id="duration"
-                        placeholder="Nhập số phút"
-                        style={{
-                           fontSize: "1.4rem",
-                           paddingLeft: "10px",
-                           height: "30px",
-                           outline: "none",
-                           borderRadius: "5px",
-                           border: "solid 2px #BFBFBF",
-                           width: "100%",
-                        }}
-                     />
-                     <label
-                        htmlFor="duration"
                         className="form-message"
                         style={{ height: "16px" }}
                      ></label>
