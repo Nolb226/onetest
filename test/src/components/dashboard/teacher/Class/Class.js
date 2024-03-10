@@ -3,7 +3,9 @@ import { useState } from "react";
 import Repass from "./Repass";
 import ClassList from "./ClassList";
 import CreateClass from "./CreateClass";
+import "./gridClass.css";  
 import "./styleClass.css";
+
 
 function Class() {
    const [classesPage, setClassesPage] = useState(true);
@@ -32,7 +34,7 @@ function Class() {
 
    return (
       <>
-         {repassPage && <Repass isClass={isClass} />}
+         {repassPage && <Repass isClass={isClass} handleRePass = {handleRePass} />}
          {classesPage && (
             <Classes
                handleRePass={handleRePass}
@@ -40,8 +42,8 @@ function Class() {
                handleCreateClass={handleCreateClass}
             />
          )}
-         {classListPage && <ClassList isClass={isClass} />}
-         {createClassPage && <CreateClass />}
+         {classListPage && <ClassList isClass={isClass} handleClassList = {handleClassList} />}
+         {createClassPage && <CreateClass handleCreateClass = {handleCreateClass} />}
       </>
    );
 }

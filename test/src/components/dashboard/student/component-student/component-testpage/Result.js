@@ -1,10 +1,10 @@
 
 import Info from "../Info";
+import { Link } from "react-router-dom";
 
 function Result() {
   return (
     <>
-      <Info />
       <div className="content flex-center">
         <div className="result-container">
           <header className="result-header">
@@ -54,7 +54,7 @@ function Result() {
             </div>
           </div>
           <footer className="result-footer flex-center">
-            <a href="/test"><button className="see-detail-test">Chi tiết bài làm</button></a>
+            <Link to="/test"><button className="see-detail-test">Chi tiết bài làm</button></Link>
           </footer>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import api from "../../../config/config";
 // import Department from "./department";
 // import Majors from "./major";
 
@@ -46,7 +47,7 @@ function StudentSelect() {
 
    function Department() {
       useEffect(() => {
-         fetch("https://bestoftest.herokuapp.com/departments/", {})
+         fetch(`${api}/departments/`, {})
             .then((response) => response.json())
             .then((data) => {
                setDepartments(data.data);
@@ -71,7 +72,7 @@ function StudentSelect() {
                className="form-control"
                onChange={(event) => {
                   setMajorAPI(
-                     `https://bestoftest.herokuapp.com/departments/${event.target.value}/majors`
+                     `${api}/departments/${event.target.value}/majors`
                   );
                }}
             >

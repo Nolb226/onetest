@@ -4,6 +4,7 @@ import Info from "../Info";
 
 import { useParams } from "react-router-dom";
 import { useState } from "react";
+import api from "../../../../../config/config";
 
 function JoinClass() {
   const params = useParams();
@@ -17,11 +18,12 @@ function JoinClass() {
   const [resultClass, setResultClass] = useState([]);
 
   const handlefindClass = () => {
+    const currentUser = localStorage.getItem('currentUser');
     if (inputFindClass !== "") {
-      fetch(`https://bestoftest.herokuapp.com/classes/${inputFindClass}`, {
+      fetch(`${api}/classes/${inputFindClass}`, {
         headers: {
           Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTY4MTEwNzg5NywiZXhwIjoxNjgxMzY3MDk3fQ.jVSFbIFs94vr32Xtoak09Ss2pG4V-sWAAVxA20LH5uo",
+            "Bearer "+ currentUser,
         },
       })
         .then((response) => response.json())
@@ -41,13 +43,14 @@ function JoinClass() {
   };
 
   const handleJoinClass = () => {
+    const currentUser = localStorage.getItem('currentUser');
     fetch(
-      `https://bestoftest.herokuapp.com/classes/${inputFindClass}/students`,
+      `${api}/classes/${inputFindClass}/students`,
       {
         method: "POST",
         headers: {
           Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImlhdCI6MTY4MTEwNzg5NywiZXhwIjoxNjgxMzY3MDk3fQ.jVSFbIFs94vr32Xtoak09Ss2pG4V-sWAAVxA20LH5uo",
+            "Bearer " + currentUser,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ password: inputJoinClass }),

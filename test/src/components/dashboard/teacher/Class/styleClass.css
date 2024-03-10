@@ -1,139 +1,260 @@
-.p-6-15 {
-   padding: 6px 15px;
-}
-
-.p-0 {
-   padding: 0;
-}
-
-.m-10-10 {
-   margin: 10px;
-}
-
-.m-0 {
-   margin: 0;
-}
-
-.list_btn_class {
-   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-   border-color: #0080f6;
-   background-color: var(--btn-list-color);
-   color: var(--white-color);
-}
-
-.list_btn_unlock {
-   background: #dedede;
-   border-color: #d5d5d5;
-   color: #999999;
-   padding: 3px 12px;
-}
-
-.list_btn_lock {
-   background: #1f2ec9;
-   border-color: #d5d5d5;
-   color: var(--white-color);
-   padding: 3px 12px;
-}
-
-.list_btn_edit {
-   background: #d3ae56;
-   border-color: #c8a248;
-   color: var(--white-color);
-   padding: 3px 12px;
-}
-
-.noClass {
-   color: var(--sub-text-color);
-   font-size: 45px;
-}
-
-.class-editpass-model {
-   width: 420px;
-   background-color: var(--white-color);
-}
-
-.class-editpass-header {
-   padding: 8px 15px;
-   color: #555555;
-   font-size: 13.5px;
-   line-height: 20px;
-   border-radius: 4px 4px 0 0;
-   margin: 0;
-}
-
-.class-editpass-body {
-   /* margin-left: -12px; */
-   margin-top: 2px;
-   padding: 10px 15px;
-   color: #333333;
-   font-size: 15px;
-   line-height: 18px;
-   border-radius: 0 0 4px 4px;
-}
-
-.class-editpass-input {
-   color: #555555;
-   font-size: 13px;
-   line-height: 16px;
-   height: 30px;
-   background: #f0f0f0;
-   border: 1px solid #dedede;
-   border-radius: 4px;
-}
-
-.class-editpass-btn {
-   margin: 10px 0;
-   font-size: 18px;
-   line-height: 38px;
-   font-style: normal;
-   font-weight: bold;
-   width: 150px;
-   background: #161f80;
-   border-radius: 5px;
-   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-   border: none;
-   color: var(--white-color);
-}
-
-.class-create-inp {
-   margin: 10px 10px;
-}
-
-.class-create-label {
-   font-family: "Inter";
-   color: #000000;
-   font-family: "Inter";
-   font-weight: 500;
-}
-
-.class-create-uploadfile {
-   margin: 10px 10px 0px;
-   text-align: center;
-   cursor: pointer;
-   background: #f0f0f0;
-   padding: 15px 0;
-   border-radius: 4px;
-}
-
-.class-input-file {
-   width: 0.1px;
-   height: 0.1px;
-   opacity: 0;
-   overflow: hidden;
-   position: absolute;
-   z-index: -1;
-}
-
-.upload-icon {
-   height: 50px;
-   width: 50px;
+:root {
+  --btn-list-color: #2b99ff;
 }
 
 .list_btn {
-   border-radius: 2px;
-   border: 1px solid;
+  border-radius: 2px;
+  border: 1px solid;
 }
 
 .list_btn:hover {
-   opacity: 0.9;
+  opacity: 0.9;
+}
+
+.p-6-15 {
+  padding: 6px 15px;
+}
+
+.p-0 {
+  padding: 0;
+}
+
+.m-10-10 {
+  margin: 10px;
+}
+
+.m-0 {
+  margin: 0;
+}
+
+#dashboard-container .list_btn_class {
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  border-color: #0080f6;
+  background-color: var(--btn-list-color);
+  color: var(--white-color);
+  width: auto;
+}
+
+#dashboard-container .list_btn_unlock {
+  background: #dedede;
+  border-color: #d5d5d5;
+  color: #999999;
+  padding: 3px 12px;
+  width: min-content;
+}
+
+#dashboard-container .list_btn_lock {
+  background: #1f2ec9;
+  border-color: #d5d5d5;
+  color: var(--white-color);
+  padding: 3px 12px;
+  width: min-content;
+}
+
+.list_btn_edit {
+  background: #d3ae56;
+  border-color: #c8a248;
+  color: var(--white-color);
+  padding: 3px 12px;
+}
+
+.noClass {
+  color: var(--sub-text-color);
+  font-size: 45px;
+}
+
+.class-editpass-model {
+  min-width: 480px;
+  background-color: var(--white-color);
+  margin: 0;
+}
+
+/* .class-editpass-info {
+  margin: 5px;
+} */
+
+#dashboard-container .class-editpass-header {
+  padding: 8px 15px;
+  color: #555555;
+  font-size: 13.5px;
+  line-height: 20px;
+  border-radius: 4px 4px 0 0;
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+.class-editpass-body {
+  /* margin-left: -12px; */
+  margin-top: 2px;
+  padding: 10px 15px;
+  color: #333333;
+  font-size: 15px;
+  line-height: 18px;
+  border-radius: 0 0 4px 4px;
+}
+
+.class-editpass-input {
+  color: #555555;
+  font-size: 13px;
+  line-height: 16px;
+  height: 30px;
+  background: #f0f0f0;
+  border: 1px solid #dedede;
+  border-radius: 4px;
+}
+
+#dashboard-container .class-editpass-btn {
+  margin: 10px 0;
+  font-size: 18px;
+  line-height: 38px;
+  font-style: normal;
+  font-weight: bold;
+  width: 150px;
+  background: #161f80;
+  border-radius: 5px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  border: none;
+  color: var(--white-color);
+  height: auto;
+}
+
+.class-create-inp {
+  margin: 10px 10px;
+}
+
+.class-create-label {
+  font-family: "Inter";
+  color: #000000;
+  font-family: "Inter";
+  font-weight: 500;
+}
+
+.class-create-uploadfile {
+  margin: 10px 10px 0px;
+  text-align: center;
+  cursor: pointer;
+  background: #f0f0f0;
+  padding: 15px 0;
+  border-radius: 4px;
+}
+
+.class-input-file {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.upload-icon {
+  height: 50px;
+  width: 50px;
+}
+
+.table__content--list {
+  height: 400px;
+}
+
+#dashboard-container .page-num,
+#dashboard-container .page-btn {
+  font-size: 1.7rem;
+  font-weight: 600;
+  background-color: transparent;
+  width: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2px;
+  color: #a0a3c2;
+  box-shadow: none;
+}
+
+#dashboard-container .page-btn:hover {
+  color: #030f3e;
+}
+
+#dashboard-container .page-num:hover {
+  text-decoration: underline;
+}
+
+#dashboard-container .current {
+  color: #1f2ec9;
+}
+
+#dashboard-container .paginator {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  bottom: 0px;
+  right: 0;
+  left: 0;
+}
+
+.search-class-btn {
+  background: #1f2ec9;
+  margin-left: 5px;
+}
+
+.class-edit-student {
+  position: absolute;
+  left:0 ;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.student-delete-form {
+  margin-bottom: 100px;
+  display: grid;
+  column-gap: -20px;
+  grid-template-columns: repeat(2, 1fr);
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  justify-content: space-between;
+  align-items: center;
+  justify-items: stretch;
+}
+
+.studen-info-inp {
+  gap: 10px;
+  grid-column: 1/-1;
+  margin: 10px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.studen-info-inp input {
+  text-align: center;
+  flex: 0 0 60%;
+}
+
+#dashboard-container .student-update-btn {
+  margin: 10px;
+  width: 100px;
+  height: 40px;
+  background: #1f2ec9;
+  border-radius: 5px;
+  font-size: 16px;
+  line-height: 35px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  border: none;
+  color: var(--white-color);
+  font-weight: bold;
+}
+
+#dashboard-container .student-delete-btn {
+  margin: 10px;
+  width: 100px;
+  height: 40px;
+  background: #ff0404;
+  border-radius: 5px;
+  font-size: 16px;
+  line-height: 35px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  border: none;
+  color: var(--white-color);
+  font-weight: bold;
 }
